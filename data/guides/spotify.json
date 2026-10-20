@@ -1,0 +1,1635 @@
+{
+  "schemaVersion": 1,
+  "slug": "spotify",
+  "app": {
+    "name": "Spotify",
+    "website": "https://www.spotify.com",
+    "category": "Music & audio streaming"
+  },
+  "provider": {
+    "name": "Spotify (Spotify for Developers, Web API)",
+    "developerPortalUrl": "https://developer.spotify.com",
+    "docsUrl": "https://developer.spotify.com/documentation/web-api",
+    "appConsoleUrl": "https://developer.spotify.com/dashboard"
+  },
+  "oauthSupport": "full",
+  "summary": {
+    "headline": "Spotify is gated for any multi-user agent. You can create an app in minutes, but every new app is in Development Mode: 5 allowlisted users, and the owner must pay for Premium. Lifting that cap needs a registered organization with at least 250k MAU, an approved partner application and a review of up to six weeks. If you cannot meet that bar, plan for personal or internal use only.",
+    "overview": "Composio has no managed Spotify app, so you always bring your own client ID and secret from the Spotify Developer Dashboard. A new app starts in Development Mode. Its owner needs an active Premium subscription, each user (up to 5) must be added by name and Spotify email, and since February 2026 the app sees a reduced Web API: no batch lookups, browse, artist top tracks or other users' profiles, search capped at 10 results per request (default 5; page with offset for more), and no email or country on GET /me. Extended Quota Mode removes the user cap, but since 15 May 2025 only organizations with a launched service, at least 250k monthly active users and availability in key markets can apply. Since mid-2026, refresh tokens also expire 6 months after the user first authorizes, so every connection needs a re-auth path.",
+    "difficulty": 5,
+    "difficultyLabel": "Gated",
+    "drivers": [
+      "Development Mode allows only 5 allowlisted users per app (down from 25), and the app owner must keep an active Spotify Premium subscription",
+      "Extended Quota Mode (since 15 May 2025): organizations only, applying from a company email, with a launched service, at least 250k MAU, availability in key Spotify markets and commercial viability",
+      "Two gates in sequence: a Partner Application (a Google Form) must be approved before the in-Dashboard quota extension review (up to six weeks), and Spotify promises no approval",
+      "February 2026 Dev Mode endpoint cuts plus the November 2024 restrictions (recommendations, audio features, related artists, editorial playlists) remove many tools an agent would use",
+      "Refresh tokens expire 6 months after the original authorization (all apps since 20 July 2026), so users must reconnect twice a year",
+      "Developer Terms v10 forbid 'otherwise ingesting Spotify Content into a machine learning or AI model', and 'Spotify Content' includes metadata and user data. This is a legal question for any LLM agent.",
+      "The Terms count controlling a background Spotify app as 'Streaming', and the Developer Policy permits no commercial use of Streaming SDAs, so a paid or ad-supported agent that controls playback has a commercial-use problem"
+    ],
+    "bestCase": "Personal or internal agent: a Premium owner creates a Dashboard app, adds the Composio redirect URI, creates a Composio auth config and allowlists up to 4 teammates, all in about 1-2 hours with no review. Multi-user: an established organization over 250k MAU gets its partner application approved and clears the quota review within the stated six weeks.",
+    "worstCase": "You are not a registered business or are below 250k MAU, so you cannot apply at all and stay at 5 users indefinitely. Or you apply and get repeated rejections with little feedback (community members report reapplying 'and wait for 3 more months'). Or your granted extended access is later moved back to Development Mode for low activity. Separately, legal review may conclude that sending Spotify data through an LLM conflicts with the AI-ingestion clause."
+  },
+  "recommendedPathId": "extended-quota",
+  "paths": [
+    {
+      "id": "development-mode",
+      "name": "Development Mode (personal or internal agent, up to 5 users)",
+      "summary": "Self-serve, with no review. Create an app in the Developer Dashboard under a Premium account, register Composio's redirect URI, and allowlist each user by name and Spotify email. Only 5 users can use the app, and you get the reduced February 2026 Development Mode API surface and a quota shared across all your Development Mode apps.",
+      "whenYouNeedIt": "A personal agent, a hackathon, internal dogfooding, or a beta with a handful of named testers. It is also the mandatory starting state for every app, including ones you later move to Extended Quota Mode.",
+      "exampleScopes": [
+        "user-read-playback-state",
+        "user-modify-playback-state",
+        "user-read-currently-playing",
+        "playlist-read-private",
+        "playlist-modify-private",
+        "user-library-read",
+        "user-top-read"
+      ],
+      "difficulty": 2,
+      "handsOnEffortHours": {
+        "min": 1,
+        "max": 4,
+        "label": "1-4 hours",
+        "basis": "Creating the app and allowlisting take minutes. Most of the time goes on wiring the Composio auth config, smoke-testing the Composio tools against the reduced Development Mode endpoint set, and adding 6-month re-auth handling. Inferred from the documented steps; no source gives an effort figure.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": ["s1", "s17", "s3"],
+          "confidence": "medium",
+          "note": "Sum of documented steps: create app, edit settings, Users Management allowlist, Composio auth config"
+        }
+      },
+      "approvalWaitDays": {
+        "min": 0,
+        "max": 0,
+        "label": "No review",
+        "basis": "Development Mode needs no Spotify review. The app works for allowlisted users as soon as it is created.",
+        "evidence": {
+          "kind": "documented",
+          "sourceIds": ["s1"],
+          "confidence": "high",
+          "note": "Newly-created apps begin in development mode"
+        }
+      },
+      "endState": "You and up to 4 other allowlisted Spotify users (5 in total; whether the owner counts is not stated) can connect through your Composio auth config. They see your app name and description on Spotify's consent screen, and API calls draw on your developer account's shared Development Mode quota.",
+      "stages": [
+        {
+          "id": "dev-register",
+          "name": "Create the Spotify app",
+          "kind": "register",
+          "access": "No one can connect yet. The app exists but has no working redirect URI or allowlisted users.",
+          "steps": [
+            {
+              "id": "dev-register-1",
+              "title": "Use a Premium account you control long-term as the app owner",
+              "detail": "Development Mode apps only work while the owner account has an active Spotify Premium subscription. Use a company-controlled account, not a personal one that could lapse, because the app stops working if Premium ends. Each developer account can own up to 25 Client IDs (raised from 1 in July 2026), and they all share one quota.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "5 min (if Premium already exists)",
+              "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s2", "s5"],
+                "confidence": "high",
+                "note": "The app owner must have a Spotify Premium account for apps in development mode to function"
+              }
+            },
+            {
+              "id": "dev-register-2",
+              "title": "Log in to the Developer Dashboard and accept the Developer Terms",
+              "detail": "Go to developer.spotify.com/dashboard and log in with the owner account. Accept the current Developer Terms (Version 10, effective 15 May 2025) when prompted. They incorporate the Developer Policy, including the AI-ingestion and voice-assistant restrictions. Read those before you commit to an agent design.",
+              "owner": "developer",
+              "agentAssist": "Summarize the Developer Terms v10 and Developer Policy clauses that affect an AI agent, such as AI ingestion, voice control, commercial use and data deletion, before you click accept.",
+              "duration": "10-20 min",
+              "url": "https://developer.spotify.com/dashboard",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s16", "s15", "s17"],
+                "confidence": "high",
+                "note": "Version 10, effective as of 15 May, 2025"
+              }
+            },
+            {
+              "id": "dev-register-3",
+              "title": "Create the app (name, description, website, redirect URI, Web API)",
+              "detail": "Click Create app. Fill in App name and App description; both appear on the user's grant screen, so use your product name, and don't include 'Spotify' or start with 'Spot'. Add Website. Under Redirect URIs, paste the exact callback URI shown in your Composio auth config. It must be HTTPS and match byte for byte. When asked which APIs/SDKs you use, select Web API. Tick the Developer Terms checkbox and click Save/Create.",
+              "owner": "developer",
+              "agentAssist": "Draft the name, description and website values. Check the redirect URI string against Spotify's rules (HTTPS, no 'localhost', exact match) before you paste it.",
+              "duration": "5-10 min",
+              "url": "https://developer.spotify.com/dashboard/create",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s17", "s10", "s20", "s22"],
+                "confidence": "high",
+                "note": "they will be displayed to the user on the grant screen; localhost is not allowed as redirect URI"
+              }
+            },
+            {
+              "id": "dev-register-4",
+              "title": "Copy the Client ID and Client Secret into a secret store",
+              "detail": "On the app's Settings/overview page, reveal the Client Secret. Store the ID and secret in your secrets manager; you paste them into Composio in the next stage. Never commit the secret. If it leaks, use ROTATE and update Composio.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "5 min",
+              "url": "https://developer.spotify.com/dashboard",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s17"],
+                "confidence": "high",
+                "note": "regenerate it immediately by clicking the ROTATE button"
+              }
+            }
+          ]
+        },
+        {
+          "id": "dev-configure",
+          "name": "Connect the app to Composio",
+          "kind": "configure",
+          "access": "Only the owner account can test, and only once the owner is in the allowlist (if it needs to be) and the redirect URI matches.",
+          "steps": [
+            {
+              "id": "dev-configure-1",
+              "title": "Create a Composio auth config for the spotify toolkit with your own credentials",
+              "detail": "In the Composio dashboard, go to Auth Configs, then Create Auth Config, then choose Spotify and the OAUTH2 scheme. There is no managed option for Spotify, so enter your Client ID and Client Secret. Copy the redirect URI the dashboard shows and make sure it is the exact string registered in the Spotify app.",
+              "owner": "developer",
+              "agentAssist": "Prepare the auth-config settings (toolkit slug 'spotify', scheme OAUTH2, scope list), so all a human has to paste is the secret.",
+              "duration": "10-15 min",
+              "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s21", "s22"],
+                "confidence": "high",
+                "note": "Composio does not provide a default OAuth app for Spotify; the dashboard shows the redirect URI"
+              }
+            },
+            {
+              "id": "dev-configure-2",
+              "title": "Pick the smallest scope set your agent's tools need",
+              "detail": "Spotify scopes are self-serve; no scope triggers a separate review. Users still see each one on the consent screen, and Spotify's quota review checks that you only use the access you need. Typical agent sets: playback control (user-read-playback-state, user-modify-playback-state, user-read-currently-playing), playlists (playlist-read-private, playlist-modify-private/public), library (user-library-read/modify) and taste (user-top-read, user-read-recently-played). Leave out user-read-email: Development Mode no longer returns the email field on GET /me.",
+              "owner": "agent",
+              "agentAssist": "Map each Composio Spotify tool you enable to its required scope, and drop any scope no enabled tool uses.",
+              "duration": "15-30 min",
+              "url": "https://developer.spotify.com/documentation/web-api/concepts/scopes",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s18", "s4", "s21"],
+                "confidence": "medium",
+                "note": "[REMOVED] email – The user's email address... (Feb 2026 changelog). The scopes page lists no approval-gated user scopes."
+              }
+            },
+            {
+              "id": "dev-configure-3",
+              "title": "Prune Composio tools that call restricted or removed endpoints",
+              "detail": "Composio's Spotify toolkit has 88 tools, written for the full API. In a new Development Mode app, expect failures from: batch gets (SPOTIFY_GET_SEVERAL_TRACKS/ALBUMS/ARTISTS...), browse (new releases, categories), artist top tracks, other users' profiles and playlists, and markets (all removed in February 2026). Recommendations, audio features/analysis, related artists, and featured or category playlists fail too (restricted since 27 Nov 2024). Turn these off so the agent does not keep hitting errors.",
+              "owner": "agent",
+              "agentAssist": "Compare the enabled tool list with the February 2026 changelog and the November 2024 restriction list, then output an allowlist of tools to enable.",
+              "duration": "30-60 min",
+              "url": "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+              "evidence": {
+                "kind": "inferred",
+                "sourceIds": ["s3", "s4", "s14", "s21"],
+                "confidence": "medium",
+                "note": "Endpoint removals are documented. That these Composio tools fail in Development Mode is inferred (not tested without credentials)."
+              }
+            }
+          ]
+        },
+        {
+          "id": "dev-test",
+          "name": "Allowlist users and test",
+          "kind": "test",
+          "access": "Up to 5 Spotify users you add in Users Management. Other users may get through login, but their API calls return 403.",
+          "steps": [
+            {
+              "id": "dev-test-1",
+              "title": "Add each user in Users Management (name + Spotify email)",
+              "detail": "In the Dashboard, open your app, then Settings, then the Users Management tab, then Add new user. Enter the person's name and the email address on their Spotify account, not their work email if it differs. The cap is 5 users per Client ID. Apps that already had more than 5 users before February 2026 keep them, but you cannot add more.",
+              "owner": "developer",
+              "agentAssist": "Keep a roster of allowlisted users and remind you when the 5-user cap is reached.",
+              "duration": "2 min per user",
+              "url": "https://developer.spotify.com/dashboard",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s2", "s3"],
+                "confidence": "high",
+                "note": "enter the name and Spotify email address of the user that you want to enable to use your app"
+              }
+            },
+            {
+              "id": "dev-test-2",
+              "title": "Connect a test user through Composio and run a smoke test",
+              "detail": "Start a Composio connection for one allowlisted user, finish Spotify's consent screen, then call a read tool (get current playback, list playlists) and a write tool (add to queue, create playlist). Playback-control tools only work if the end user has Premium. A 403 straight after a successful login usually means the user is not on the allowlist.",
+              "owner": "agent",
+              "agentAssist": "Script the smoke test against the enabled tool list and report every 403/404/429 with the endpoint involved.",
+              "duration": "20-40 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s18", "s21"],
+                "confidence": "high",
+                "note": "API requests with an access token associated to that user and app will receive a 403 status code error"
+              }
+            }
+          ]
+        },
+        {
+          "id": "dev-maintain",
+          "name": "Operate within Development Mode",
+          "kind": "maintain",
+          "access": "The same 5 allowlisted users. Each must reconnect 6 months after first authorizing.",
+          "steps": [
+            {
+              "id": "dev-maintain-1",
+              "title": "Build a 6-month reconnect path",
+              "detail": "Access tokens last 1 hour. Refresh tokens expire 6 months after the user's original authorization, and refreshing does not extend them. At expiry, the token endpoint returns 400 invalid_grant. Store each user's authorization date and prompt a reconnect (start a new Composio connection) before day 180. Don't retry a failed refresh.",
+              "owner": "agent",
+              "agentAssist": "Implement the expiry tracker and the reconnect prompt. Handle invalid_grant by marking the Composio connection as needing re-auth.",
+              "duration": "1-2 h",
+              "url": "https://developer.spotify.com/blog/2026-06-18-refresh-token-expiration",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s6", "s7"],
+                "confidence": "high",
+                "note": "Refreshing an access token does not reset or extend the refresh token's 6-month lifetime."
+              }
+            },
+            {
+              "id": "dev-maintain-2",
+              "title": "Handle the two kinds of 429",
+              "detail": "A 429 with reason QUOTA_EXCEEDED means your developer account's shared Development Mode quota is used up; quotas are grouped into endpoint buckets with unpublished limits. A 429 with a Retry-After header is the ordinary rolling 30-second rate limit. Back off differently for each. Keep Composio polling triggers slow, because all your Development Mode apps draw on one quota.",
+              "owner": "agent",
+              "agentAssist": "Add response handling that branches on error.reason, and honor Retry-After.",
+              "duration": "30-60 min",
+              "url": "https://developer.spotify.com/documentation/web-api/concepts/rate-limits",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s5", "s19"],
+                "confidence": "high",
+                "note": "\"reason\": \"QUOTA_EXCEEDED\"; rolling 30 second window"
+              }
+            },
+            {
+              "id": "dev-maintain-3",
+              "title": "Honor disconnect and deletion duties",
+              "detail": "Give users an easy way to disconnect Spotify. When a user disconnects (or Spotify or the user asks), stop accessing their Spotify data and delete it within 5 days. Don't store Spotify Content indefinitely. A privacy policy must be shown before signup.",
+              "owner": "developer",
+              "agentAssist": "Draft the disconnect flow and a deletion job that purges stored Spotify data and the Composio connection.",
+              "duration": "1-3 h",
+              "url": "https://developer.spotify.com/terms",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s16", "s15"],
+                "confidence": "high",
+                "note": "delete the applicable Spotify Personal Data in your possession or control within five (5) days"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "extended-quota",
+      "name": "Extended Quota Mode (multi-user agent product)",
+      "summary": "This is the only documented way to let more than 5 users connect. Since 15 May 2025, only organizations can apply: a registered business with a launched service, at least 250k MAU, availability in key Spotify markets and commercial viability. You first submit a Partner Application (Google Form, from a company email). If it is approved, you file the in-Dashboard quota extension questionnaire, and the app review team tests the app against the Developer Policy, taking up to six weeks.",
+      "whenYouNeedIt": "Any product in which users outside a 5-person allowlist connect their own Spotify account to your agent, directly or through your Composio auth config.",
+      "exampleScopes": [
+        "user-read-playback-state",
+        "user-modify-playback-state",
+        "user-read-currently-playing",
+        "playlist-read-private",
+        "playlist-modify-private",
+        "playlist-modify-public",
+        "user-library-read",
+        "user-library-modify",
+        "user-top-read",
+        "user-read-recently-played"
+      ],
+      "difficulty": 5,
+      "handsOnEffortHours": {
+        "min": 20,
+        "max": 60,
+        "label": "20-60 hours (excluding growing to 250k MAU)",
+        "basis": "Inferred from the deliverables: the partner application, branding and attribution work to the Design Guidelines, a privacy policy and disconnect/deletion flow, the 4-step questionnaire, reviewer test access, and rounds of reviewer feedback. Reaching the 250k MAU threshold is a business prerequisite and is not counted.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": ["s1", "s20", "s15"],
+          "confidence": "low",
+          "note": "No source gives an effort figure"
+        }
+      },
+      "approvalWaitDays": {
+        "min": 14,
+        "max": 120,
+        "label": "2 weeks to about 4 months (if approved at all)",
+        "basis": "Only the six-week figure is documented: the in-Dashboard quota extension review 'can take up to six weeks' (42 days). Spotify gives no review time for the Partner Application, and the Developer Policy says it 'makes no guarantees or promises on processing times'. The 14-day minimum is inferred. The 120-day maximum adds one rejection and resubmission, based on community reports of waiting about 3 months per attempt; those reports are from April-May 2025, under the older process before the Partner Application gate, so treat them as indicative only. Spotify makes no promise of approval.",
+        "evidence": {
+          "kind": "reported",
+          "sourceIds": ["s1", "s15", "s25"],
+          "confidence": "low",
+          "note": "Documented: 'This review process can take up to six weeks'. The range ends are inferred (min) and community-reported (max: 'apply again and wait for 3 more months', April 2025)."
+        }
+      },
+      "endState": "Any Spotify user can connect without being allowlisted, at a higher rate limit. You may use the extra quota only for the use case Spotify reviewed. New scopes or purposes need a new request, and Spotify reviews apps periodically.",
+      "stages": [
+        {
+          "id": "eq-qualify",
+          "name": "Check eligibility and policy fit before you apply",
+          "kind": "review",
+          "access": "Development Mode only: up to 5 allowlisted users.",
+          "steps": [
+            {
+              "id": "eq-qualify-1",
+              "title": "Confirm you meet every published criterion",
+              "detail": "You need: a legally registered business or organisation; an active, launched service; at least 250k MAUs; availability in key Spotify markets; commercial viability; and adherence to the Terms. You must apply from a company email. The partner form reportedly says 'applications with fewer users will be rejected' and asks for app-store screenshots, which is awkward for web-only agents. If you miss any criterion, stay on the Development Mode path.",
+              "owner": "developer",
+              "agentAssist": "Run the eligibility checklist (artifact a3) against your company facts and flag the gaps.",
+              "duration": "1-2 h",
+              "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s13", "s24"],
+                "confidence": "high",
+                "note": "Maintaining a minimum of active users (at least 250k MAUs); form wording reported by a community member"
+              }
+            },
+            {
+              "id": "eq-qualify-2",
+              "title": "Get a legal read on the AI-ingestion, voice and commercial-use clauses",
+              "detail": "The Developer Policy and Terms say: 'Do not use the Spotify Platform or any Spotify Content to train a machine learning or AI model or otherwise ingest Spotify Content into a machine learning or AI model.' 'Spotify Content' includes metadata, playlists and user data, so an agent that puts API responses into an LLM prompt may fall under it. The Policy also bans voice assistants that control Spotify and products targeted at businesses, and allows commercial use only for Non-Streaming SDAs. The Terms count controlling a background Spotify app as Streaming, so a playback-control agent sold as a paid product, or with ads, does not fit any permitted commercial use. Decide how your design complies before you describe it to reviewers.",
+              "owner": "developer",
+              "agentAssist": "Draft a design memo showing which Spotify data reaches the model, how long it is kept, and whether the product has a voice mode, so counsel can review it.",
+              "duration": "2-8 h (plus counsel time)",
+              "url": "https://developer.spotify.com/policy",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s15", "s16"],
+                "confidence": "medium",
+                "note": "The clause text is documented. Whether it applies to inference-time LLM use is an inference that Spotify has not clarified."
+              }
+            }
+          ]
+        },
+        {
+          "id": "eq-configure",
+          "name": "Build to Spotify's policy and design guidelines",
+          "kind": "configure",
+          "access": "Development Mode only: up to 5 allowlisted users.",
+          "steps": [
+            {
+              "id": "eq-configure-1",
+              "title": "Add Spotify attribution and link-backs everywhere the agent shows Spotify content",
+              "detail": "Wherever your UI shows Spotify content, attribute it with the full Spotify logo (at least 70px digital), link metadata back to Spotify with OPEN SPOTIFY / PLAY ON SPOTIFY / LISTEN ON SPOTIFY, and show titles and cover art unmodified (no crop or overlay). Your app name and logo must not resemble Spotify's. Community reports describe rejections for missing logos and links, so make them obvious in agent chat cards too.",
+              "owner": "developer",
+              "agentAssist": "Audit every agent response template and UI card that renders Spotify data against the Design Guidelines, and list the fixes.",
+              "duration": "4-12 h",
+              "url": "https://developer.spotify.com/documentation/design",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s20", "s15", "s25"],
+                "confidence": "high",
+                "note": "you must always attribute content from Spotify with the logo"
+              }
+            },
+            {
+              "id": "eq-configure-2",
+              "title": "Publish a privacy policy and the disconnect/deletion flow",
+              "detail": "Show the privacy policy before users sign up. It must describe how you access, use, process and disclose Spotify data, including passing it to your LLM provider and Composio as processors. Provide an easy disconnect control, and delete the user's Spotify data within 5 days of disconnect.",
+              "owner": "developer",
+              "agentAssist": "Draft the Spotify-specific privacy policy sections and the deletion runbook.",
+              "duration": "3-8 h",
+              "url": "https://developer.spotify.com/terms",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s16", "s15"],
+                "confidence": "high",
+                "note": "You must display a privacy policy to end users before they install or signup to your SDA."
+              }
+            },
+            {
+              "id": "eq-configure-3",
+              "title": "Prepare reviewer access",
+              "detail": "Reviewers 'test out your app', and a reported rejection reason was simply 'The app doesn't work'. Have a reachable production URL, a reviewer test login, and written steps that exercise every scope you request. Allowlist a reviewer Spotify account if they need one while you are still in Development Mode.",
+              "owner": "agent",
+              "agentAssist": "Write the reviewer test instructions and a per-scope walkthrough (artifact a2 text).",
+              "duration": "2-4 h",
+              "url": "",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": ["s1", "s25"],
+                "confidence": "medium",
+                "note": "The app review team will review the information that you have provided, test out your app; 'The app doesn't work' (reported)"
+              }
+            }
+          ]
+        },
+        {
+          "id": "eq-partner",
+          "name": "Partner Application",
+          "kind": "review",
+          "access": "Development Mode only: up to 5 allowlisted users.",
+          "steps": [
+            {
+              "id": "eq-partner-1",
+              "title": "Submit the Partner Application form from a company email",
+              "detail": "The form is linked from the 'Quota Extension Request for New Potential Partners' section of the Quota modes page. It is a Google Form that needs a Google sign-in to open, so use your company Google account. Expect to give business details, MAU and markets.",
+              "owner": "developer",
+              "agentAssist": "Draft the answers (company description, use case, MAU evidence, markets) for a human to paste.",
+              "duration": "1-2 h",
+              "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+              "evidence": {
+                "kind": "tested",
+                "sourceIds": ["s1"],
+                "confidence": "high",
+                "note": "Probe p6: form returns 401 'You must sign in to access this content'"
+              }
+            },
+            {
+              "id": "eq-partner-2",
+              "title": "Wait for the partner decision",
+              "detail": "Spotify publishes no review time for the Partner Application. You can only file the in-Dashboard quota request after it is approved.",
+              "owner": "provider",
+              "agentAssist": "",
+              "duration": "Unknown (no stated SLA)",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1"],
+                "confidence": "medium",
+                "note": "If your Partner Application form is approved, you can ask Spotify to move your app"
+              }
+            }
+          ]
+        },
+        {
+          "id": "eq-review",
+          "name": "Quota extension request and app review",
+          "kind": "review",
+          "access": "Development Mode only, until Spotify approves.",
+          "steps": [
+            {
+              "id": "eq-review-1",
+              "title": "File the quota extension questionnaire in the Dashboard",
+              "detail": "In the Dashboard, open your app, then Settings, then the 'Quota extension Request' tab. Complete the 4-step questionnaire, stating the exact use case (extra quota may only be used for the reviewed use case), and tap Submit. The app detail page then shows 'Sent' in blue.",
+              "owner": "developer",
+              "agentAssist": "Pre-fill the use case and scope justifications from artifact a2.",
+              "duration": "1-2 h",
+              "url": "https://developer.spotify.com/dashboard",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s15"],
+                "confidence": "high",
+                "note": "you should see the word 'Sent' in blue on your app detail page"
+              }
+            },
+            {
+              "id": "eq-review-2",
+              "title": "App review team tests the app",
+              "detail": "Spotify checks the app against the Developer Policy and emails feedback to the address on the owner's Spotify account, so make sure someone monitors that inbox. The stated time is up to six weeks. Community reports describe little feedback on rejections and waits of months between attempts.",
+              "owner": "provider",
+              "agentAssist": "",
+              "duration": "Up to 6 weeks (stated)",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s1", "s25"],
+                "confidence": "medium",
+                "note": "This review process can take up to six weeks."
+              }
+            },
+            {
+              "id": "eq-review-3",
+              "title": "Respond to feedback or reapply",
+              "detail": "Fix what the email cites (often attribution, links or app not working, per community reports). Then resubmit through the same tab. Replying to the email is reported not to get answers.",
+              "owner": "developer",
+              "agentAssist": "Turn reviewer feedback into a fix list and update the questionnaire text.",
+              "duration": "2-8 h per round",
+              "url": "",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": ["s25"],
+                "confidence": "low",
+                "note": "no replies to emails and the only option is to apply again"
+              }
+            }
+          ]
+        },
+        {
+          "id": "eq-live",
+          "name": "Live in Extended Quota Mode",
+          "kind": "live",
+          "access": "Any Spotify user can connect; the allowlist no longer applies, and the rate limit is higher. Playback control still needs the end user to have Premium.",
+          "steps": [
+            {
+              "id": "eq-live-1",
+              "title": "Stay inside the reviewed use case and scopes",
+              "detail": "Use the extra quota only for the use case Spotify reviewed. Tell Spotify before using it for anything new, and file a request for extra scopes. Spotify may suspend permissions your app has not used within 90 days.",
+              "owner": "developer",
+              "agentAssist": "Flag any new agent feature that adds a scope or a new Spotify data use, so it can go through Spotify before it ships.",
+              "duration": "Ongoing",
+              "url": "https://developer.spotify.com/policy",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": ["s15", "s16"],
+                "confidence": "high",
+                "note": "individual permissions that your SDA has not used or accessed within a 90-day period"
+              }
+            },
+            {
+              "id": "eq-live-2",
+              "title": "Keep the app active, and keep the 6-month re-auth",
+              "detail": "A community member reports that an app was 'placed in Development Mode due to low activity'. Spotify's refresh-token announcement covers 'apps registered on Spotify for Developers' and names no exception for Extended Quota Mode, so keep the 6-month reconnect flow.",
+              "owner": "developer",
+              "agentAssist": "Monitor connection counts and reconnect rates, and alert if usage drops.",
+              "duration": "Ongoing",
+              "url": "",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": ["s23", "s6"],
+                "confidence": "medium",
+                "note": "Your application has been placed in Development Mode due to low activity."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "composio": {
+    "managed": "no",
+    "toolkitSlug": "spotify",
+    "note": "Composio has no Composio-managed OAuth app for Spotify, so you must create your own app in the Spotify Developer Dashboard and enter its Client ID and Client Secret in a Composio auth config (scheme OAUTH2). Your own app name and description appear on Spotify's consent screen, and all calls count against your Spotify developer account's quota. Register exactly the redirect URI that the Composio auth-config dashboard shows; Spotify needs an exact, HTTPS match. The toolkit has 88 tools and 3 triggers. Several tools call endpoints that new Development Mode apps cannot use, and polling triggers consume your shared Development Mode quota.",
+    "evidence": {
+      "kind": "documented",
+      "sourceIds": ["s21", "s22", "s30"],
+      "confidence": "high",
+      "note": "Composio does not provide a default OAuth app for Spotify; Spotify is listed under 'Bring your own OAuth app' on the managed-auth page."
+    }
+  },
+  "oauth": {
+    "authorizationUrl": "https://accounts.spotify.com/authorize (the OIDC discovery document lists https://accounts.spotify.com/oauth2/v2/auth for OpenID sign-in)",
+    "tokenUrl": "https://accounts.spotify.com/api/token",
+    "pkce": "supported",
+    "refreshTokens": "Issued for Authorization Code and Authorization Code with PKCE; not for Client Credentials. A refresh response might not include a new refresh token, in which case keep using the existing one. Refresh tokens have a hard 6-month lifetime counted from the user's original authorization, and refreshing does not extend it (new apps since 18 June 2026, existing apps since 20 July 2026). At expiry the token endpoint returns 400 invalid_grant and the user must authorize again. Previously approved scopes carry over if you request the same ones.",
+    "tokenLifetime": "Access token: 1 hour (expires_in). Refresh token: 6 months from original authorization.",
+    "redirectUris": "Exact match against a URI registered in the app's settings. HTTPS is required, except for loopback IP literals (http://127.0.0.1:PORT or http://[::1]:PORT), and 'localhost' is not allowed. For loopback only, you can register the URI without a port and add a dynamic port at request time. Custom schemes are still supported for mobile apps. Wildcard URIs are not allowed (Spotify: 'Never use http://localhost or wildcard URIs'). These rules apply to apps created since 9 April 2025 and to all apps since 27 November 2025, the date the implicit grant flow was also removed.",
+    "scopes": "Space-separated in the scope parameter, and shown to users on the consent screen. User scopes (playback, playlists, library, follow, listening history, user profile) are self-serve, with no per-scope review. What actually gates access is the app's quota mode and the endpoints available to it. 'streaming' needs the Web Playback SDK and a Premium user, 'app-remote-control' is for the mobile SDKs, and the Open Access soa-* scopes are for partners. Spotify's OIDC metadata separately advertises the openid, profile and email scopes.",
+    "dynamicClientRegistration": "no",
+    "evidence": {
+      "kind": "tested",
+      "sourceIds": ["s7", "s8", "s9", "s10", "s11", "s12", "s6", "s18", "s26"],
+      "confidence": "high",
+      "note": "Probes p1/p2: code_challenge_methods_supported [S256], response_types_supported [code], no registration_endpoint. The rest is from the official docs."
+    }
+  },
+  "agentVsYou": {
+    "agentCan": [
+      "Run the read-only probes: OIDC and RFC 8414 metadata, authorize and token endpoint liveness",
+      "Draft the Dashboard values (App name, App description, Website), and check that the Composio redirect URI is HTTPS, has no 'localhost', and matches exactly",
+      "Map enabled Composio Spotify tools to scopes and propose the minimum scope set",
+      "Cross-check the Composio toolkit against Spotify's February 2026 removals and November 2024 restrictions, and produce a tool allowlist",
+      "Write and run a smoke test for allowlisted users that reports 403/404/429 per endpoint",
+      "Implement 6-month refresh-token expiry tracking and the invalid_grant reconnect flow",
+      "Implement 429 handling that tells QUOTA_EXCEEDED apart from Retry-After rate limiting",
+      "Draft privacy-policy sections, the disconnect and 5-day deletion runbook, and the attribution audit against the Design Guidelines",
+      "Draft the Partner Application answers, quota-extension questionnaire text, scope justifications and reviewer test instructions",
+      "Draft a forum post asking Spotify to clarify how the AI-ingestion clause applies to agents"
+    ],
+    "youMust": [
+      "Own and keep paying for a Spotify Premium account that owns the app",
+      "Log in to the Developer Dashboard, accept Developer Terms v10, create the app and handle the client secret",
+      "Paste the client ID and secret into the Composio auth config",
+      "Add each user's name and Spotify email in Users Management (up to 5)",
+      "Decide, with counsel, whether your agent design complies with the AI-ingestion, voice-assistant and commercial-use clauses",
+      "For Extended Quota Mode: be a registered organization with a launched service and at least 250k MAU, and sign in to the Google Form with a company account and submit it",
+      "Complete and submit the 4-step quota extension questionnaire, provide reviewer access, and respond to review emails",
+      "Rotate the client secret if it leaks, and monitor the email address on the owner's Spotify account"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "r1",
+      "title": "App owner must have an active Spotify Premium subscription",
+      "detail": "Since 11 February 2026 (new apps) and 9 March 2026 (existing apps), Development Mode apps only work while the owner account has Premium. This is a recurring cost, and if the subscription lapses, the app stops working.",
+      "category": "cost",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1", "s2"],
+        "confidence": "high",
+        "note": "Development Mode use will require a Spotify Premium account"
+      }
+    },
+    {
+      "id": "r2",
+      "title": "Accept Developer Terms v10 and the Developer Policy",
+      "detail": "Ticking the Developer Terms checkbox is part of app creation. Terms v10 and the Policy took effect on 15 May 2025 and define what an SDA may do.",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s16", "s17"],
+        "confidence": "high",
+        "note": "put a tick in the Developer Terms of Service checkbox"
+      }
+    },
+    {
+      "id": "r3",
+      "title": "Exact-match HTTPS redirect URI from Composio",
+      "detail": "Register the redirect URI shown in your Composio auth config exactly. Spotify rejects HTTP (except loopback IP literals) and 'localhost'.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s10", "s22"],
+        "confidence": "high",
+        "note": "The definition of the redirect URI must exactly match"
+      }
+    },
+    {
+      "id": "r4",
+      "title": "Allowlist each user by name and Spotify email (max 5)",
+      "detail": "Development Mode apps serve only users added in Users Management. Apps that already had more than 5 users before February 2026 keep them but cannot add more.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": ["development-mode"],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1", "s3"],
+        "confidence": "high",
+        "note": "Each Spotify user who installs your app will need to be added to your app's allowlist"
+      }
+    },
+    {
+      "id": "r5",
+      "title": "Registered organization, launched service, at least 250k MAU and key markets",
+      "detail": "Extended Quota Mode accepts applications only from organizations (since 15 May 2025), sent from a company email. The other criteria are commercial viability and adherence to the Terms.",
+      "category": "business",
+      "mandatory": true,
+      "pathIds": ["extended-quota"],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1", "s13"],
+        "confidence": "high",
+        "note": "Established Business Entity (legally registered business or organisation)"
+      }
+    },
+    {
+      "id": "r6",
+      "title": "Privacy policy before signup; disconnect control; 5-day deletion",
+      "detail": "Display a privacy policy before users sign up that covers how Spotify data is accessed, used and disclosed. Provide an easy disconnect control, and delete the user's Spotify personal data within 5 days of disconnect.",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s15", "s16"],
+        "confidence": "high",
+        "note": "You must provide a privacy policy which clearly describes how you intend to access, use, process and disclose user data."
+      }
+    },
+    {
+      "id": "r7",
+      "title": "Spotify attribution, link-back and naming rules",
+      "detail": "Attribute content with the Spotify logo, link back to Spotify, keep metadata and artwork unmodified, and don't put 'Spotify' in your app name (or start it with 'Spot'). These rules apply to every SDA, and app review checks them.",
+      "category": "branding",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s20", "s15"],
+        "confidence": "high",
+        "note": "you must always attribute content from Spotify with the logo"
+      }
+    },
+    {
+      "id": "r8",
+      "title": "No ML training on, or ingestion of, Spotify Content into an AI model",
+      "detail": "The Policy and Terms forbid training on Spotify Content and 'otherwise ingesting' it into an ML or AI model. Spotify Content includes metadata, playlists and user data. Get a legal read on whether your agent's inference-time use is acceptable.",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s15", "s16"],
+        "confidence": "high",
+        "note": "otherwise ingest Spotify Content into a machine learning or AI model"
+      }
+    },
+    {
+      "id": "r9",
+      "title": "Re-authorization at least every 6 months",
+      "detail": "User refresh tokens expire 6 months after the original authorization. Your product needs a reconnect path, or connections silently die.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s6", "s7"],
+        "confidence": "high",
+        "note": "Refresh tokens issued to apps registered in the Developer Dashboard have a lifetime of 6 months."
+      }
+    },
+    {
+      "id": "r10",
+      "title": "End users need Premium for playback control",
+      "detail": "Player endpoints (start/pause, queue and similar) only work for Premium users. Free users can still use the read, library and playlist tools.",
+      "category": "account",
+      "mandatory": false,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s27", "s21", "s18"],
+        "confidence": "high",
+        "note": "This API only works for users who have Spotify Premium (official Start/Resume Playback and Add to Queue reference)."
+      }
+    }
+  ],
+  "nuances": [
+    {
+      "id": "n1",
+      "title": "The 25-user Development Mode is gone; it is now 5",
+      "detail": "Development Mode used to allow 25 users. Since 11 Feb 2026 (new Client IDs) and 9 Mar 2026 (existing ones), each Client ID allows up to 5 users, and the owner needs Premium. Apps that already had more than 5 users keep them but cannot add more. Raising the Client ID cap to 25 per account in July 2026 did not raise the per-app user cap.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s2", "s3", "s5", "s24", "s29"],
+        "confidence": "high",
+        "note": "Each Client ID will be limited to up to five authorized users"
+      }
+    },
+    {
+      "id": "n2",
+      "title": "Development Mode apps see a cut-down Web API (February 2026)",
+      "detail": "Removed: batch gets (GET /tracks, /albums, /artists...), browse new-releases and categories, artist top-tracks, GET /users/{id} and their playlists, and GET /markets. Search returns at most 10 results per request (default 5), so page with offset if you need more. GET /me no longer returns email, country, product, explicit_content or followers. Playlist items are returned only for playlists the user owns or collaborates on, and save/follow moved to /me/library. Extended Quota Mode apps are unaffected. On 9 March 2026 Spotify postponed the endpoint changes for apps created before 11 Feb 2026 (the migration guide's timeline table still says existing apps migrate on 9 March; the blog update supersedes it), but all new apps get them.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s3", "s4", "s2"],
+        "confidence": "high",
+        "note": "Apps in extended quota mode are not affected by any of the changes described in this guide."
+      }
+    },
+    {
+      "id": "n3",
+      "title": "Recommendation-style features have been restricted since November 2024",
+      "detail": "New apps (and Development Mode apps without a pending extension at the time) cannot use Related Artists, Recommendations, Audio Features, Audio Analysis, Featured Playlists, Category Playlists, or algorithmic and Spotify-owned editorial playlists. A 'recommend me music' agent has to build its own recommendations from the user's top items, library and search.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s14", "s21"],
+        "confidence": "high",
+        "note": "New apps that are registered on or after today's date"
+      }
+    },
+    {
+      "id": "n4",
+      "title": "Refresh tokens hard-expire after 6 months, and refreshing doesn't extend them",
+      "detail": "Refresh tokens carry no issue date, so record each user's authorization time yourself. At expiry you get 400 invalid_grant. Discard the token rather than retry, and send the user through the consent flow again. Scopes they already approved carry over if you request the same set. Tokens older than 6 months were invalidated on next use when enforcement started (20 July 2026 for existing apps).",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s6", "s7"],
+        "confidence": "high",
+        "note": "Existing apps: affected from July 20, 2026."
+      }
+    },
+    {
+      "id": "n5",
+      "title": "The AI clause is broad enough to cover LLM agents",
+      "detail": "Spotify Content is defined as 'any content, data, information or material made available through the Spotify Platform', including metadata, playlists and user data. Ingesting it 'into a machine learning or AI model' is listed as misuse, separately from training. Spotify's 'Building with AI' page covers AI coding assistants only, and restates the rule as 'do not use the API to train machine learning models on Spotify data'; it says nothing about inference-time agents. Treat this as a legal risk to resolve before you scale or apply for extended quota.",
+      "impact": "high",
+      "evidence": {
+        "kind": "inferred",
+        "sourceIds": ["s15", "s16", "s26"],
+        "confidence": "medium",
+        "note": "The clause text is quoted from the Terms and Policy. Its application to inference-time agents is our reading."
+      }
+    },
+    {
+      "id": "n6",
+      "title": "One quota per developer account, with two kinds of 429",
+      "detail": "Since July 2026, all of an account's Development Mode Client IDs (up to 25) share one set of quota buckets, so splitting traffic across apps doesn't help. Quota exhaustion returns 429 with reason QUOTA_EXCEEDED. The rolling 30-second rate limit returns 429, usually with Retry-After. Spotify publishes no numbers for either.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s5", "s1", "s19"],
+        "confidence": "high",
+        "note": "API quotas for development mode are now counted per developer account rather than per Client ID."
+      }
+    },
+    {
+      "id": "n7",
+      "title": "Spotify's policy bans voice assistants and business-targeted products",
+      "detail": "'Do not create a voice-enabled SDA that enables a user to control Spotify with their voice, or any kind of voice assistant that provides voice-control functionality.' An agent with a voice mode that controls playback is squarely in scope. Products 'targeted for use by businesses' (in-store, retail staff) are banned too. Commercial use is not permitted at all for Streaming SDAs, and the Terms define Streaming to include 'using the Spotify Platform to control a background Spotify application'. So an agent that starts, pauses or queues playback is a Streaming SDA, and selling access to it or selling ads on it is not a permitted commercial use; only Non-Streaming SDAs get those limited commercial uses. Text-chat control is not named in the voice ban, but reviewers judge the whole product.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s15", "s16"],
+        "confidence": "high",
+        "note": "Do not create a voice-enabled SDA that enables a user to control Spotify with their voice"
+      }
+    },
+    {
+      "id": "n8",
+      "title": "Extended access can be lost",
+      "detail": "Spotify may suspend permissions your app hasn't used within 90 days and reviews apps periodically. One community member reports an app 'placed in Development Mode due to low activity', and an approved developer was afraid to request more scopes in case it cost them access.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": ["s23", "s25", "s16"],
+        "confidence": "medium",
+        "note": "Your application has been placed in Development Mode due to low activity."
+      }
+    },
+    {
+      "id": "n9",
+      "title": "'Each user brings their own Client ID' is a grey area for commercial products",
+      "detail": "Some self-hosted tools ask every user to create their own Dashboard app. Spotify says Development Mode is for 'non-commercial use by individual developers' and is not a foundation for a business, and each such user would also need Premium. For a commercial agent product, don't rely on users bringing their own Client IDs to get around the 5-user cap.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "inferred",
+        "sourceIds": ["s2", "s13"],
+        "confidence": "medium",
+        "note": "Spotify states Development Mode is for non-commercial use by individual developers; the grey-area judgement is ours"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "b1",
+      "title": "Users log in fine but every API call returns 403",
+      "symptom": "The Spotify consent screen completes and the Composio connection shows as active, but tool calls fail with 403.",
+      "cause": "The user is not on the app's allowlist, or the allowlist is already at the 5-user cap. Non-allowlisted users can still finish the login.",
+      "resolution": "Add the user under Settings > Users Management with the email on their Spotify account. If the cap is full, there is no self-serve way past 5 users; the only documented route is Extended Quota Mode.",
+      "escalation": "Spotify for Developers community forum (community.spotify.com, Spotify for Developers board)",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1"],
+        "confidence": "high",
+        "note": "Users may be able to log into a development mode app without having been allowlisted"
+      }
+    },
+    {
+      "id": "b2",
+      "title": "INVALID_CLIENT / redirect URI error on the Spotify consent page",
+      "symptom": "After login, Spotify shows an INVALID_CLIENT error mentioning the redirect URI instead of the consent screen.",
+      "cause": "The redirect_uri Composio sends does not exactly match one registered in the app, or the registered URI uses http:// (non-loopback) or 'localhost', which Spotify rejects for all apps since 27 Nov 2025.",
+      "resolution": "Copy the redirect URI shown in the Composio auth config into the app's Redirect URIs field exactly (HTTPS, same path, no trailing differences) and save. For local testing, use http://127.0.0.1:PORT, never localhost.",
+      "escalation": "Spotify for Developers community forum",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s10", "s12", "s22"],
+        "confidence": "medium",
+        "note": "Rules documented. The exact error text could not be probed because the authorize endpoint redirects to login first (p3)."
+      }
+    },
+    {
+      "id": "b3",
+      "title": "Not eligible to apply for Extended Quota Mode",
+      "symptom": "You need more than 5 users, but you are an individual or small company, or you are under 250k MAU.",
+      "cause": "Since 15 May 2025, Spotify accepts extension requests only from organizations that meet all the criteria. Developers point out the catch: you can't reach 250k MAU while capped at 5 users.",
+      "resolution": "Keep Spotify in personal or internal Development Mode use, or make it an optional integration. Re-evaluate once you meet the criteria. Don't stand in for the cap with many apps or user-supplied apps in a commercial product.",
+      "escalation": "No official appeal channel is documented. Feedback goes through the community forum.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1", "s13", "s24", "s28"],
+        "confidence": "high",
+        "note": "Spotify only accepts applications from organizations (not individuals); a September 2026 forum answer confirms nothing has changed"
+      }
+    },
+    {
+      "id": "b4",
+      "title": "Composio tools return 403/404 for recommendations, audio features, batch or browse",
+      "symptom": "Certain Spotify tools fail consistently while others on the same connection work.",
+      "cause": "The endpoints are restricted for new or Development Mode apps (November 2024) or were removed from Development Mode (February 2026).",
+      "resolution": "Turn those tools off in your agent. Fetch items one at a time instead of batch gets, use /playlists/{id}/items and /me/library, and build suggestions from top items and search.",
+      "escalation": "Extended Quota Mode restores the February 2026 removals (batch gets, browse, artist top tracks, other users' data). It does not restore the November 2024 endpoints (recommendations, audio features/analysis, related artists, featured/category playlists) for a new use case; Spotify kept those only for apps that already had extended access and relied on them before 27 Nov 2024. There is no documented way to request them.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s14", "s3", "s21"],
+        "confidence": "medium",
+        "note": "Composio's own tool docs warn 'Accounts without extended access will receive a 404 error' for recommendations"
+      }
+    },
+    {
+      "id": "b5",
+      "title": "Connections die with invalid_grant after about 6 months",
+      "symptom": "A user's agent actions start failing, and token refresh returns 400 invalid_grant.",
+      "cause": "The refresh token reached its 6-month lifetime, counted from the original authorization.",
+      "resolution": "Discard the stored token, mark the Composio connection as expired, and send the user a reconnect link (a new connection request). Scopes carry over if unchanged. Prompt a few days before day 180 to avoid an outage.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s6"],
+        "confidence": "high",
+        "note": "return a 400 Bad Request response with an invalid_grant error"
+      }
+    },
+    {
+      "id": "b6",
+      "title": "429 QUOTA_EXCEEDED",
+      "symptom": "Calls fail with 429 and the body {\"error\":{\"status\":429,\"message\":\"Too many requests\",\"reason\":\"QUOTA_EXCEEDED\"}}.",
+      "cause": "Your developer account's Development Mode quota bucket is exhausted. It is shared across all your Development Mode Client IDs.",
+      "resolution": "Reduce polling-trigger frequency, cache read results briefly within the Terms' caching limits, and cut agent loops that re-query. There is no paid upgrade; higher limits come only with Extended Quota Mode.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s1", "s5"],
+        "confidence": "high",
+        "note": "If you have multiple Client IDs in development mode, they will share the same quota buckets."
+      }
+    },
+    {
+      "id": "b7",
+      "title": "Quota extension rejected with little or no feedback",
+      "symptom": "A rejection email that cites missing logos or links, or just says 'The app doesn't work', and no replies to follow-up emails.",
+      "cause": "Reviewers could not verify compliance or functionality: attribution not visible, no test access, or a flow that is hard to reach.",
+      "resolution": "Make Spotify logos and OPEN SPOTIFY links obvious on every surface, give working reviewer credentials and step-by-step test instructions, and resubmit.",
+      "escalation": "Reply to the review email and post on the Spotify for Developers forum. Developers report neither reliably gets a response.",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": ["s25"],
+        "confidence": "medium",
+        "note": "twice being reject for allegedly not having these (even though they were definitely there)"
+      }
+    },
+    {
+      "id": "b8",
+      "title": "The app stops working for everyone when the owner's Premium lapses",
+      "symptom": "All users of a Development Mode app suddenly get errors, although nothing changed in code.",
+      "cause": "The owner account no longer has an active Premium subscription.",
+      "resolution": "Restore Premium on the owner account. Spotify says the app resumes working once the owner resubscribes, so there is nothing to re-create. In future, own the app from a company-controlled account with billing monitoring.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": ["s3", "s1"],
+        "confidence": "high",
+        "note": "If the owner's Premium subscription lapses, the app will stop working. It will resume functioning once the owner resubscribes."
+      }
+    }
+  ],
+  "probes": [
+    {
+      "id": "p1",
+      "name": "Spotify OIDC discovery document",
+      "kind": "oauth_metadata",
+      "request": "GET https://accounts.spotify.com/.well-known/openid-configuration",
+      "observed": "200 application/json. issuer=https://accounts.spotify.com, authorization_endpoint=https://accounts.spotify.com/oauth2/v2/auth, token_endpoint=https://accounts.spotify.com/api/token, revocation_endpoint=https://accounts.spotify.com/oauth2/revoke/v1, scopes_supported=[email, openid, profile], response_types_supported=[code, none], code_challenge_methods_supported=[S256], grant_types_supported=[authorization_code, refresh_token, urn:ietf:params:oauth:grant-type:device_code, urn:ietf:params:oauth:grant-type:jwt-bearer], token_endpoint_auth_methods_supported=[client_secret_basic, client_secret_post]. No registration_endpoint key.",
+      "conclusion": "Spotify publishes OIDC metadata. PKCE is S256-only, token responses (implicit) are not offered, and there is no dynamic client registration. The OIDC authorize URL differs from the Web API docs' /authorize.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T18:11:53Z"
+    },
+    {
+      "id": "p2",
+      "name": "RFC 8414 authorization-server metadata",
+      "kind": "oauth_metadata",
+      "request": "GET https://accounts.spotify.com/.well-known/oauth-authorization-server",
+      "observed": "200 application/json. authorization_endpoint=https://accounts.spotify.com/authorize, token_endpoint=https://accounts.spotify.com/api/token, response_types_supported=[code], code_challenge_methods_supported=[S256], grant_types_supported=[refresh_token, client_credentials, authorization_code, urn:ietf:params:oauth:grant-type:jwt-bearer], token_endpoint_auth_methods_supported=[none, client_secret_basic, client_secret_post], device_authorization_endpoint=https://accounts.spotify.com/oauth2/device/authorize, dpop_signing_alg_values_supported=[ES256]. No registration_endpoint key.",
+      "conclusion": "This matches the Web API docs: the /authorize and /api/token endpoints, code-only responses (consistent with the implicit grant's removal), S256 PKCE, and public-client ('none') token auth for PKCE apps. There is no DCR. A device authorization endpoint is advertised, but it is not documented for Web API apps.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T18:11:53Z"
+    },
+    {
+      "id": "p3",
+      "name": "Authorize endpoint with an unknown client (code+PKCE and implicit+localhost variants)",
+      "kind": "authorize_endpoint",
+      "request": "GET https://accounts.spotify.com/authorize?client_id=greenlight-probe-invalid&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=user-read-playback-state&code_challenge_method=S256&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM (also, at 18:12:19Z, response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2Fcallback); redirects not followed",
+      "observed": "Both: 303 with an empty body, Location: https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3F...&client_id=greenlight-probe-invalid. Following the redirect gives 200 on the login page, which does not mention the invalid client.",
+      "conclusion": "The endpoint is live. Spotify defers client_id, response_type and redirect_uri validation until after the user logs in, so an unauthenticated probe cannot confirm how it rejects an unknown client, the implicit grant or a localhost redirect. Those rules rest on the docs.",
+      "outcome": "inconclusive",
+      "ranAt": "2026-10-19T18:12:09Z"
+    },
+    {
+      "id": "p4",
+      "name": "Token endpoint with placeholder public-client values",
+      "kind": "token_endpoint",
+      "request": "POST https://accounts.spotify.com/api/token (Content-Type: application/x-www-form-urlencoded) body grant_type=refresh_token&refresh_token=greenlight-probe-invalid&client_id=greenlight-probe-invalid; and body grant_type=authorization_code&code=greenlight-probe-invalid&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&client_id=greenlight-probe-invalid&code_verifier=<43-char dummy>",
+      "observed": "Both: 400 application/json {\"error\":\"invalid_client\",\"error_description\":\"Invalid client\"}",
+      "conclusion": "The token endpoint is live and checks the client before the grant, returning standard OAuth JSON errors. Composio would see invalid_client if the client ID is mistyped, and (per the docs) invalid_grant once a refresh token expires.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T18:12:29Z"
+    },
+    {
+      "id": "p5",
+      "name": "Developer Dashboard access",
+      "kind": "portal_access",
+      "request": "GET https://developer.spotify.com/dashboard and GET https://developer.spotify.com/dashboard/create",
+      "observed": "Both 200, with no server redirect. The body is a ~4.7 KB Next.js shell (<title>spotify-for-developers</title>) that loads pages/dashboard-*.js. No app content is in the HTML.",
+      "conclusion": "The Dashboard is a client-rendered app. Login and Premium checks run in the browser after load, so the probe cannot show the login wall. Per the docs, you log in with a Spotify account, and Development Mode apps need the owner to have Premium.",
+      "outcome": "inconclusive",
+      "ranAt": "2026-10-19T18:12:37Z"
+    },
+    {
+      "id": "p6",
+      "name": "Extended-quota Partner Application form",
+      "kind": "portal_access",
+      "request": "GET https://docs.google.com/forms/d/1O87xdPP1zWUDyHnduwbEFpcjA57JOaefCgBShKjAqlo (the form linked from the Quota modes page), following redirects",
+      "observed": "401 at https://docs.google.com/forms/d/.../viewform?edit_requested=true. Body: 'Sign in to your Google Account' / 'You must sign in to access this content'.",
+      "conclusion": "The Partner Application needs a Google sign-in even to view, which fits the 'company email' requirement. Its questions and eligibility text can't be read anonymously, so the reported '≥ 250,000 MAU, applications with fewer users will be rejected' wording stays community-sourced.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T18:12:52Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "a1",
+      "title": "Spotify + Composio setup checklist (Development Mode)",
+      "kind": "checklist",
+      "format": "markdown",
+      "content": "## Spotify app for <YOUR_APP_NAME> via Composio (Development Mode)\n\n**Owner account**\n- [ ] Use a company-controlled Spotify account with an active **Premium** subscription, with billing alerts on.\n- [ ] The email on this account is monitored; Spotify review and service emails go there.\n\n**Create the app** at https://developer.spotify.com/dashboard → Create app\n- [ ] App name: `<YOUR_APP_NAME>` (no 'Spotify'; must not start with 'Spot'). Users see it on the consent screen.\n- [ ] App description: `<YOUR_APP_NAME> lets you control playback and manage playlists from your AI assistant.` Users see this too.\n- [ ] Website: `<https://YOUR_DOMAIN>`\n- [ ] Redirect URIs: paste the exact URI from **Composio → Auth Configs → Spotify (OAUTH2, your own credentials)**. It must be HTTPS, with no 'localhost' and no trailing-slash differences.\n- [ ] APIs used: **Web API**\n- [ ] Tick the Developer Terms checkbox → Save\n- [ ] Copy the Client ID and Client Secret into the secrets manager, then into the Composio auth config.\n\n**Scopes** (keep only what enabled tools need)\n- [ ] Playback: user-read-playback-state, user-modify-playback-state, user-read-currently-playing\n- [ ] Playlists: playlist-read-private, playlist-modify-private (add playlist-modify-public only if needed)\n- [ ] Library: user-library-read, user-library-modify\n- [ ] Taste: user-top-read, user-read-recently-played\n- [ ] Leave out user-read-email; Development Mode no longer returns email on GET /me.\n\n**Tools to disable in Development Mode**\n- [ ] Batch gets (SEVERAL_TRACKS / ALBUMS / ARTISTS / EPISODES / SHOWS / AUDIOBOOKS / CHAPTERS)\n- [ ] New releases, browse categories, category playlists, featured playlists\n- [ ] Artist top tracks, related artists, recommendations, audio features/analysis\n- [ ] Get another user's profile or playlists; available markets\n\n**Allowlist** (Settings → Users Management → Add new user; max 5)\n- [ ] <USER_1_NAME> – <spotify-account-email>\n- [ ] <USER_2_NAME> – <spotify-account-email>\n\n**Smoke test** (one allowlisted user)\n- [ ] Connect through Composio and complete consent.\n- [ ] Read: current playback, list my playlists, my top tracks.\n- [ ] Write: add to queue (Premium user), create a private playlist, add items.\n- [ ] A 403 right after login means the user isn't allowlisted.\n\n**Operations**\n- [ ] Store each user's authorization date and prompt a reconnect before day 180. Treat invalid_grant as 'reconnect needed'.\n- [ ] On 429: if reason == QUOTA_EXCEEDED, back off (the quota is shared across all your Development Mode apps); otherwise honor Retry-After.\n- [ ] Disconnect button plus a job that deletes the user's Spotify data within 5 days.",
+      "howToUse": "Work through it top to bottom while creating the app. Replace the <PLACEHOLDERS>. An agent can check the redirect URI and scope/tool lists. A human does the Dashboard login, terms acceptance and secret handling."
+    },
+    {
+      "id": "a2",
+      "title": "Use-case and scope justification text for the quota extension questionnaire",
+      "kind": "scope_justification",
+      "format": "markdown",
+      "content": "**Use case (one paragraph)**\n<YOUR_APP_NAME> is <a consumer AI assistant / productivity agent> used by <N> monthly active users in <MARKETS>. A user who chooses to connect Spotify can ask the assistant, in text, to control their own playback, find music in their own library and playlists, and organise their own playlists. Every action happens on that user's account at their explicit request. We do not use Spotify content or data to train any model. We don't offer voice control of Spotify. We don't broadcast, mix or sync audio with other media, and we don't sell or share Spotify data with ad networks or data brokers. Spotify data is processed only to answer the user's current request, and is kept for no longer than <RETENTION, e.g. the conversation session>. Users can disconnect at any time from <SETTINGS PATH>, and we delete their Spotify data within 5 days.\n\n**Scopes requested and why**\n- `user-read-playback-state` – shows the user what is playing and on which device, so the assistant can say what is playing and pick the right device. Seen when the user asks 'what's playing?'.\n- `user-modify-playback-state` – starts, pauses and skips, and adds tracks to the queue when the user asks (Premium users only). Seen when the user says 'queue this album'.\n- `user-read-currently-playing` – identifies the current track, for requests like 'save this song'.\n- `playlist-read-private` – lists and reads the user's own playlists, so they can ask for a playlist by name.\n- `playlist-modify-private` – creates and edits private playlists the user asks for, for example 'make a focus playlist from my liked songs'.\n- `user-library-read` / `user-library-modify` – checks for and saves items in the user's library when asked.\n- `user-top-read` – personalises suggestions from the user's own top artists and tracks, instead of restricted recommendation endpoints.\n\n**Branding and attribution**\nEvery card that shows Spotify content uses the full Spotify logo, shows unmodified track, artist, album and playlist metadata and artwork, and links back with 'OPEN SPOTIFY'. Screenshots: <LINKS>.\n\n**Reviewer access**\nURL: <https://YOUR_DOMAIN/login>, test account: <REVIEWER_EMAIL / PASSWORD>. Steps: 1) Settings → Connections → Connect Spotify. 2) Ask 'what's playing?' 3) Ask 'add this to a new private playlist called Review Test'. 4) Settings → Disconnect Spotify (deletion confirmation shown).",
+      "howToUse": "Paste the sections into the 4-step quota extension questionnaire (Dashboard → your app → Settings → Quota extension Request), and adapt them for the Partner Application. Delete any scope you don't actually use. Before submitting, have counsel confirm the 'no training / processing only for the current request' statements are true for your LLM provider setup."
+    },
+    {
+      "id": "a3",
+      "title": "Extended Quota Mode pre-submission checklist",
+      "kind": "checklist",
+      "format": "markdown",
+      "content": "## Eligibility (stop if any is 'no')\n- [ ] Legally registered business or organisation: <ENTITY NAME, JURISDICTION, REG NO.>\n- [ ] Active, launched service (public, not beta-only): <URL>\n- [ ] At least 250,000 MAU, with evidence ready (analytics export): <MAU>\n- [ ] Available in key Spotify markets: <LIST>\n- [ ] Commercial viability: describe your business model without selling Spotify content or access to playback\n- [ ] Applying from a company email and company Google account (the form needs Google sign-in)\n- [ ] App-store screenshots, if the form asks for them (reported). For a web-only agent, prepare web screenshots and an explanation.\n\n## Policy fit\n- [ ] Counsel sign-off on the clause 'otherwise ingest Spotify Content into a machine learning or AI model' for our LLM agent design\n- [ ] No voice control of Spotify\n- [ ] Not targeted at businesses (in-store or retail use)\n- [ ] No games or trivia, no products for children, no webcasting to multiple listeners, no syncing audio with video\n- [ ] No transfer of Spotify data to ad networks or data brokers. LLM provider and Composio are listed as processors in the privacy policy.\n- [ ] Commercial model checked against Developer Policy section IV (commercial use)\n\n## Product compliance\n- [ ] Privacy policy shown before signup, with a Spotify-specific section\n- [ ] Disconnect control, plus deletion within 5 days\n- [ ] Spotify logo (full, at least 70px), OPEN/PLAY/LISTEN ON SPOTIFY link-backs, unmodified metadata and artwork\n- [ ] App name and logo don't resemble Spotify's\n- [ ] Minimal scopes, each exercised by a visible feature\n- [ ] Code migrated to the February 2026 endpoints (/playlists/{id}/items, /me/library), and no restricted endpoints used\n- [ ] 6-month re-auth flow and invalid_grant handling\n\n## Submission\n- [ ] Partner Application submitted on <DATE>, approved on <DATE>\n- [ ] Quota extension questionnaire (4 steps) submitted; 'Sent' shows in blue\n- [ ] Reviewer test account and instructions included\n- [ ] Owner account's email monitored for review feedback (allow up to 6 weeks)",
+      "howToUse": "Go through it with product, legal and engineering before you open the Partner Application. If any eligibility line is 'no', you cannot apply yet; stay on the Development Mode path."
+    },
+    {
+      "id": "a4",
+      "title": "Forum post asking Spotify to clarify AI-agent use",
+      "kind": "email",
+      "format": "text",
+      "content": "Title: Clarification: does Developer Terms IV.2.1 ('ingesting Spotify Content into a machine learning or AI model') apply to inference-time AI assistants?\n\nHi Spotify for Developers team,\n\nWe're building <YOUR_APP_NAME>, a text-based AI assistant. Users can connect their own Spotify account (OAuth, Authorization Code flow) to control their own playback and manage their own playlists.\n\nDeveloper Terms v10 and the Developer Policy prohibit using Spotify Content 'to train a machine learning or AI model or otherwise ingest Spotify Content into a machine learning or AI model'. Spotify Content is defined to include metadata, playlists and user data.\n\nIn our design, when a user asks, for example, 'add the song I'm playing to my Focus playlist', our server calls the Web API and passes the minimal response fields (track name, artist, playlist name) to a hosted language model only to carry out that request. Nothing is used for training, nothing is kept beyond <RETENTION>, and the model provider is a contracted processor under our privacy policy.\n\n1. Does this inference-time use count as 'ingesting Spotify Content into an AI model' under IV.2.1?\n2. If it does, is there an approved way for AI assistants to act on a user's own Spotify account at their request?\n3. Would the review team treat this design differently in an Extended Quota Mode application?\n\nThanks,\n<NAME>, <TITLE>, <COMPANY> (<COMPANY_EMAIL>)",
+      "howToUse": "Post it on the Spotify for Developers board at community.spotify.com; Spotify documents no direct support email. Keep a copy for your legal file. Any answer from a non-employee (Spotify Stars are volunteers) is not authoritative."
+    }
+  ],
+  "openQuestions": [
+    "Does the app owner count toward the 5 Development Mode users? Neither the Quota modes page nor the February 2026 blog says.",
+    "Can you remove an allowlisted user to free a slot, and does that user's existing token stop working immediately?",
+    "How do Developer Terms IV.2.1 and the Policy's 'otherwise ingest Spotify Content into a machine learning or AI model' apply to inference-time LLM agents that don't train on the data? Spotify's 'Building with AI' page addresses AI coding assistants only and does not answer this.",
+    "Does the Policy's voice-assistant ban extend to text-chat agents that control playback? Only voice control is named.",
+    "How long does the Partner Application review take, and exactly what does it ask? The form is behind Google sign-in, and no SLA is published.",
+    "Does the 6-month refresh-token expiry also apply to Extended Quota Mode apps? The blog says 'apps registered on Spotify for Developers' without naming quota modes.",
+    "When do the postponed endpoint restrictions take effect for Development Mode apps created before 11 Feb 2026? Spotify said only that timelines would follow.",
+    "What are the Development Mode quota bucket sizes and the rate-limit thresholds? Spotify publishes neither.",
+    "What exact error does the authorize endpoint show for an unknown client, a localhost redirect or response_type=token? It redirects to login before validating, so this was not observable without an account.",
+    "Is the device_authorization_endpoint advertised in the RFC 8414 metadata usable by third-party Web API apps? It is not documented in the Web API authorization guides."
+  ],
+  "verification": {
+    "status": "partial",
+    "checkedAt": "2026-10-20T05:59:19Z",
+    "summary": "Checked 27 claims against re-fetched official pages, Composio docs, community threads and re-run probes: 20 supported, 5 corrected, 1 downgraded, 1 unverifiable. The most important correction is that the Developer Terms count controlling a background Spotify app as 'Streaming' and the Policy permits no commercial use of Streaming SDAs, so a paid playback-control agent has a commercial-use problem (the guide said only 'heavily restricted'); the Extended Quota wait range was downgraded because only the six-week figure is documented.",
+    "entries": [
+      {
+        "id": "v1",
+        "claim": "Development Mode allows up to 5 allowlisted users per app (down from 25); apps that already had more keep them",
+        "location": "summary.drivers[0], nuances[n1], requirements[r4]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s1", "s2", "s3", "s29"],
+        "note": "Quota modes: 'Up to 5 authenticated Spotify users'. Migration guide: grandfathering. TechCrunch confirms the earlier 25-user limit; added as s29."
+      },
+      {
+        "id": "v2",
+        "claim": "App owner must have Premium; applied to new apps from 11 Feb 2026 and existing apps from 9 Mar 2026",
+        "location": "requirements[r1], paths[development-mode].stages[dev-register].steps[dev-register-1]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s1", "s2", "s3"],
+        "note": "Blog: 'Development Mode use will require a Spotify Premium account'; the 9 March update keeps the Premium requirement for existing apps."
+      },
+      {
+        "id": "v3",
+        "claim": "What happens when the owner's Premium lapses is not documented",
+        "location": "blockers[b8]",
+        "verdict": "corrected",
+        "before": "The exact failure mode is not documented (documented, medium, s1 only); resolution 'Restore Premium'.",
+        "after": "Documented, high: the app stops working and resumes once the owner resubscribes (s3).",
+        "method": "source_recheck",
+        "sourceIds": ["s3"],
+        "note": "Migration guide: 'If the owner's Premium subscription lapses, the app will stop working. It will resume functioning once the owner resubscribes.'"
+      },
+      {
+        "id": "v4",
+        "claim": "Extended Quota Mode: organizations only since 15 May 2025, company email, launched service, at least 250k MAU, key markets, commercial viability",
+        "location": "summary.headline, requirements[r5], paths[extended-quota].stages[eq-qualify]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s1", "s13", "s28"],
+        "note": "Quota modes page lists all six criteria verbatim. A Sep 2026 forum answer (s28, from a volunteer Spotify Star) and search for Sep-Oct 2026 news found no change."
+      },
+      {
+        "id": "v5",
+        "claim": "The Partner Application is a Google Form that needs a Google sign-in even to view",
+        "location": "paths[extended-quota].stages[eq-partner].steps[eq-partner-1], probes[p6]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": ["s1"],
+        "note": "Re-ran p6 at 2026-10-20T05:52Z: 401 at .../viewform?edit_requested=true. The form URL matches the one linked from the Quota modes page."
+      },
+      {
+        "id": "v6",
+        "claim": "In-Dashboard quota extension review: 4-step questionnaire, 'Sent' in blue, feedback by email, up to six weeks, no promise of approval",
+        "location": "paths[extended-quota].stages[eq-review], summary.drivers[2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s1", "s15", "s16"],
+        "note": "Quota modes: 'This review process can take up to six weeks.' Policy: 'Spotify makes no guarantees or promises on processing times, or that such extended access request will be approved.'"
+      },
+      {
+        "id": "v7",
+        "claim": "Extended Quota approval wait is 14-120 days, evidence kind 'documented'",
+        "location": "paths[extended-quota].approvalWaitDays",
+        "verdict": "downgraded",
+        "before": "kind documented (s1, s25, s16); basis cites community 3-month waits without dating them.",
+        "after": "kind reported, low (s1, s15, s25); basis says only the six-week figure is documented, the Partner Application has no SLA, and the 3-month reports are from April-May 2025 under the older process.",
+        "method": "cross_source",
+        "sourceIds": ["s1", "s15", "s25"],
+        "note": "The range is kept as a planning estimate, but neither end is stated by Spotify. The s25 posts predate the 15 May 2025 Partner Application gate."
+      },
+      {
+        "id": "v8",
+        "claim": "February 2026 Development Mode removals: batch gets, browse new-releases/categories, artist top tracks, other users' profiles and playlists, markets; GET /me loses email, country, product, explicit_content, followers; playlist items only for owned/collaborative playlists",
+        "location": "summary.overview, nuances[n2], paths[development-mode].stages[dev-configure].steps[dev-configure-3]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s3", "s4"],
+        "note": "Every listed removal appears in the migration guide and changelog. The March 2026 changelog reverted only external_ids, which the guide does not mention."
+      },
+      {
+        "id": "v9",
+        "claim": "Search is capped at 10 results in Development Mode",
+        "location": "summary.overview, nuances[n2]",
+        "verdict": "corrected",
+        "before": "'a 10-result search limit' / 'Search is capped at 10 results.'",
+        "after": "At most 10 results per request (default 5); page with offset for more.",
+        "method": "source_recheck",
+        "sourceIds": ["s3", "s4"],
+        "note": "Changelog: 'limit parameter maximum value has been reduced from 50 to 10, and the default value has been changed from 20 to 5'. The migration guide says to paginate with offset, so total results are not capped at 10."
+      },
+      {
+        "id": "v10",
+        "claim": "Endpoint changes for apps created before 11 Feb 2026 were postponed; new apps get them",
+        "location": "nuances[n2], openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s2", "s3"],
+        "note": "Blog 'Update March 9: Postponed endpoint access changes for existing integrations'. The migration guide's timeline table still says existing apps migrate on 9 March; n2 now notes the blog update supersedes it. No later timeline found in the blog RSS (latest post 13 Aug 2026)."
+      },
+      {
+        "id": "v11",
+        "claim": "Since 27 Nov 2024, new and Development Mode apps cannot use Related Artists, Recommendations, Audio Features/Analysis, Featured and Category Playlists, algorithmic/editorial playlists",
+        "location": "nuances[n3], summary.drivers[3]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s14", "s21"],
+        "note": "Blog lists all of them (plus 30-second preview URLs in multi-get responses). Composio's GET_RECOMMENDATIONS doc warns of a 404 without extended access."
+      },
+      {
+        "id": "v12",
+        "claim": "Extended Quota Mode restores the restricted endpoints if your app was already using them or Spotify grants them for your use case",
+        "location": "blockers[b4].escalation",
+        "verdict": "corrected",
+        "before": "Only Extended Quota Mode restores them, and only if your app was already using them or Spotify grants them for your use case.",
+        "after": "Extended Quota restores the Feb 2026 removals; the Nov 2024 endpoints are not restored for a new use case and there is no documented way to request them.",
+        "method": "source_recheck",
+        "sourceIds": ["s14", "s3"],
+        "note": "Nov 2024 blog: 'new Web API use cases will no longer be able to access' them; only 'Applications with existing extended mode Web API access that were relying on these endpoints remain unaffected'. No source describes Spotify granting them case by case."
+      },
+      {
+        "id": "v13",
+        "claim": "Access tokens last 1 hour; refresh tokens expire 6 months after original authorization, refreshing does not extend them, new apps from 18 Jun 2026 and existing from 20 Jul 2026, expiry returns 400 invalid_grant, scopes carry over",
+        "location": "oauth.refreshTokens, oauth.tokenLifetime, nuances[n4], requirements[r9], blockers[b5]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s6", "s7"],
+        "note": "All facts appear verbatim in the June 2026 blog FAQ and the Refreshing tokens page."
+      },
+      {
+        "id": "v14",
+        "claim": "PKCE supported with S256 only; no dynamic client registration; endpoints /authorize and /api/token; token endpoint returns invalid_client for an unknown client",
+        "location": "oauth.pkce, oauth.dynamicClientRegistration, oauth.authorizationUrl, probes[p1,p2,p3,p4]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": ["s8", "s9"],
+        "note": "Re-ran p1, p2, p3 and p4 at 2026-10-20T05:52Z with identical results: S256 only, no registration_endpoint, 303 to login, 400 invalid_client. PKCE is not required for confidential clients (Authorization Code with a backend is 'recommended')."
+      },
+      {
+        "id": "v15",
+        "claim": "Redirect URIs: exact match, HTTPS except loopback IP literals, no localhost; 'No wildcard support is documented'",
+        "location": "oauth.redirectUris",
+        "verdict": "corrected",
+        "before": "No wildcard support is documented.",
+        "after": "Wildcard URIs are not allowed (Spotify: 'Never use http://localhost or wildcard URIs').",
+        "method": "cross_source",
+        "sourceIds": ["s10", "s11", "s12", "s26"],
+        "note": "The other rules are confirmed on the Redirect URIs page and in the 2025 blogs. Spotify's Building with AI page (added as s26) explicitly prohibits wildcards."
+      },
+      {
+        "id": "v16",
+        "claim": "Up to 25 Client IDs per account since July 2026; all Development Mode apps share one quota; QUOTA_EXCEEDED 429 differs from the rolling 30-second rate limit with Retry-After",
+        "location": "nuances[n6], blockers[b6], paths[development-mode].stages[dev-maintain].steps[dev-maintain-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s5", "s1", "s19"],
+        "note": "July 2026 changelog and the 23 Jul 2026 blog both say 'increased from 1 to 25' and quota is 'counted per developer account'. The Rate Limits page confirms the rolling 30-second window and Retry-After."
+      },
+      {
+        "id": "v17",
+        "claim": "Composio has no managed Spotify OAuth app; toolkit uses OAUTH2 with 88 tools and 3 triggers",
+        "location": "composio",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s21", "s22", "s30"],
+        "note": "Toolkit page: 'Composio-managed OAuth available? No', 'Tools: 88', 'Triggers: 3'. The managed-auth page lists Spotify under 'Bring your own OAuth app' (added as s30)."
+      },
+      {
+        "id": "v18",
+        "claim": "Developer Terms v10 (effective 15 May 2025) forbid 'otherwise ingesting Spotify Content into a machine learning or AI model', and Spotify Content includes metadata, playlists and user data",
+        "location": "summary.drivers[5], requirements[r8], nuances[n5]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s15", "s16"],
+        "note": "Quoted verbatim in Terms Section IV (General restrictions, Misuse) and the Policy. The 'IV.2.1' reference in artifact a4 matches the Terms' nested list structure."
+      },
+      {
+        "id": "v19",
+        "claim": "Policy bans voice assistants that control Spotify and products targeted for use by businesses",
+        "location": "nuances[n7], paths[extended-quota].stages[eq-qualify].steps[eq-qualify-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s15"],
+        "note": "Both clauses appear verbatim in Policy section III. The other artifact a3 items (games, children, webcasting, syncing with visual media, ad networks and data brokers) are also confirmed."
+      },
+      {
+        "id": "v20",
+        "claim": "Commercial use of streaming or playback SDAs is 'heavily restricted'",
+        "location": "nuances[n7], paths[extended-quota].stages[eq-qualify].steps[eq-qualify-2], summary.drivers",
+        "verdict": "corrected",
+        "before": "commercial use of streaming or playback SDAs is heavily restricted",
+        "after": "Commercial use is not permitted for Streaming SDAs, and the Terms define Streaming to include controlling a background Spotify app, so a playback-control agent cannot be sold or carry ads; only Non-Streaming SDAs get limited commercial uses. Added as a summary driver.",
+        "method": "source_recheck",
+        "sourceIds": ["s15", "s16"],
+        "note": "Terms: 'Streaming means ... including using the Spotify Platform to control a background Spotify application.' Policy: 'Except for the limited commercial uses for Non-Streaming SDAs ... commercial uses are not permitted for SDAs.'"
+      },
+      {
+        "id": "v21",
+        "claim": "Privacy policy before signup, easy disconnect, delete Spotify personal data within 5 days; Spotify may suspend permissions unused for 90 days",
+        "location": "requirements[r6], paths[development-mode].stages[dev-maintain].steps[dev-maintain-3], paths[extended-quota].stages[eq-live].steps[eq-live-1]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s16", "s15"],
+        "note": "Terms: 'within five (5) days', 'You must display a privacy policy to end users before they install or signup', 'not used or accessed within a 90-day period'."
+      },
+      {
+        "id": "v22",
+        "claim": "Attribute with the full Spotify logo (at least 70px), link back with OPEN/PLAY/LISTEN ON SPOTIFY, no artwork cropping or overlays, app name must not include 'Spotify' or begin with 'Spot'",
+        "location": "requirements[r7], paths[extended-quota].stages[eq-configure].steps[eq-configure-1]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s20", "s15"],
+        "note": "Design Guidelines: 'never be smaller than 70px in digital'; 'The app name should not include Spotify'. Policy VI: 'the name should not begin with Spot'."
+      },
+      {
+        "id": "v23",
+        "claim": "End users need Premium for playback-control endpoints",
+        "location": "requirements[r10], paths[development-mode].stages[dev-test].steps[dev-test-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s27", "s21"],
+        "note": "Evidence previously relied on Composio tool docs and the streaming scope (medium). The official Start/Resume Playback and Add to Queue references say 'This API only works for users who have Spotify Premium'; added as s27 and raised to high. Get Playback State has no such note."
+      },
+      {
+        "id": "v24",
+        "claim": "Community reports: rejections citing missing logos/links or 'The app doesn't work', no email replies, about 3 months per reapplication, an app 'placed in Development Mode due to low activity'",
+        "location": "summary.worstCase, nuances[n8], blockers[b7], paths[extended-quota].stages[eq-live].steps[eq-live-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": ["s23", "s25"],
+        "note": "All quotes found verbatim (s25 posts from practical_hen and lukens, April-May 2025; s23 quote from a volunteer Spotify Star describing a Dashboard banner). They are correctly labelled as reported."
+      },
+      {
+        "id": "v25",
+        "claim": "Spotify has published no guidance on inference-time AI agent use",
+        "location": "nuances[n5], openQuestions[2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s26", "s15", "s16"],
+        "note": "Spotify now has a 'Building with AI' page, but it covers AI coding assistants and restates only the no-training rule. Added that nuance to n5 and the open question; the core claim holds."
+      },
+      {
+        "id": "v26",
+        "claim": "Difficulty: recommended extended-quota path is 5 (Gated); Development Mode path is 2 (Easy)",
+        "location": "summary.difficulty, paths[extended-quota].difficulty, paths[development-mode].difficulty",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": ["s1", "s15"],
+        "note": "Rubric 5 = partner approval or business threshold with no guaranteed path; the 250k MAU threshold, Partner Application and the Policy's 'no ... promises ... that such extended access request will be approved' fit exactly. The Development Mode hands-on range (1-4 h) is consistent with the developer-owned step durations, since the longer steps are agent-owned."
+      },
+      {
+        "id": "v27",
+        "claim": "The Partner Application says 'applications with fewer users will be rejected' and asks for app-store screenshots",
+        "location": "paths[extended-quota].stages[eq-qualify].steps[eq-qualify-1], artifacts[a3]",
+        "verdict": "unverifiable",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": ["s24"],
+        "note": "The quote is genuine in the Feb 2026 forum post (s24), but the form is behind Google sign-in (p6 re-run: 401), so it cannot be confirmed officially. The guide already labels it 'reportedly'; it stays in openQuestions."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "title": "Quota modes (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Up to 5 authenticated Spotify users can use an app that is in development mode ... Please note that as of May 15th 2025, Spotify only accepts applications from organizations (not individuals). ... This review process can take up to six weeks."
+    },
+    {
+      "id": "s2",
+      "url": "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security",
+      "title": "Update on Developer Access and Platform Security (Feb 6, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Development Mode use will require a Spotify Premium account ... Each Client ID will be limited to up to five authorized users ... decided to postpone endpoint access changes for existing integrations"
+    },
+    {
+      "id": "s3",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+      "title": "February 2026 Web API Dev Mode Changes - Migration Guide",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Apps in extended quota mode are not affected by any of the changes described in this guide. ... If the owner's Premium subscription lapses, the app will stop working. It will resume functioning once the owner resubscribes. ... If you already have multiple Client IDs or more than 5 users, you will retain them."
+    },
+    {
+      "id": "s4",
+      "url": "https://developer.spotify.com/documentation/web-api/references/changes/february-2026",
+      "title": "Web API Changelog - February 2026",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "[REMOVED] email – The user's email address, as entered by the user when creating their account. ... The limit parameter maximum value has been reduced from 50 to 10, and the default value has been changed from 20 to 5."
+    },
+    {
+      "id": "s5",
+      "url": "https://developer.spotify.com/documentation/web-api/references/changes/july-2026",
+      "title": "Web API Changelog - July 2026",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Developers can now create up to 25 apps per account. ... API quotas for development mode are now counted per developer account rather than per Client ID."
+    },
+    {
+      "id": "s6",
+      "url": "https://developer.spotify.com/blog/2026-06-18-refresh-token-expiration",
+      "title": "Introducing refresh token expiration (June 18, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Refreshing an access token does not reset or extend the refresh token's 6-month lifetime. ... Existing apps: affected from July 20, 2026."
+    },
+    {
+      "id": "s7",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens",
+      "title": "Refreshing tokens",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Access tokens are intentionally configured to have a limited lifespan (1 hour) ... Refresh tokens issued to apps registered in the Developer Dashboard have a lifetime of 6 months. ... When a refresh token is not returned, continue using the existing token."
+    },
+    {
+      "id": "s8",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow",
+      "title": "Authorization Code with PKCE Flow",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "recommended authorization flow if you're implementing authorization in a mobile app, single page web apps ... code_challenge_method ... Set to S256."
+    },
+    {
+      "id": "s9",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/authorization",
+      "title": "Authorization (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "the client secret can be safely stored, then the authorization code flow is the recommended choice"
+    },
+    {
+      "id": "s10",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/redirect_uri",
+      "title": "Redirect URIs",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Use HTTPS for your redirect URI, unless you are using a loopback address, when HTTP is permitted. ... localhost is not allowed as redirect URI."
+    },
+    {
+      "id": "s11",
+      "url": "https://developer.spotify.com/blog/2025-02-12-increasing-the-security-requirements-for-integrating-with-spotify",
+      "title": "Increasing the security requirements for integrating with Spotify (Feb 12, 2025)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "All clients created from the 9th of April 2025 will have the new rules enforced automatically. ... Redirects using a custom scheme will still be supported."
+    },
+    {
+      "id": "s12",
+      "url": "https://developer.spotify.com/blog/2025-10-14-reminder-oauth-migration-27-nov-2025",
+      "title": "Reminder: OAuth Migration - 27 November 2025",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "On 27 November 2025, Spotify will remove support for the implicit grant flow ... as well as HTTP redirect URIs and localhost aliases in our OAuth offering."
+    },
+    {
+      "id": "s13",
+      "url": "https://developer.spotify.com/blog/2025-04-15-updating-the-criteria-for-web-api-extended-access",
+      "title": "Updating the Criteria for Web API Extended Access (Apr 15, 2025)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "development mode will remain accessible for experimentation and personal use"
+    },
+    {
+      "id": "s14",
+      "url": "https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api",
+      "title": "Introducing some changes to our Web API (Nov 27, 2024)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Related Artists ... Recommendations ... Audio Features ... Audio Analysis ... Get Featured Playlists ... Get Category's Playlists ... New apps that are registered on or after today's date"
+    },
+    {
+      "id": "s15",
+      "url": "https://developer.spotify.com/policy",
+      "title": "Spotify Developer Policy (effective 15 May 2025)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Do not use the Spotify Platform or any Spotify Content to train a machine learning or AI model or otherwise ingest Spotify Content into a machine learning or AI model. ... Do not create a voice-enabled SDA that enables a user to control Spotify with their voice ... Except for the limited commercial uses for Non-Streaming SDAs (set out below) commercial uses are not permitted for SDAs. ... Spotify makes no guarantees or promises on processing times, or that such extended access request will be approved."
+    },
+    {
+      "id": "s16",
+      "url": "https://developer.spotify.com/terms",
+      "title": "Spotify Developer Terms (Version 10, effective 15 May 2025)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "\"Spotify Content\" means any content, data, information or material made available through the Spotify Platform, Spotify Service or by Spotify. This may include, among other things, ... metadata, playlists, and user data including Spotify Personal Data. ... \"Streaming\" means using the Spotify Platform to enable playback of sound recordings available through the Spotify Service, including using the Spotify Platform to control a background Spotify application."
+    },
+    {
+      "id": "s17",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/apps",
+      "title": "Apps (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Enter an App Name and App Description of your choice (they will be displayed to the user on the grant screen)"
+    },
+    {
+      "id": "s18",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/scopes",
+      "title": "Scopes (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Scopes provide Spotify users using third-party apps the confidence that only the information they choose to share will be shared, and nothing more."
+    },
+    {
+      "id": "s19",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/rate-limits",
+      "title": "Rate Limits (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Spotify's API rate limit is calculated based on the number of calls that your app makes to Spotify in a rolling 30 second window."
+    },
+    {
+      "id": "s20",
+      "url": "https://developer.spotify.com/documentation/design",
+      "title": "Spotify Design Guidelines",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "To comply with our licensing agreements, you must always attribute content from Spotify with the logo."
+    },
+    {
+      "id": "s21",
+      "url": "https://docs.composio.dev/toolkits/spotify",
+      "title": "Spotify toolkit (Composio)",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Composio does not provide a default OAuth app for Spotify."
+    },
+    {
+      "id": "s22",
+      "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+      "title": "Custom app vs managed app (Composio)",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "For OAuth toolkits, the dashboard shows the redirect URI to add in the provider's developer portal."
+    },
+    {
+      "id": "s23",
+      "url": "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072",
+      "title": "Clarification on Extended Quota Mode Eligibility (Spotify Community)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Your application has been placed in Development Mode due to low activity."
+    },
+    {
+      "id": "s24",
+      "url": "https://community.spotify.com/t5/Spotify-for-Developers/development-mode-to-extended-quota-mode/td-p/7345683",
+      "title": "development mode to extended quota mode (Spotify Community, Feb 2026)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Must be ≥ 250,000 MAU, applications with fewer users will be rejected. How is that possible when you are limited to only 25 users (and in future only 5) in development mode?"
+    },
+    {
+      "id": "s25",
+      "url": "https://community.spotify.com/t5/Spotify-for-Developers/Updating-the-Criteria-for-Web-API-Extended-Access/td-p/6920661",
+      "title": "Updating the Criteria for Web API Extended Access (Spotify Community thread)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Of course, no replies to emails and the only option is to apply again and wait for 3 more months. I am on my 6th attempt"
+    },
+    {
+      "id": "s26",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/building-with-ai",
+      "title": "Building with AI (Spotify Web API)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Never use http://localhost or wildcard URIs. ... do not use the API to train machine learning models on Spotify data."
+    },
+    {
+      "id": "s27",
+      "url": "https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback",
+      "title": "Start/Resume Playback (Spotify Web API reference)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Start a new context or resume current playback on the user's active device. This API only works for users who have Spotify Premium."
+    },
+    {
+      "id": "s28",
+      "url": "https://community.spotify.com/t5/Spotify-for-Developers/5-to-250-000-users-How/td-p/7554842",
+      "title": "5 to 250,000 users? How? (Spotify Community, Sep 2026)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Apps are limited to 5 authorized users. For access beyond that, Spotify now requires the application to come from an eligible business or organization that meets the Extended Quota requirements"
+    },
+    {
+      "id": "s29",
+      "url": "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/",
+      "title": "Spotify changes developer mode API to require Premium accounts, limits test users (TechCrunch, Feb 6, 2026)",
+      "publisher": "other",
+      "accessedAt": "2026-10-20",
+      "excerpt": "The company debuted Developer Mode in 2021 to allow developers to test their applications with up to 25 users."
+    },
+    {
+      "id": "s30",
+      "url": "https://docs.composio.dev/toolkits/managed-auth",
+      "title": "Managed OAuth apps (Composio)",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Bring your own OAuth app (211) ... | [Spotify](/toolkits/spotify.md) | `SPOTIFY` |"
+    }
+  ],
+  "meta": {
+    "generatedAt": "2026-10-19T18:26:03Z",
+    "generatedBy": "library",
+    "model": "claude-code-research-agent",
+    "durationSec": 1320,
+    "lastReviewedAt": "2026-10-20T05:59:19Z"
+  }
+}

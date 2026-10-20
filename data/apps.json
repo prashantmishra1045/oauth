@@ -1,0 +1,1002 @@
+[
+  {
+    "slug": "github",
+    "name": "GitHub",
+    "website": "https://github.com",
+    "category": "Developer tools",
+    "composioToolkit": "github",
+    "composioManaged": "yes",
+    "providerPlatform": "GitHub (GitHub Apps / OAuth Apps)",
+    "featured": true
+  },
+  {
+    "slug": "gmail",
+    "name": "Gmail",
+    "website": "https://workspace.google.com/products/gmail/",
+    "category": "Communication",
+    "composioToolkit": "gmail",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": true
+  },
+  {
+    "slug": "hubspot",
+    "name": "HubSpot",
+    "website": "https://www.hubspot.com",
+    "category": "CRM & sales",
+    "composioToolkit": "hubspot",
+    "composioManaged": "yes",
+    "providerPlatform": "HubSpot Developer Platform",
+    "featured": true
+  },
+  {
+    "slug": "instagram",
+    "name": "Instagram",
+    "website": "https://www.instagram.com",
+    "category": "Social",
+    "composioToolkit": "instagram",
+    "composioManaged": "yes",
+    "providerPlatform": "Meta for Developers",
+    "featured": true
+  },
+  {
+    "slug": "linkedin",
+    "name": "LinkedIn",
+    "website": "https://www.linkedin.com",
+    "category": "Social",
+    "composioToolkit": "linkedin",
+    "composioManaged": "yes",
+    "providerPlatform": "LinkedIn Developer Platform",
+    "featured": true
+  },
+  {
+    "slug": "notion",
+    "name": "Notion",
+    "website": "https://www.notion.com",
+    "category": "Productivity",
+    "composioToolkit": "notion",
+    "composioManaged": "yes",
+    "providerPlatform": "Notion",
+    "featured": true
+  },
+  {
+    "slug": "outlook",
+    "name": "Outlook",
+    "website": "https://www.microsoft.com/microsoft-365/outlook",
+    "category": "Communication",
+    "composioToolkit": "outlook",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": true
+  },
+  {
+    "slug": "salesforce",
+    "name": "Salesforce",
+    "website": "https://www.salesforce.com",
+    "category": "CRM & sales",
+    "composioToolkit": "salesforce",
+    "composioManaged": "yes",
+    "providerPlatform": "Salesforce",
+    "featured": true
+  },
+  {
+    "slug": "shopify",
+    "name": "Shopify",
+    "website": "https://www.shopify.com",
+    "category": "Commerce",
+    "composioToolkit": "shopify",
+    "composioManaged": "no",
+    "providerPlatform": "Shopify",
+    "featured": true
+  },
+  {
+    "slug": "slack",
+    "name": "Slack",
+    "website": "https://slack.com",
+    "category": "Communication",
+    "composioToolkit": "slack",
+    "composioManaged": "yes",
+    "providerPlatform": "Slack API",
+    "featured": true
+  },
+  {
+    "slug": "spotify",
+    "name": "Spotify",
+    "website": "https://www.spotify.com",
+    "category": "Media",
+    "composioToolkit": "spotify",
+    "composioManaged": "no",
+    "providerPlatform": "Spotify for Developers",
+    "featured": true
+  },
+  {
+    "slug": "twitter",
+    "name": "X (Twitter)",
+    "website": "https://x.com",
+    "category": "Social",
+    "composioToolkit": "twitter",
+    "composioManaged": "no",
+    "providerPlatform": "X Developer Platform",
+    "featured": true
+  },
+  {
+    "slug": "airtable",
+    "name": "Airtable",
+    "website": "https://www.airtable.com",
+    "category": "Productivity",
+    "composioToolkit": "airtable",
+    "composioManaged": "yes",
+    "providerPlatform": "Airtable",
+    "featured": false
+  },
+  {
+    "slug": "asana",
+    "name": "Asana",
+    "website": "https://asana.com",
+    "category": "Project management",
+    "composioToolkit": "asana",
+    "composioManaged": "yes",
+    "providerPlatform": "Asana",
+    "featured": false
+  },
+  {
+    "slug": "attio",
+    "name": "Attio",
+    "website": "https://attio.com",
+    "category": "CRM & sales",
+    "composioToolkit": "attio",
+    "composioManaged": "yes",
+    "providerPlatform": "Attio",
+    "featured": false
+  },
+  {
+    "slug": "basecamp",
+    "name": "Basecamp",
+    "website": "https://basecamp.com",
+    "category": "Project management",
+    "composioToolkit": "basecamp",
+    "composioManaged": "yes",
+    "providerPlatform": "37signals Launchpad",
+    "featured": false
+  },
+  {
+    "slug": "bitbucket",
+    "name": "Bitbucket",
+    "website": "https://bitbucket.org",
+    "category": "Developer tools",
+    "composioToolkit": "bitbucket",
+    "composioManaged": "yes",
+    "providerPlatform": "Bitbucket Cloud (Atlassian)",
+    "featured": false
+  },
+  {
+    "slug": "bitly",
+    "name": "Bitly",
+    "website": "https://bitly.com",
+    "category": "Marketing",
+    "composioToolkit": "bitly",
+    "composioManaged": "no",
+    "providerPlatform": "Bitly",
+    "featured": false
+  },
+  {
+    "slug": "box",
+    "name": "Box",
+    "website": "https://www.box.com",
+    "category": "Storage & docs",
+    "composioToolkit": "box",
+    "composioManaged": "yes",
+    "providerPlatform": "Box",
+    "featured": false
+  },
+  {
+    "slug": "calendly",
+    "name": "Calendly",
+    "website": "https://calendly.com",
+    "category": "Calendar & scheduling",
+    "composioToolkit": "calendly",
+    "composioManaged": "yes",
+    "providerPlatform": "Calendly",
+    "featured": false
+  },
+  {
+    "slug": "canva",
+    "name": "Canva",
+    "website": "https://www.canva.com",
+    "category": "Design",
+    "composioToolkit": "canva",
+    "composioManaged": "yes",
+    "providerPlatform": "Canva (Connect API)",
+    "featured": false
+  },
+  {
+    "slug": "clickup",
+    "name": "ClickUp",
+    "website": "https://clickup.com",
+    "category": "Project management",
+    "composioToolkit": "clickup",
+    "composioManaged": "yes",
+    "providerPlatform": "ClickUp",
+    "featured": false
+  },
+  {
+    "slug": "confluence",
+    "name": "Confluence",
+    "website": "https://www.atlassian.com/software/confluence",
+    "category": "Storage & docs",
+    "composioToolkit": "confluence",
+    "composioManaged": "yes",
+    "providerPlatform": "Atlassian Developer Console",
+    "featured": false
+  },
+  {
+    "slug": "constant-contact",
+    "name": "Constant Contact",
+    "website": "https://www.constantcontact.com",
+    "category": "Marketing",
+    "composioToolkit": "constant_contact",
+    "composioManaged": "no",
+    "providerPlatform": "Constant Contact",
+    "featured": false
+  },
+  {
+    "slug": "digitalocean",
+    "name": "DigitalOcean",
+    "website": "https://www.digitalocean.com",
+    "category": "Developer tools",
+    "composioToolkit": "digital_ocean",
+    "composioManaged": "no",
+    "providerPlatform": "DigitalOcean",
+    "featured": false
+  },
+  {
+    "slug": "discord",
+    "name": "Discord",
+    "website": "https://discord.com",
+    "category": "Communication",
+    "composioToolkit": "discord",
+    "composioManaged": "yes",
+    "providerPlatform": "Discord Developer Portal",
+    "featured": false
+  },
+  {
+    "slug": "docusign",
+    "name": "Docusign",
+    "website": "https://www.docusign.com",
+    "category": "Productivity",
+    "composioToolkit": "docusign",
+    "composioManaged": "no",
+    "providerPlatform": "Docusign Developer Center",
+    "featured": false
+  },
+  {
+    "slug": "dropbox",
+    "name": "Dropbox",
+    "website": "https://www.dropbox.com",
+    "category": "Storage & docs",
+    "composioToolkit": "dropbox",
+    "composioManaged": "yes",
+    "providerPlatform": "Dropbox",
+    "featured": false
+  },
+  {
+    "slug": "dropbox-sign",
+    "name": "Dropbox Sign",
+    "website": "https://sign.dropbox.com",
+    "category": "Productivity",
+    "composioToolkit": "dropbox_sign",
+    "composioManaged": "no",
+    "providerPlatform": "Dropbox Sign",
+    "featured": false
+  },
+  {
+    "slug": "dynamics-365",
+    "name": "Dynamics 365",
+    "website": "https://www.microsoft.com/dynamics-365",
+    "category": "CRM & sales",
+    "composioToolkit": "dynamics365",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "excel",
+    "name": "Excel",
+    "website": "https://www.microsoft.com/microsoft-365/excel",
+    "category": "Productivity",
+    "composioToolkit": "excel",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "facebook",
+    "name": "Facebook",
+    "website": "https://www.facebook.com",
+    "category": "Social",
+    "composioToolkit": "facebook",
+    "composioManaged": "yes",
+    "providerPlatform": "Meta for Developers",
+    "featured": false
+  },
+  {
+    "slug": "figma",
+    "name": "Figma",
+    "website": "https://www.figma.com",
+    "category": "Design",
+    "composioToolkit": "figma",
+    "composioManaged": "yes",
+    "providerPlatform": "Figma",
+    "featured": false
+  },
+  {
+    "slug": "freshbooks",
+    "name": "FreshBooks",
+    "website": "https://www.freshbooks.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "freshbooks",
+    "composioManaged": "yes",
+    "providerPlatform": "FreshBooks",
+    "featured": false
+  },
+  {
+    "slug": "gitlab",
+    "name": "GitLab",
+    "website": "https://about.gitlab.com",
+    "category": "Developer tools",
+    "composioToolkit": "gitlab",
+    "composioManaged": "yes",
+    "providerPlatform": "GitLab",
+    "featured": false
+  },
+  {
+    "slug": "gong",
+    "name": "Gong",
+    "website": "https://www.gong.io",
+    "category": "CRM & sales",
+    "composioToolkit": "gong",
+    "composioManaged": "yes",
+    "providerPlatform": "Gong",
+    "featured": false
+  },
+  {
+    "slug": "google-ads",
+    "name": "Google Ads",
+    "website": "https://ads.google.com",
+    "category": "Marketing",
+    "composioToolkit": "googleads",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-analytics",
+    "name": "Google Analytics",
+    "website": "https://marketingplatform.google.com/about/analytics/",
+    "category": "Analytics",
+    "composioToolkit": "google_analytics",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-bigquery",
+    "name": "Google BigQuery",
+    "website": "https://cloud.google.com/bigquery",
+    "category": "Analytics",
+    "composioToolkit": "googlebigquery",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-calendar",
+    "name": "Google Calendar",
+    "website": "https://workspace.google.com/products/calendar/",
+    "category": "Calendar & scheduling",
+    "composioToolkit": "googlecalendar",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-chat",
+    "name": "Google Chat",
+    "website": "https://workspace.google.com/products/chat/",
+    "category": "Communication",
+    "composioToolkit": "google_chat",
+    "composioManaged": "no",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-contacts",
+    "name": "Google Contacts",
+    "website": "https://contacts.google.com",
+    "category": "Productivity",
+    "composioToolkit": "googlecontacts",
+    "composioManaged": "no",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-docs",
+    "name": "Google Docs",
+    "website": "https://workspace.google.com/products/docs/",
+    "category": "Storage & docs",
+    "composioToolkit": "googledocs",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-drive",
+    "name": "Google Drive",
+    "website": "https://workspace.google.com/products/drive/",
+    "category": "Storage & docs",
+    "composioToolkit": "googledrive",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-forms",
+    "name": "Google Forms",
+    "website": "https://workspace.google.com/products/forms/",
+    "category": "Productivity",
+    "composioToolkit": "googleforms",
+    "composioManaged": "no",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-meet",
+    "name": "Google Meet",
+    "website": "https://workspace.google.com/products/meet/",
+    "category": "Communication",
+    "composioToolkit": "googlemeet",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-search-console",
+    "name": "Google Search Console",
+    "website": "https://search.google.com/search-console/about",
+    "category": "Analytics",
+    "composioToolkit": "google_search_console",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-sheets",
+    "name": "Google Sheets",
+    "website": "https://workspace.google.com/products/sheets/",
+    "category": "Productivity",
+    "composioToolkit": "googlesheets",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-slides",
+    "name": "Google Slides",
+    "website": "https://workspace.google.com/products/slides/",
+    "category": "Productivity",
+    "composioToolkit": "googleslides",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "google-tasks",
+    "name": "Google Tasks",
+    "website": "https://workspace.google.com/products/tasks/",
+    "category": "Productivity",
+    "composioToolkit": "googletasks",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "gorgias",
+    "name": "Gorgias",
+    "website": "https://www.gorgias.com",
+    "category": "Support",
+    "composioToolkit": "gorgias",
+    "composioManaged": "yes",
+    "providerPlatform": "Gorgias",
+    "featured": false
+  },
+  {
+    "slug": "greenhouse",
+    "name": "Greenhouse",
+    "website": "https://www.greenhouse.com",
+    "category": "HR & recruiting",
+    "composioToolkit": "greenhouse",
+    "composioManaged": "yes",
+    "providerPlatform": "Greenhouse",
+    "featured": false
+  },
+  {
+    "slug": "gusto",
+    "name": "Gusto",
+    "website": "https://gusto.com",
+    "category": "HR & recruiting",
+    "composioToolkit": "gusto",
+    "composioManaged": "no",
+    "providerPlatform": "Gusto Developer Portal",
+    "featured": false
+  },
+  {
+    "slug": "help-scout",
+    "name": "Help Scout",
+    "website": "https://www.helpscout.com",
+    "category": "Support",
+    "composioToolkit": "help_scout",
+    "composioManaged": "no",
+    "providerPlatform": "Help Scout",
+    "featured": false
+  },
+  {
+    "slug": "intercom",
+    "name": "Intercom",
+    "website": "https://www.intercom.com",
+    "category": "Support",
+    "composioToolkit": "intercom",
+    "composioManaged": "yes",
+    "providerPlatform": "Intercom Developer Hub",
+    "featured": false
+  },
+  {
+    "slug": "jira",
+    "name": "Jira",
+    "website": "https://www.atlassian.com/software/jira",
+    "category": "Project management",
+    "composioToolkit": "jira",
+    "composioManaged": "yes",
+    "providerPlatform": "Atlassian Developer Console",
+    "featured": false
+  },
+  {
+    "slug": "kit",
+    "name": "Kit",
+    "website": "https://kit.com",
+    "category": "Marketing",
+    "composioToolkit": "kit",
+    "composioManaged": "yes",
+    "providerPlatform": "Kit (App Store)",
+    "featured": false
+  },
+  {
+    "slug": "klaviyo",
+    "name": "Klaviyo",
+    "website": "https://www.klaviyo.com",
+    "category": "Marketing",
+    "composioToolkit": "klaviyo",
+    "composioManaged": "no",
+    "providerPlatform": "Klaviyo",
+    "featured": false
+  },
+  {
+    "slug": "linear",
+    "name": "Linear",
+    "website": "https://linear.app",
+    "category": "Project management",
+    "composioToolkit": "linear",
+    "composioManaged": "yes",
+    "providerPlatform": "Linear",
+    "featured": false
+  },
+  {
+    "slug": "linkedin-ads",
+    "name": "LinkedIn Ads",
+    "website": "https://business.linkedin.com/marketing-solutions/ads",
+    "category": "Marketing",
+    "composioToolkit": "linkedin_ads",
+    "composioManaged": "no",
+    "providerPlatform": "LinkedIn Developer Platform",
+    "featured": false
+  },
+  {
+    "slug": "mailchimp",
+    "name": "Mailchimp",
+    "website": "https://mailchimp.com",
+    "category": "Marketing",
+    "composioToolkit": "mailchimp",
+    "composioManaged": "yes",
+    "providerPlatform": "Mailchimp (Intuit)",
+    "featured": false
+  },
+  {
+    "slug": "meta-ads",
+    "name": "Meta Ads",
+    "website": "https://www.facebook.com/business/ads",
+    "category": "Marketing",
+    "composioToolkit": "metaads",
+    "composioManaged": "no",
+    "providerPlatform": "Meta for Developers",
+    "featured": false
+  },
+  {
+    "slug": "microsoft-onenote",
+    "name": "Microsoft OneNote",
+    "website": "https://www.microsoft.com/microsoft-365/onenote/digital-note-taking-app",
+    "category": "Productivity",
+    "composioToolkit": "onenote",
+    "composioManaged": "no",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "power-bi",
+    "name": "Microsoft Power BI",
+    "website": "https://www.microsoft.com/power-platform/products/power-bi",
+    "category": "Analytics",
+    "composioToolkit": "microsoft_power_bi",
+    "composioManaged": "no",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "microsoft-teams",
+    "name": "Microsoft Teams",
+    "website": "https://www.microsoft.com/microsoft-teams",
+    "category": "Communication",
+    "composioToolkit": "microsoft_teams",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "microsoft-to-do",
+    "name": "Microsoft To Do",
+    "website": "https://www.microsoft.com/microsoft-365/microsoft-to-do-list-app",
+    "category": "Productivity",
+    "composioToolkit": "microsoft_todo",
+    "composioManaged": "no",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "miro",
+    "name": "Miro",
+    "website": "https://miro.com",
+    "category": "Design",
+    "composioToolkit": "miro",
+    "composioManaged": "yes",
+    "providerPlatform": "Miro Developer Platform",
+    "featured": false
+  },
+  {
+    "slug": "monday",
+    "name": "monday.com",
+    "website": "https://monday.com",
+    "category": "Project management",
+    "composioToolkit": "monday",
+    "composioManaged": "yes",
+    "providerPlatform": "monday.com Developer Center",
+    "featured": false
+  },
+  {
+    "slug": "netsuite",
+    "name": "NetSuite",
+    "website": "https://www.netsuite.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "netsuite",
+    "composioManaged": "no",
+    "providerPlatform": "Oracle NetSuite (per-account integration record)",
+    "featured": false
+  },
+  {
+    "slug": "onedrive",
+    "name": "OneDrive",
+    "website": "https://www.microsoft.com/microsoft-365/onedrive",
+    "category": "Storage & docs",
+    "composioToolkit": "one_drive",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "pagerduty",
+    "name": "PagerDuty",
+    "website": "https://www.pagerduty.com",
+    "category": "Developer tools",
+    "composioToolkit": "pagerduty",
+    "composioManaged": "yes",
+    "providerPlatform": "PagerDuty",
+    "featured": false
+  },
+  {
+    "slug": "paypal",
+    "name": "PayPal",
+    "website": "https://www.paypal.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "paypal",
+    "composioManaged": "no",
+    "providerPlatform": "PayPal Developer",
+    "featured": false
+  },
+  {
+    "slug": "pinterest",
+    "name": "Pinterest",
+    "website": "https://www.pinterest.com",
+    "category": "Social",
+    "composioToolkit": "pinterest",
+    "composioManaged": "yes",
+    "providerPlatform": "Pinterest Developers",
+    "featured": false
+  },
+  {
+    "slug": "pipedrive",
+    "name": "Pipedrive",
+    "website": "https://www.pipedrive.com",
+    "category": "CRM & sales",
+    "composioToolkit": "pipedrive",
+    "composioManaged": "no",
+    "providerPlatform": "Pipedrive Developer Hub",
+    "featured": false
+  },
+  {
+    "slug": "quickbooks",
+    "name": "QuickBooks",
+    "website": "https://quickbooks.intuit.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "quickbooks",
+    "composioManaged": "yes",
+    "providerPlatform": "Intuit Developer",
+    "featured": false
+  },
+  {
+    "slug": "ramp",
+    "name": "Ramp",
+    "website": "https://ramp.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "ramp",
+    "composioManaged": "no",
+    "providerPlatform": "Ramp Developer",
+    "featured": false
+  },
+  {
+    "slug": "reddit",
+    "name": "Reddit",
+    "website": "https://www.reddit.com",
+    "category": "Social",
+    "composioToolkit": "reddit",
+    "composioManaged": "yes",
+    "providerPlatform": "Reddit",
+    "featured": false
+  },
+  {
+    "slug": "sentry",
+    "name": "Sentry",
+    "website": "https://sentry.io",
+    "category": "Developer tools",
+    "composioToolkit": "sentry",
+    "composioManaged": "yes",
+    "providerPlatform": "Sentry",
+    "featured": false
+  },
+  {
+    "slug": "servicenow",
+    "name": "ServiceNow",
+    "website": "https://www.servicenow.com",
+    "category": "Support",
+    "composioToolkit": "servicenow",
+    "composioManaged": "no",
+    "providerPlatform": "ServiceNow (per-instance Application Registry)",
+    "featured": false
+  },
+  {
+    "slug": "sharepoint",
+    "name": "SharePoint",
+    "website": "https://www.microsoft.com/microsoft-365/sharepoint",
+    "category": "Storage & docs",
+    "composioToolkit": "share_point",
+    "composioManaged": "yes",
+    "providerPlatform": "Microsoft Entra ID",
+    "featured": false
+  },
+  {
+    "slug": "snowflake",
+    "name": "Snowflake",
+    "website": "https://www.snowflake.com",
+    "category": "Analytics",
+    "composioToolkit": "snowflake",
+    "composioManaged": "no",
+    "providerPlatform": "Snowflake (per-account security integration)",
+    "featured": false
+  },
+  {
+    "slug": "square",
+    "name": "Square",
+    "website": "https://squareup.com",
+    "category": "Commerce",
+    "composioToolkit": "square",
+    "composioManaged": "yes",
+    "providerPlatform": "Square Developer",
+    "featured": false
+  },
+  {
+    "slug": "stripe",
+    "name": "Stripe",
+    "website": "https://stripe.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "stripe",
+    "composioManaged": "yes",
+    "providerPlatform": "Stripe (Stripe Apps / Connect)",
+    "featured": false
+  },
+  {
+    "slug": "supabase",
+    "name": "Supabase",
+    "website": "https://supabase.com",
+    "category": "Developer tools",
+    "composioToolkit": "supabase",
+    "composioManaged": "yes",
+    "providerPlatform": "Supabase",
+    "featured": false
+  },
+  {
+    "slug": "surveymonkey",
+    "name": "SurveyMonkey",
+    "website": "https://www.surveymonkey.com",
+    "category": "Marketing",
+    "composioToolkit": "survey_monkey",
+    "composioManaged": "no",
+    "providerPlatform": "SurveyMonkey",
+    "featured": false
+  },
+  {
+    "slug": "tiktok",
+    "name": "TikTok",
+    "website": "https://www.tiktok.com",
+    "category": "Social",
+    "composioToolkit": "tiktok",
+    "composioManaged": "no",
+    "providerPlatform": "TikTok for Developers",
+    "featured": false
+  },
+  {
+    "slug": "todoist",
+    "name": "Todoist",
+    "website": "https://www.todoist.com",
+    "category": "Productivity",
+    "composioToolkit": "todoist",
+    "composioManaged": "yes",
+    "providerPlatform": "Todoist",
+    "featured": false
+  },
+  {
+    "slug": "typeform",
+    "name": "Typeform",
+    "website": "https://www.typeform.com",
+    "category": "Marketing",
+    "composioToolkit": "typeform",
+    "composioManaged": "yes",
+    "providerPlatform": "Typeform",
+    "featured": false
+  },
+  {
+    "slug": "vercel",
+    "name": "Vercel",
+    "website": "https://vercel.com",
+    "category": "Developer tools",
+    "composioToolkit": "vercel",
+    "composioManaged": "no",
+    "providerPlatform": "Vercel",
+    "featured": false
+  },
+  {
+    "slug": "vimeo",
+    "name": "Vimeo",
+    "website": "https://vimeo.com",
+    "category": "Media",
+    "composioToolkit": "vimeo",
+    "composioManaged": "no",
+    "providerPlatform": "Vimeo Developer",
+    "featured": false
+  },
+  {
+    "slug": "webflow",
+    "name": "Webflow",
+    "website": "https://webflow.com",
+    "category": "Design",
+    "composioToolkit": "webflow",
+    "composioManaged": "no",
+    "providerPlatform": "Webflow",
+    "featured": false
+  },
+  {
+    "slug": "whatsapp",
+    "name": "WhatsApp",
+    "website": "https://business.whatsapp.com",
+    "category": "Communication",
+    "composioToolkit": "whatsapp",
+    "composioManaged": "yes",
+    "providerPlatform": "Meta for Developers",
+    "featured": false
+  },
+  {
+    "slug": "wix",
+    "name": "Wix",
+    "website": "https://www.wix.com",
+    "category": "Design",
+    "composioToolkit": "wix",
+    "composioManaged": "no",
+    "providerPlatform": "Wix Developers",
+    "featured": false
+  },
+  {
+    "slug": "wordpress-com",
+    "name": "WordPress.com",
+    "website": "https://wordpress.com",
+    "category": "Media",
+    "composioToolkit": "wordpress_com",
+    "composioManaged": "no",
+    "providerPlatform": "WordPress.com Developer",
+    "featured": false
+  },
+  {
+    "slug": "xero",
+    "name": "Xero",
+    "website": "https://www.xero.com",
+    "category": "Finance & accounting",
+    "composioToolkit": "xero",
+    "composioManaged": "no",
+    "providerPlatform": "Xero Developer",
+    "featured": false
+  },
+  {
+    "slug": "youtube",
+    "name": "YouTube",
+    "website": "https://www.youtube.com",
+    "category": "Media",
+    "composioToolkit": "youtube",
+    "composioManaged": "yes",
+    "providerPlatform": "Google Auth Platform",
+    "featured": false
+  },
+  {
+    "slug": "zendesk",
+    "name": "Zendesk",
+    "website": "https://www.zendesk.com",
+    "category": "Support",
+    "composioToolkit": "zendesk",
+    "composioManaged": "yes",
+    "providerPlatform": "Zendesk",
+    "featured": false
+  },
+  {
+    "slug": "zoho-crm",
+    "name": "Zoho CRM",
+    "website": "https://www.zoho.com/crm/",
+    "category": "CRM & sales",
+    "composioToolkit": "zoho",
+    "composioManaged": "yes",
+    "providerPlatform": "Zoho API Console",
+    "featured": false
+  },
+  {
+    "slug": "zoom",
+    "name": "Zoom",
+    "website": "https://www.zoom.com",
+    "category": "Communication",
+    "composioToolkit": "zoom",
+    "composioManaged": "yes",
+    "providerPlatform": "Zoom App Marketplace",
+    "featured": false
+  },
+  {
+    "slug": "zoom-team-chat",
+    "name": "Zoom Team Chat",
+    "website": "https://www.zoom.com/en/products/team-chat/",
+    "category": "Communication",
+    "composioToolkit": "zoom_chat",
+    "composioManaged": "no",
+    "providerPlatform": "Zoom App Marketplace",
+    "featured": false
+  }
+]

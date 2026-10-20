@@ -1,0 +1,58 @@
+name: Deploy to Vercel
+
+# Deploys main to Vercel production. ANTHROPIC_API_KEY is copied from this
+# repository's secret into the Vercel project's production environment, so the
+# key is only ever handled by GitHub and Vercel.
+#
+# Required repository secrets: VERCEL_TOKEN, ANTHROPIC_API_KEY.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: deploy-production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run validate && npm test
+      # The Vercel token is given only to the Vercel CLI steps, never to npm install or tests.
+      - run: npm install --global vercel@64.7.0
+
+      - name: Link the Vercel project (created on first run)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel link --yes --project greenlight --token="$VERCEL_TOKEN"
+
+      - name: Sync ANTHROPIC_API_KEY into Vercel production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::ANTHROPIC_API_KEY secret is not set; live generation will be disabled."
+          else
+            printf '%s' "$ANTHROPIC_API_KEY" | vercel env add ANTHROPIC_API_KEY production --sensitive --force --yes --token="$VERCEL_TOKEN"
+          fi
+
+      - name: Pull Vercel settings and build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "Deployed: $url"
+          echo "### Deployed to $url" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #18181b;
+  --muted: #71717a;
+  --card: #ffffff;
+  --line: #e4e4e7;
+  --brand: #059669;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  /* Guides quote long URLs and scope strings; never let one widen the page on a phone. */
+  overflow-wrap: anywhere;
+}
+
+/* Anchor targets land below the sticky header. */
+:target {
+  scroll-margin-top: 5rem;
+}
+[id^="src-"]:target {
+  background: #ecfdf5;
+  border-radius: 0.5rem;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

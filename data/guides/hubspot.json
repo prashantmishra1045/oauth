@@ -1,0 +1,2431 @@
+{
+  "schemaVersion": 1,
+  "slug": "hubspot",
+  "app": {
+    "name": "HubSpot",
+    "website": "https://www.hubspot.com",
+    "category": "CRM"
+  },
+  "provider": {
+    "name": "HubSpot (Developer Platform, project-based apps)",
+    "developerPortalUrl": "https://developers.hubspot.com",
+    "docsUrl": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+    "appConsoleUrl": "https://app.hubspot.com/l/developer-projects"
+  },
+  "oauthSupport": "full",
+  "summary": {
+    "headline": "Your own HubSpot OAuth app is self-serve in an afternoon but stops at 25 installs behind an 'unverified app' warning; to let any HubSpot customer connect your agent, build it as a 2026.09 project (user-level if it's an AI connector) and pass a Marketplace listing review, which needs 3 active customer installs first.",
+    "overview": "HubSpot apps are now created only as CLI 'projects' on the developer platform (2026.09 is current), from any standard HubSpot account. The UI 'Create app' flow and separate developer accounts are gone. Credentials are self-serve, and an unlisted app can be installed by up to 25 accounts, but every installer must type 'I accept the risk'. Removing the cap and the warning takes a Marketplace listing: 3 active installs from unaffiliated customers, a manual Ecosystem Quality review (first response within 10 business days, feedback rounds up to 60 days), and, for apps that mainly connect HubSpot to AI tools, user-level access or HubSpot's MCP server. Composio's managed HubSpot app works with no setup, but users currently see the same unverified-app warning and Composio's app identity.",
+    "difficulty": 4,
+    "difficultyLabel": "Hard",
+    "drivers": [
+      "Unlisted marketplace apps are capped at 25 installs; only a Marketplace listing removes the cap, and HubSpot documents no exception process (forum posts attribute a 'no exceptions' answer to HubSpot staff)",
+      "A listing needs 3 active installs from unaffiliated production accounts in the last 30 days, which you have to win while users still see the unverified-app warning",
+      "Manual Ecosystem Quality review: initial response within 10 business days, up to 60 days of feedback rounds",
+      "AI-connector rule: apps that primarily connect HubSpot to generative AI must be user-level (platform 2026.09) or built on HubSpot's MCP server, and user-level apps lose webhooks and part of the API",
+      "CLI/project-only setup since legacy public app creation was disabled (May 26 / June 23, 2026)",
+      "Version churn: new listings must be on a supported platform version and use OAuth v3/date-versioned token endpoints, numbered API paths (v1-v4) go unsupported by September 2027, and coarse scopes are being migrated to granular ones (a recommendation, not a listing requirement)"
+    ],
+    "bestCase": "You stay on Composio's managed HubSpot app (zero setup; Composio identity plus an unverified-app warning), or create your own unlisted app in 2-6 hours and serve up to 25 accounts with no review.",
+    "worstCase": "The listing is sent back for unused scopes, pages blocked by your WAF or the AI-connector rule. You rebuild as a new user-level app (account-level apps can't be converted), so existing pilot installs must reconnect, and you sit at the 25-install cap for two months or more."
+  },
+  "recommendedPathId": "marketplace-listed",
+  "paths": [
+    {
+      "id": "marketplace-listed",
+      "name": "Marketplace-listed app (unlimited installs, no warning)",
+      "summary": "Build a marketplace-distribution app on developer platform 2026.09, pilot it with up to 25 unlisted installs until 3 unaffiliated customers are actively using it, then pass the HubSpot Ecosystem Quality listing review.",
+      "whenYouNeedIt": "Your agent product will be connected by more than 25 HubSpot accounts, or you want your own name on the consent screen without the 'unverified app' warning that every unlisted app (including Composio's managed one) shows.",
+      "exampleScopes": [
+        "oauth",
+        "crm.objects.contacts.read",
+        "crm.objects.contacts.write",
+        "crm.objects.companies.read",
+        "crm.objects.deals.read",
+        "crm.objects.deals.write",
+        "crm.objects.tickets.read"
+      ],
+      "difficulty": 4,
+      "handsOnEffortHours": {
+        "min": 16,
+        "max": 40,
+        "label": "16-40 hours",
+        "basis": "Inferred: project and Composio setup 2-4 h; pilot onboarding and support 3-8 h; public setup guide, privacy policy, terms and listing copy 6-12 h; demo video 2-4 h; one or two review rounds 2-8 h. Rebuilding as a user-level app (AI-connector rule) or removing unused scopes adds time.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s5",
+            "s20"
+          ],
+          "confidence": "low",
+          "note": "No provider estimate exists; based on the listed requirements and the seven-tab listing wizard."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 10,
+        "max": 74,
+        "label": "10 days to about 10.5 weeks after you submit",
+        "basis": "Official: initial review within 10 business days (about 14 calendar days); the feedback process then 'should take no more than 60 days from the time feedback is shared', so a listing with feedback rounds can run to roughly 74 calendar days. A 2026 third-party guide reports 2-4 weeks for most submissions. Not included: the time it takes you to get 3 active installs from unaffiliated customers before you can submit.",
+        "evidence": {
+          "kind": "documented",
+          "sourceIds": [
+            "s5",
+            "s25"
+          ],
+          "confidence": "medium",
+          "note": "'complete an initial review within 10 business days' / 'no more than 60 days from the time feedback is shared' (the 60 days starts after the initial review); Appnigma: '2-4 weeks for most submissions'."
+        }
+      },
+      "endState": "Any HubSpot account can install the app (from the Marketplace or your own connect page) with your name and logo on the consent screen, no install cap and no unverified-app warning.",
+      "stages": [
+        {
+          "id": "ml-register",
+          "name": "Create the HubSpot project",
+          "kind": "register",
+          "access": "Nobody yet. The client ID exists only after the first `hs project upload`.",
+          "steps": [
+            {
+              "id": "ml-account",
+              "title": "Sign in to (or create) a standard HubSpot account",
+              "detail": "There is no separate developer account any more: every standard HubSpot account, including a free CRM account, has a Development section in the main navigation. app.hubspot.com/signup-hubspot/developers now redirects to the normal CRM signup with intent=developer. Super admins have developer-platform access by default; other teammates need a Developer seat or the 'Developer tools access' permission.",
+              "owner": "developer",
+              "agentAssist": "Nothing to automate here; an agent can confirm afterwards that Development > Projects loads for your user.",
+              "duration": "10-15 min",
+              "url": "https://app.hubspot.com/signup-hubspot/developers",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12",
+                  "s26"
+                ],
+                "confidence": "high",
+                "note": "'as of March 9, 2026, all legacy developer accounts were migrated to standard HubSpot accounts.' Developer seats doc: 'By default, all super admins and partner admins have access to the developer platform'; non-seat accounts grant 'the Developer tools access permission'. Probe p6 saw the developer signup redirect to /signup-hubspot/crm?intent=developer."
+              }
+            },
+            {
+              "id": "ml-cli",
+              "title": "Install the HubSpot CLI and authenticate it",
+              "detail": "Run `npm install -g @hubspot/cli@latest` (user-level apps need CLI 8.15.0 or later), then `hs account auth` and paste a personal access key generated in Development > Keys > Personal access key. Apps can no longer be created in the UI, so the CLI is the only way to create one.",
+              "owner": "developer",
+              "agentAssist": "An agent can run the install and every later `hs` command in your terminal once you have pasted the personal access key yourself.",
+              "duration": "15-30 min",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s9",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "User-level setup: 'make sure you're on the latest version of the HubSpot CLI (8.15.0)'. Legacy UI app creation was disabled May 26 / June 23, 2026."
+              }
+            },
+            {
+              "id": "ml-scaffold",
+              "title": "Scaffold a marketplace app on platform 2026.09",
+              "detail": "Run `hs project create`, choose App, distribution 'marketplace', auth 'OAuth'. Set `platformVersion` to \"2026.09\" in hsproject.json. Decide now whether to set `isUserLevel: true`: listed AI connectors must be user-level (or built on HubSpot's MCP server), and an existing account-level app cannot be converted later. User-level apps don't support webhooks, app cards, serverless functions or workflow actions, and only support part of the REST API.",
+              "owner": "agent",
+              "agentAssist": "Generate hsproject.json and app-hsmeta.json from the manifest artifact; list which Composio tools hit APIs that user-level access doesn't support yet.",
+              "duration": "30-60 min",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/user-level-apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s9",
+                  "s5"
+                ],
+                "confidence": "high",
+                "note": "'add isUserLevel: true to the config property'; AI connectors 'must require user-level permissions by setting access to user-level or be built with HubSpot’s MCP Server.'"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ml-configure",
+          "name": "Wire it to Composio and test",
+          "kind": "configure",
+          "access": "Developer test accounts only (up to 10). Production accounts are blocked until the Acceptable Use Policy is signed.",
+          "steps": [
+            {
+              "id": "ml-redirect",
+              "title": "Copy the redirect URI from Composio, add it to the project and upload",
+              "detail": "In the Composio dashboard create a HubSpot auth config, choose OAuth2 and 'Use your own developer authentication', and copy the redirect URI the dashboard shows. Put it in `auth.redirectUrls` in src/app/app-hsmeta.json (HTTPS; http://localhost only for local tests), keep `distribution: \"marketplace\"`, list scopes so that Composio `scopes` map to HubSpot requiredScopes and Composio `optional_scopes` map to optionalScopes, then run `hs project upload`.",
+              "owner": "agent",
+              "agentAssist": "Write app-hsmeta.json from the manifest artifact, diff the scope lists against the Composio auth config, and run `hs project upload` and check that the build succeeds.",
+              "duration": "20-40 min",
+              "url": "https://platform.composio.dev",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s23",
+                  "s10",
+                  "s22"
+                ],
+                "confidence": "high",
+                "note": "Composio: 'the dashboard shows the redirect URI to add'. HubSpot: redirect URLs 'must use HTTPS' except http://localhost. Composio: required/optional categories must match."
+              }
+            },
+            {
+              "id": "ml-creds",
+              "title": "Paste the client ID and secret into the Composio auth config",
+              "detail": "In HubSpot go to Development > Projects > your project > (app name under Project Components) > Auth tab and copy Client ID and Client secret into the Composio auth config (Base URL https://api.hubapi.com). Store the resulting auth config ID (ac_...) in your secret manager. If the secret leaks, use Rotate on the same Auth tab and update Composio.",
+              "owner": "developer",
+              "agentAssist": "An agent can open the project with `hs project open` and, after you paste the values, test a connection through Composio.",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s24"
+                ],
+                "confidence": "high",
+                "note": "'Your app's Client ID and Client secret will appear in the Client credentials section.' Composio guide: paste Client ID/Secret into the auth config."
+              }
+            },
+            {
+              "id": "ml-test",
+              "title": "Install into a developer test account and run a few tools",
+              "detail": "Create a test account (Development > Testing > Test Accounts; up to 10, free, with 90-day Enterprise trials). Connect it through Composio, run the tools your agent uses, then check Development > Monitoring > Logs > OAuth tab for AUTHORIZATION_REQUEST, AUTHORIZATION_GRANT and TOKEN_EXCHANGE events. Note: apps cannot be installed into a legacy developer account itself.",
+              "owner": "agent",
+              "agentAssist": "Drive the Composio connect flow, call each tool, and read the OAuth log export you download to explain any failure.",
+              "duration": "30-60 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12",
+                  "s2"
+                ],
+                "confidence": "high",
+                "note": "'You can create up to 10 test accounts per standard HubSpot account'; OAuth log event types AUTHORIZATION_REQUEST ... TOKEN_EXCHANGE. The developer-account block is the consent UI string 'This app can't be installed on a developer account' (probe p4)."
+              }
+            }
+          ]
+        },
+        {
+          "id": "ml-pilot",
+          "name": "Unlisted pilot to reach 3 active installs",
+          "kind": "test",
+          "access": "Up to 25 HubSpot accounts (developer test accounts don't count). Every installer sees 'You're connecting an unverified app' and must type 'I accept the risk'. For an account-level app the installer must be a Super Admin, or have Marketplace Access plus the permissions behind each requested scope; a user-level app can be installed by any user whose own permissions cover its scopes.",
+          "steps": [
+            {
+              "id": "ml-aup",
+              "title": "Sign the Acceptable Use Policy",
+              "detail": "Project > app > Distribution tab > Begin publishing > review and sign the AUP. Until it is signed, installs into anything other than developer test accounts fail with 'the app developer has not signed the acceptable use policy'. The panel also gives you the sample install URL.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "'Until the AUP is signed, you won't be able to install your app in accounts other than developer test accounts.'"
+              }
+            },
+            {
+              "id": "ml-domain",
+              "title": "Verify your domain (optional, improves the warning)",
+              "detail": "Development > Domain > Verify a domain, then add the TXT record HubSpot gives you at your DNS provider. It usually completes within an hour but can take up to 48 h. You get one verified domain per account, shared by all its apps. The install screen then shows your domain, but the 'I accept the risk' confirmation remains until the app is listed.",
+              "owner": "developer",
+              "agentAssist": "An agent can check propagation with `dig TXT <host>` and tell you when to click Next.",
+              "duration": "15 min + DNS propagation",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "'When an app does have a verified domain but isn't officially listed ... HubSpot will display the verified domain, along with a banner'."
+              }
+            },
+            {
+              "id": "ml-design-partners",
+              "title": "Get 3 unaffiliated customers actively using it",
+              "detail": "Only HubSpot production accounts not affiliated with your organization count, and they need successful OAuth-authenticated API calls (or signed webhook/extension requests) within the past 30 days. Sandboxes, test accounts and your own portals don't count. Keep the pilot under 25 installs and remove stale installs. Since Aug 19, 2026 the submission eligibility check counts active installs, and the count refreshes once a day, so check it the day after you reach 3 before submitting.",
+              "owner": "developer",
+              "agentAssist": "Draft the pilot invitation and an explainer about the unverified-app screen; monitor per-portal API activity from your logs.",
+              "duration": "1-4 weeks (calendar)",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s5",
+                  "s28"
+                ],
+                "confidence": "high",
+                "note": "'Active installs are the number of unique HubSpot production accounts, unaffiliated with your organization, showing successful app activity within the past 30 days.'"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ml-review",
+          "name": "Submit the Marketplace listing",
+          "kind": "review",
+          "access": "Unchanged during review: still capped at 25 installs, still behind the unverified-app gate.",
+          "steps": [
+            {
+              "id": "ml-public-pages",
+              "title": "Publish the pages the reviewer will crawl",
+              "detail": "You need live, public pages for: a setup guide specific to the HubSpot integration, privacy policy, terms of service and support. HubSpot crawls them with its SEO tools, so add the 'HubSpot Crawler' user agent to your WAF/bot allowlist. URL fields are limited to 250 characters. Don't put 'HubSpot' or 'Hub' in your app name or logo.",
+              "owner": "agent",
+              "agentAssist": "Draft the setup guide, privacy-policy outline and support page; check every URL returns 200 to a non-browser user agent.",
+              "duration": "3-6 h",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/create-an-app-listing-setup-guide",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s5"
+                ],
+                "confidence": "high",
+                "note": "'All URLs in your HubSpot Marketplace listing must lead to live, publicly available, and functional pages.'"
+              }
+            },
+            {
+              "id": "ml-listing",
+              "title": "Fill the listing wizard",
+              "detail": "Development > App Listings > Create listing. Seven tabs: Listing info, App details (demo video, up to 8 screenshots, overview, Shared data table that must match your scopes, bi-directional if you request read and write), Pricing, App features, Support info, Testing info, Review info. Since March 31, 2026 a demo video or guided walkthrough replaces test credentials. Install experience: if the redirect URL is Composio's callback, choose 'Login via partner site' and point it at your own connect page (see nuances).",
+              "owner": "agent",
+              "agentAssist": "Prepare the listing copy, Shared data table and demo-video script from the artifacts; an 800x800 icon without text.",
+              "duration": "2-4 h",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/listing-your-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s20",
+                  "s6"
+                ],
+                "confidence": "high",
+                "note": "Seven-tab wizard; 'testing credentials no longer need to be provided ... demo videos or guided walkthroughs ... should be provided.'"
+              }
+            },
+            {
+              "id": "ml-submit",
+              "title": "Agree to the Technology Partner terms and submit",
+              "detail": "A Super Admin submits. You must agree to the Technology Partner Program Agreement. Only one app can be in review at a time; a second submission is automatically rejected.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "15 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s5",
+                  "s20"
+                ],
+                "confidence": "high",
+                "note": "'you can only submit one app at a time for approval'; 'You must be a Super Admin to update and submit an app listing.'"
+              }
+            },
+            {
+              "id": "ml-wait",
+              "title": "Wait for the Ecosystem Quality review and answer feedback",
+              "detail": "The initial review arrives within 10 business days. Missing a minimum requirement gets the listing rejected; incomplete listing fields put it back in Draft. Reply to the reviewer's email quickly, because each round adds time. HubSpot can refuse or unpublish a listing at any time.",
+              "owner": "provider",
+              "agentAssist": "Turn reviewer feedback into a fix list and draft the reply.",
+              "duration": "Up to 10 business days for the first response, then up to ~60 days of feedback rounds",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s5",
+                  "s25"
+                ],
+                "confidence": "medium",
+                "note": "'initial review within 10 business days' ... 'no more than 60 days from the time feedback is shared'; third-party report of 2-4 weeks."
+              }
+            }
+          ]
+        },
+        {
+          "id": "ml-maintain",
+          "name": "Stay listable",
+          "kind": "maintain",
+          "access": "Any HubSpot account; no install cap and no warning banner.",
+          "steps": [
+            {
+              "id": "ml-versions",
+              "title": "Keep the platform version and OAuth endpoints current",
+              "detail": "HubSpot ships a platform/API version every March and September, with a transition period before older versions become unsupported. From Nov 2, 2026 new listings must be on a supported platform (legacy apps and 2023.2/2025.1 projects are rejected); Projects 2025.2 must move to 2026.09 by March 2027, v4 APIs become unsupported on March 30, 2027, and OAuth v1 endpoints start returning errors after February 16, 2027. New listings and recertifications must use OAuth v3 or the date-versioned token endpoints; prefer /oauth/2026-09/token, because numbered API paths (v1-v3, which by HubSpot's wording includes /oauth/v3/token and the /crm/v3 endpoints most integrations call) become unsupported in September 2027, and certified apps still calling them lose certification. Ask Composio which HubSpot token endpoint it calls.",
+              "owner": "agent",
+              "agentAssist": "Watch the HubSpot developer changelog and open a task before each March/September cut-over.",
+              "duration": "1-2 h per release",
+              "url": "https://developers.hubspot.com/changelog",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s6",
+                  "s31",
+                  "s27",
+                  "s35"
+                ],
+                "confidence": "high",
+                "note": "'Starting November 2, 2026: Apps must be on a supported developer platform version'; 'must use the new OAuth v3 endpoints.'"
+              }
+            },
+            {
+              "id": "ml-scopes",
+              "title": "Keep scopes minimal and migrated",
+              "detail": "Reviewers check that the app uses every scope it requests. HubSpot replaced coarse scopes (tickets, timeline, files, hubdb) with granular ones from Sept 8, 2026; affected apps show up under Development > Migrations with an Auto rollout date. HubSpot's migration keeps existing installs working without a reinstall, but when you add a scope, existing users must reconnect to grant it.",
+              "owner": "agent",
+              "agentAssist": "Compare the scopes your Composio tools actually used in the last 30 days with the manifest and propose removals.",
+              "duration": "1 h per change",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s5",
+                  "s17",
+                  "s22"
+                ],
+                "confidence": "high",
+                "note": "'Your app must use all of the scopes that it requests during installation.'"
+              }
+            },
+            {
+              "id": "ml-limits",
+              "title": "Respect the per-account rate limit",
+              "detail": "Marketplace-distributed OAuth apps get 110 requests per 10 seconds per installing account (CRM Search has its own limits). HubSpot documents this for platform 2025.2 and 2026.03 and legacy public apps; the limits page doesn't yet cover 2026.09 or user-level apps. The customer's API Limit Increase add-on does not raise it. A 401 doesn't mean the token needs refreshing; track expires_in instead.",
+              "owner": "agent",
+              "agentAssist": "Add per-portal throttling and refresh tokens shortly before expiry.",
+              "duration": "1-2 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s14"
+                ],
+                "confidence": "medium",
+                "note": "'each HubSpot account that installs your app is limited to 110 requests every 10 seconds' (stated for 2025.2 and 2026.03 apps; 2026.09 not mentioned on the page)."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unlisted-pilot",
+      "name": "Unlisted marketplace app (up to 25 accounts)",
+      "summary": "Your own HubSpot app with distribution 'marketplace', used without a listing: no review, but capped at 25 installs and every user has to type 'I accept the risk'.",
+      "whenYouNeedIt": "A beta, a pilot with design partners, or a product with fewer than 25 HubSpot customers that wants its own app name, scopes and rate-limit pool instead of Composio's managed app. It is also the mandatory first step toward a listing.",
+      "exampleScopes": [
+        "oauth",
+        "crm.objects.contacts.read",
+        "crm.objects.contacts.write",
+        "crm.objects.companies.read",
+        "crm.objects.deals.read"
+      ],
+      "difficulty": 2,
+      "handsOnEffortHours": {
+        "min": 2,
+        "max": 6,
+        "label": "2-6 hours",
+        "basis": "Inferred: CLI install and auth, project scaffold, Composio auth config, one test install, AUP signature, optional DNS record.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s3",
+            "s10"
+          ],
+          "confidence": "medium",
+          "note": "Every step is self-serve; no provider estimate exists."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 0,
+        "max": 0,
+        "label": "No review",
+        "basis": "Unlisted marketplace installs need no HubSpot review once the AUP is signed. Optional domain verification usually completes within an hour (up to 48 h of DNS propagation).",
+        "evidence": {
+          "kind": "documented",
+          "sourceIds": [
+            "s3"
+          ],
+          "confidence": "high",
+          "note": "'You can use the sample install URL to install your app in any account' (until the 25-install limit)."
+        }
+      },
+      "endState": "Up to 25 HubSpot accounts can connect through Composio with your app name on the consent screen, after each installer accepts the unverified-app warning.",
+      "stages": [
+        {
+          "id": "up-register",
+          "name": "Create the project",
+          "kind": "register",
+          "access": "Nobody until the first upload, then developer test accounts only.",
+          "steps": [
+            {
+              "id": "up-account",
+              "title": "Sign in to (or create) a standard HubSpot account",
+              "detail": "There is no separate developer account any more: every standard HubSpot account, including a free CRM account, has a Development section in the main navigation. app.hubspot.com/signup-hubspot/developers now redirects to the normal CRM signup with intent=developer. Super admins have developer-platform access by default; other teammates need a Developer seat or the 'Developer tools access' permission.",
+              "owner": "developer",
+              "agentAssist": "Nothing to automate here; an agent can confirm afterwards that Development > Projects loads for your user.",
+              "duration": "10-15 min",
+              "url": "https://app.hubspot.com/signup-hubspot/developers",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12",
+                  "s26"
+                ],
+                "confidence": "high",
+                "note": "'as of March 9, 2026, all legacy developer accounts were migrated to standard HubSpot accounts.' Developer seats doc: 'By default, all super admins and partner admins have access to the developer platform'; non-seat accounts grant 'the Developer tools access permission'. Probe p6 saw the developer signup redirect to /signup-hubspot/crm?intent=developer."
+              }
+            },
+            {
+              "id": "up-cli",
+              "title": "Install the HubSpot CLI and authenticate it",
+              "detail": "Run `npm install -g @hubspot/cli@latest` (user-level apps need CLI 8.15.0 or later), then `hs account auth` and paste a personal access key generated in Development > Keys > Personal access key. Apps can no longer be created in the UI, so the CLI is the only way to create one.",
+              "owner": "developer",
+              "agentAssist": "An agent can run the install and every later `hs` command in your terminal once you have pasted the personal access key yourself.",
+              "duration": "15-30 min",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s9",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "User-level setup: 'make sure you're on the latest version of the HubSpot CLI (8.15.0)'. Legacy UI app creation was disabled May 26 / June 23, 2026."
+              }
+            },
+            {
+              "id": "up-redirect",
+              "title": "Copy the redirect URI from Composio, add it to the project and upload",
+              "detail": "In the Composio dashboard create a HubSpot auth config, choose OAuth2 and 'Use your own developer authentication', and copy the redirect URI the dashboard shows. Put it in `auth.redirectUrls` in src/app/app-hsmeta.json (HTTPS; http://localhost only for local tests), keep `distribution: \"marketplace\"`, list scopes so that Composio `scopes` map to HubSpot requiredScopes and Composio `optional_scopes` map to optionalScopes, then run `hs project upload`.",
+              "owner": "agent",
+              "agentAssist": "Write app-hsmeta.json from the manifest artifact, diff the scope lists against the Composio auth config, and run `hs project upload` and check that the build succeeds.",
+              "duration": "20-40 min",
+              "url": "https://platform.composio.dev",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s23",
+                  "s10",
+                  "s22"
+                ],
+                "confidence": "high",
+                "note": "Composio: 'the dashboard shows the redirect URI to add'. HubSpot: redirect URLs 'must use HTTPS' except http://localhost. Composio: required/optional categories must match."
+              }
+            },
+            {
+              "id": "up-creds",
+              "title": "Paste the client ID and secret into the Composio auth config",
+              "detail": "In HubSpot go to Development > Projects > your project > (app name under Project Components) > Auth tab and copy Client ID and Client secret into the Composio auth config (Base URL https://api.hubapi.com). Store the resulting auth config ID (ac_...) in your secret manager. If the secret leaks, use Rotate on the same Auth tab and update Composio.",
+              "owner": "developer",
+              "agentAssist": "An agent can open the project with `hs project open` and, after you paste the values, test a connection through Composio.",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s24"
+                ],
+                "confidence": "high",
+                "note": "'Your app's Client ID and Client secret will appear in the Client credentials section.' Composio guide: paste Client ID/Secret into the auth config."
+              }
+            }
+          ]
+        },
+        {
+          "id": "up-live",
+          "name": "Sign the AUP and onboard pilot users",
+          "kind": "live",
+          "access": "Up to 25 HubSpot accounts (developer test accounts excluded). Installers must be Super Admins or have Marketplace Access plus the scope permissions, and must type 'I accept the risk'.",
+          "steps": [
+            {
+              "id": "up-aup",
+              "title": "Sign the Acceptable Use Policy",
+              "detail": "Distribution tab > Begin publishing > sign the AUP. You can close the listing panel and come back later with Continue publishing.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "'Review and sign the Acceptable Use Policy (AUP).'"
+              }
+            },
+            {
+              "id": "up-domain",
+              "title": "Verify your domain",
+              "detail": "Development > Domain > Verify a domain and add the DNS TXT record. The install screen will show your domain instead of a plain 'not verified' banner. The typed confirmation stays.",
+              "owner": "developer",
+              "agentAssist": "Check the TXT record with dig.",
+              "duration": "15 min + DNS",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "'The verification process usually completes within an hour, but you may need to wait up to 48 hours'."
+              }
+            },
+            {
+              "id": "up-onboard",
+              "title": "Explain the warning to each pilot user",
+              "detail": "Users see 'This app could put your data at risk' / 'You're connecting an unverified app' and must type 'I accept the risk'. Tell them in advance, and ask a Super Admin to do the install.",
+              "owner": "agent",
+              "agentAssist": "Write the onboarding email and in-app help text (screenshot plus the exact phrase to type).",
+              "duration": "30 min",
+              "url": "",
+              "evidence": {
+                "kind": "tested",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "Strings observed in HubSpot's OAuth UI bundle (probe p4): matchText 'I accept the risk', alertTitle 'This app could put your data at risk'."
+              }
+            }
+          ]
+        },
+        {
+          "id": "up-maintain",
+          "name": "Watch the 25-install ceiling",
+          "kind": "maintain",
+          "access": "Same as above; installer number 26 gets an 'installation limit has been reached' error.",
+          "steps": [
+            {
+              "id": "up-count",
+              "title": "Track installs and clean out dead ones",
+              "detail": "Check installed accounts on the Distribution tab. Uninstall stale test or churned portals with DELETE /appinstalls/v3/external-install (needs a live access token for that portal). HubSpot doesn't document whether an uninstall frees a slot under the 25 cap; it appears to count current installs (HubSpot staff have suggested uninstalling to get under the private-app limit), so confirm before relying on it. No documented exception process exists for the cap.",
+              "owner": "agent",
+              "agentAssist": "Keep a list of active and inactive portals from your API logs and call the uninstall endpoint for churned ones through Composio's proxy.",
+              "duration": "30 min / month",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4",
+                  "s6"
+                ],
+                "confidence": "low",
+                "note": "The cap is enforced automatically; the uninstall endpoint 'fully removes your app from a customer's HubSpot account'. That an uninstall frees a cap slot is inferred from community threads, not documented."
+              }
+            },
+            {
+              "id": "up-plan-listing",
+              "title": "Start the listing before you hit ~15 installs",
+              "detail": "The listing review takes weeks, and you need 3 active installs from unaffiliated customers first, so start the marketplace-listed path while you still have room under the cap.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "Minutes to decide; the listing work itself is the Marketplace-listed path",
+              "url": "",
+              "evidence": {
+                "kind": "inferred",
+                "sourceIds": [
+                  "s5"
+                ],
+                "confidence": "medium",
+                "note": "Derived from the 25 cap plus the ≤10-business-day initial review and up to 60-day feedback window."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "private-allowlist",
+      "name": "Private distribution (allowlisted accounts only)",
+      "summary": "An OAuth app with distribution 'private' that installs only into accounts you allowlist: up to 10, or 100 if the app lives in a Solutions Partner portal. No review, no listing.",
+      "whenYouNeedIt": "An internal agent for your own company's HubSpot portals, or an agency/Solutions Partner running agents across client portals that your HubSpot user can already access. It doesn't fit a SaaS product with self-serve sign-up, because you can only allowlist accounts your own user belongs to. If the agent only touches your own portal, HubSpot now recommends Service Keys (public beta, Settings > Integrations > Service Keys) for internal tools and AI agent integrations; whether Composio's HubSpot API_KEY auth accepts a service key is unverified.",
+      "exampleScopes": [
+        "oauth",
+        "crm.objects.contacts.read",
+        "crm.objects.deals.read",
+        "crm.objects.deals.write"
+      ],
+      "difficulty": 2,
+      "handsOnEffortHours": {
+        "min": 2,
+        "max": 5,
+        "label": "2-5 hours",
+        "basis": "Inferred: same project/Composio setup as the unlisted path plus allowlisting each account.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s3"
+          ],
+          "confidence": "medium",
+          "note": "All steps are self-serve on the Distribution tab."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 0,
+        "max": 0,
+        "label": "No review",
+        "basis": "Private distribution has no HubSpot review step.",
+        "evidence": {
+          "kind": "documented",
+          "sourceIds": [
+            "s3",
+            "s4"
+          ],
+          "confidence": "high",
+          "note": "'Privately distributed OAuth apps: can be installed in up to 10 allowlisted accounts'."
+        }
+      },
+      "endState": "Only the allowlisted portals (max 10, or 100 for Solutions Partners) can connect. You can later switch the app to marketplace distribution without breaking existing installs.",
+      "stages": [
+        {
+          "id": "pa-register",
+          "name": "Create the project with private distribution",
+          "kind": "register",
+          "access": "Nobody until the first upload, then developer test accounts only.",
+          "steps": [
+            {
+              "id": "pa-account",
+              "title": "Sign in to (or create) a standard HubSpot account",
+              "detail": "There is no separate developer account any more: every standard HubSpot account, including a free CRM account, has a Development section in the main navigation. app.hubspot.com/signup-hubspot/developers now redirects to the normal CRM signup with intent=developer. Super admins have developer-platform access by default; other teammates need a Developer seat or the 'Developer tools access' permission.",
+              "owner": "developer",
+              "agentAssist": "Nothing to automate here; an agent can confirm afterwards that Development > Projects loads for your user.",
+              "duration": "10-15 min",
+              "url": "https://app.hubspot.com/signup-hubspot/developers",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12",
+                  "s26"
+                ],
+                "confidence": "high",
+                "note": "'as of March 9, 2026, all legacy developer accounts were migrated to standard HubSpot accounts.' Developer seats doc: 'By default, all super admins and partner admins have access to the developer platform'; non-seat accounts grant 'the Developer tools access permission'. Probe p6 saw the developer signup redirect to /signup-hubspot/crm?intent=developer."
+              }
+            },
+            {
+              "id": "pa-cli",
+              "title": "Install the HubSpot CLI and authenticate it",
+              "detail": "Run `npm install -g @hubspot/cli@latest` (user-level apps need CLI 8.15.0 or later), then `hs account auth` and paste a personal access key generated in Development > Keys > Personal access key. Apps can no longer be created in the UI, so the CLI is the only way to create one.",
+              "owner": "developer",
+              "agentAssist": "An agent can run the install and every later `hs` command in your terminal once you have pasted the personal access key yourself.",
+              "duration": "15-30 min",
+              "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s9",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "User-level setup: 'make sure you're on the latest version of the HubSpot CLI (8.15.0)'. Legacy UI app creation was disabled May 26 / June 23, 2026."
+              }
+            },
+            {
+              "id": "pa-redirect",
+              "title": "Copy the redirect URI from Composio, add it to the project and upload",
+              "detail": "In the Composio dashboard create a HubSpot auth config, choose OAuth2 and 'Use your own developer authentication', and copy the redirect URI the dashboard shows. Put it in `auth.redirectUrls` in src/app/app-hsmeta.json (HTTPS; http://localhost only for local tests), keep `distribution: \"private\"`, list scopes so that Composio `scopes` map to HubSpot requiredScopes and Composio `optional_scopes` map to optionalScopes, then run `hs project upload`.",
+              "owner": "agent",
+              "agentAssist": "Write app-hsmeta.json from the manifest artifact, diff the scope lists against the Composio auth config, and run `hs project upload` and check that the build succeeds.",
+              "duration": "20-40 min",
+              "url": "https://platform.composio.dev",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s23",
+                  "s10",
+                  "s22"
+                ],
+                "confidence": "high",
+                "note": "Composio: 'the dashboard shows the redirect URI to add'. HubSpot: redirect URLs 'must use HTTPS' except http://localhost. Composio: required/optional categories must match."
+              }
+            },
+            {
+              "id": "pa-creds",
+              "title": "Paste the client ID and secret into the Composio auth config",
+              "detail": "In HubSpot go to Development > Projects > your project > (app name under Project Components) > Auth tab and copy Client ID and Client secret into the Composio auth config (Base URL https://api.hubapi.com). Store the resulting auth config ID (ac_...) in your secret manager. If the secret leaks, use Rotate on the same Auth tab and update Composio.",
+              "owner": "developer",
+              "agentAssist": "An agent can open the project with `hs project open` and, after you paste the values, test a connection through Composio.",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s24"
+                ],
+                "confidence": "high",
+                "note": "'Your app's Client ID and Client secret will appear in the Client credentials section.' Composio guide: paste Client ID/Secret into the auth config."
+              }
+            }
+          ]
+        },
+        {
+          "id": "pa-configure",
+          "name": "Allowlist and install",
+          "kind": "configure",
+          "access": "Only allowlisted production accounts that your own HubSpot user can access: up to 10, or 100 when the app is created in a Solutions Partner portal. Developer test accounts don't count.",
+          "steps": [
+            {
+              "id": "pa-allowlist",
+              "title": "Add approved accounts",
+              "detail": "Distribution tab > Add approved account(s) > under 'Other production accounts' tick the portals (only accounts your user can access are listed) > Save changes.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "'review the list of production accounts that your HubSpot user currently has access to.'"
+              }
+            },
+            {
+              "id": "pa-install",
+              "title": "Install via each account's install link",
+              "detail": "Hover each approved account to copy its install link, or start the Composio connect flow while logged into that portal. Installers can untick optional scopes. A portal that isn't allowlisted gets 'This account isn't eligible to install this app.'",
+              "owner": "developer",
+              "agentAssist": "An agent can generate a per-portal checklist and verify each connection by calling a read tool.",
+              "duration": "10 min per account",
+              "url": "",
+              "evidence": {
+                "kind": "tested",
+                "sourceIds": [
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "Error string PORTAL_NOT_ALLOWLISTED_FOR_APP_INSTALL observed in HubSpot's OAuth UI bundle (probe p4)."
+              }
+            }
+          ]
+        },
+        {
+          "id": "pa-maintain",
+          "name": "Operate within private limits",
+          "kind": "maintain",
+          "access": "Same allowlisted accounts.",
+          "steps": [
+            {
+              "id": "pa-limits",
+              "title": "Plan for private-app rate limits",
+              "detail": "Private apps get a per-app burst limit (100 per 10 s on Free/Starter, 190 on Professional/Enterprise) and a daily limit shared by all private apps in the portal (250k / 625k / 1M per day). Unlike marketplace apps, the API Limit Increase add-on applies.",
+              "owner": "agent",
+              "agentAssist": "Add throttling and per-portal daily budgets.",
+              "duration": "1 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s14"
+                ],
+                "confidence": "high",
+                "note": "Privately distributed apps table: '100 / app' ... '250,000 / account'."
+              }
+            },
+            {
+              "id": "pa-switch",
+              "title": "Switch to marketplace distribution if you outgrow it",
+              "detail": "Change `distribution` to \"marketplace\" and upload; existing installs keep working, but you then fall under the 25-install unlisted cap until you are listed.",
+              "owner": "agent",
+              "agentAssist": "Edit app-hsmeta.json and run `hs project upload`.",
+              "duration": "15 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4"
+                ],
+                "confidence": "high",
+                "note": "'switch it to marketplace distribution later without interrupting existing installs'."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "composio": {
+    "managed": "yes",
+    "toolkitSlug": "hubspot",
+    "note": "Composio manages a HubSpot OAuth app (toolkit HUBSPOT, OAUTH2 or API_KEY). Its own FAQ says that app is 'still awaiting HubSpot approval', so your users get HubSpot's 'Connecting an unverified app' warning, and you can only drop optional scopes the managed app already has (no new scopes). Bring your own app for: your name and logo on the consent screen instead of Composio's, a different scope set, your own rate-limit pool (HubSpot meters each app per installing account, so the shared managed pool matters mainly when one portal is connected through several Composio-based products), polling triggers faster than the 15-minute managed minimum, or HubSpot webhook triggers (which need your own app ID and developer API key). Trade-off: your own unlisted app is capped at 25 installs until you get listed. Register the redirect URI the Composio dashboard shows in auth.redirectUrls. Composio's HubSpot guide prints https://backend.composio.dev/api/v3/toolkits/auth/callback, but that guide still describes the retired UI 'Create App' flow, so trust the dashboard. Composio recommends making only `oauth` required and putting tool scopes in optional_scopes, mirrored as Optional in HubSpot. In May 2026, after a Composio security incident, HubSpot rotated OAuth tokens for apps using Composio's managed or custom auth with the HubSpot toolkit, so connections had to be re-authorized either way (see nuances).",
+    "evidence": {
+      "kind": "documented",
+      "sourceIds": [
+        "s21",
+        "s22",
+        "s23",
+        "s24",
+        "s29",
+        "s30"
+      ],
+      "confidence": "high",
+      "note": "Composio's docs, fetched by probe p7: the toolkit page shows 'Composio-managed OAuth available? Yes', and the FAQ says 'the default Composio-managed HubSpot OAuth app is still awaiting HubSpot approval.'"
+    }
+  },
+  "oauth": {
+    "authorizationUrl": "https://app.hubspot.com/oauth/authorize (pin an account with https://app.hubspot.com/oauth/{hubId}/authorize; the consent UI sends user-level apps to /oauth/authorize/user)",
+    "tokenUrl": "https://api.hubapi.com/oauth/2026-09/token (current date-versioned endpoint; the May 2026 changelog and v1 migration guide name /oauth/2026-03/token). /oauth/v3/token also works and meets the current listing rule, but it is a numbered-version path, and HubSpot says all semantic-version APIs (v1-v4) stop being supported in September 2027, so prefer the date-versioned URL. /oauth/v1/token is deprecated, still answers, and must be replaced before Feb 16, 2027.",
+    "pkce": "supported",
+    "refreshTokens": "Yes. The authorization-code exchange returns a refresh_token. Per HubSpot's Jan 2026 blog, refresh tokens don't expire 'for now' and stay valid until the app is uninstalled or the token is revoked. A refresh may return a new refresh token, so always store the latest one. Revoke refresh tokens with POST /oauth/2026-03/token/revoke (listed in the May 2026 changelog). Token requests must send all parameters, including client_id and client_secret, in the form body (client_secret_post), not the URL.",
+    "tokenLifetime": "Access token 1800 s (30 min, see expires_in). The authorization code is single-use with a 'short window' (exact length not documented). Refresh tokens have no documented expiry.",
+    "redirectUris": "Declared in app-hsmeta.json `auth.redirectUrls` (at least one) and deployed with `hs project upload`. HTTPS required; http://localhost allowed for testing; must be a domain, not an IP address. The redirect_uri sent must match a registered URL (otherwise MISMATCH_REDIRECT_URI, or HTTPS_REQUIRED for http). Wildcard or prefix matching is not documented. Marketplace 'Seamless install' sends code + returnUrl to one of these URLs and requires a redirect back to returnUrl.",
+    "scopes": "Space-separated `scope` (required plus any conditionally required scopes) and `optional_scope` query parameters. Each scope must be declared in the matching list in app-hsmeta.json (requiredScopes / conditionallyRequiredScopes / optionalScopes), or installs fail with a scope-mismatch error. `oauth` is the base scope. Use granular scopes such as crm.objects.contacts.read/write; coarse scopes (tickets, timeline, files, hubdb) are being replaced through per-app migrations from Sept 8, 2026. Scopes tied to a product tier fail for accounts without that product unless optional. Sensitive and highly_sensitive scopes need Ecosystem Quality approval for marketplace apps. Account-level tokens carry the app's scopes regardless of the installing user's own permissions, which is why user-level access (isUserLevel) exists. Adding scopes requires existing users to reinstall or reconnect.",
+    "dynamicClientRegistration": "no",
+    "evidence": {
+      "kind": "tested",
+      "sourceIds": [
+        "s1",
+        "s2",
+        "s7",
+        "s8",
+        "s10",
+        "s11",
+        "s18",
+        "s27",
+        "s36",
+        "s35",
+        "s31"
+      ],
+      "confidence": "high",
+      "note": "Probes p1/p5 (re-run 2026-10-20): app.hubspot.com RFC 8414 metadata advertises S256 and no registration_endpoint; v3, 2026-09, 2026-03 and v1 token endpoints all return RFC 6749 errors, while a non-existent version (2099-01) returns 404. Docs: 'expires after 30 minutes'; the 2026-09 token schema lists code_verifier and the consent UI has a MISSING_CODE_CHALLENGE error ('PKCE is required for this authorization request'), but HubSpot's app OAuth guides don't describe PKCE, and a HubSpot community reply (reported, not openable) says the standard flow doesn't offer PKCE in place of client_secret. Legacy migration guide: semantic-version APIs are unsupported from September 2027."
+    }
+  },
+  "agentVsYou": {
+    "agentCan": [
+      "Scaffold hsproject.json (platformVersion 2026.09) and src/app/app-hsmeta.json with distribution, isUserLevel, redirectUrls and scope lists",
+      "Map the Composio HubSpot tools you plan to use to the smallest set of granular scopes, then keep HubSpot required/optional categories identical to Composio scopes/optional_scopes",
+      "Run `hs project create`, `hs project upload` and `hs project open` in a terminal you have already authenticated",
+      "Check that the redirect URI in app-hsmeta.json exactly matches the one shown in the Composio dashboard, and probe the authorize and token endpoints",
+      "List which Composio tools call APIs that user-level apps don't support yet (and the webhook-based triggers that stop working)",
+      "Draft the public setup guide, privacy-policy outline, Shared data table, listing overview, demo-video script and reviewer replies",
+      "Write the onboarding note that tells pilot users how to get past the 'I accept the risk' screen",
+      "Monitor per-portal API activity to prove 3 active installs, flag unused scopes, and throttle to 110 requests per 10 s per portal",
+      "Watch the HubSpot developer changelog for platform-version, OAuth-endpoint and scope migrations"
+    ],
+    "youMust": [
+      "Sign in to or create the HubSpot account (including 2FA), and be a Super Admin or hold a Developer seat",
+      "Generate a personal access key and paste it into `hs account auth`",
+      "Copy the client ID and secret into Composio and keep them in a secret manager",
+      "Sign the Acceptable Use Policy, and for listing agree to the Technology Partner Program Agreement",
+      "Add the DNS TXT record for domain verification",
+      "Decide account-level vs user-level before the first upload (it can't be changed later)",
+      "Recruit at least 3 unaffiliated customers and get them actively using the app",
+      "Publish the privacy policy, terms, support and setup pages, record the demo video, submit the listing as a Super Admin, and answer reviewer emails"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "r-account",
+      "title": "Standard HubSpot account with developer access",
+      "category": "account",
+      "mandatory": true,
+      "pathIds": [],
+      "detail": "Any standard HubSpot account works, including a free one. Development > Projects is available to Super Admins, and to other users with a Developer seat or the 'Developer tools access' permission. Legacy developer accounts were folded into standard accounts on March 9, 2026.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s12",
+          "s26"
+        ],
+        "confidence": "high",
+        "note": "'as of March 9, 2026, all legacy developer accounts were migrated to standard HubSpot accounts.' Developer seats doc: 'By default, all super admins and partner admins have access to the developer platform'; non-seat accounts grant 'the Developer tools access permission'. Probe p6 saw the developer signup redirect to /signup-hubspot/crm?intent=developer."
+      }
+    },
+    {
+      "id": "r-cli",
+      "title": "HubSpot CLI project (no UI app creation)",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "detail": "New apps are created with the HubSpot CLI (`hs project create`). Build on platform 2026.09 (current) or 2026.03; avoid 2025.2, which HubSpot announced on Sep 15, 2026 is going unsupported (apps on it must migrate to 2026.09 by March 2027). User-level apps need platform 2026.09 and CLI 8.15.0+. Creating legacy public apps in the UI was disabled May 26, 2026 (new accounts) and June 23, 2026 (existing accounts).",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s13",
+          "s9",
+          "s6",
+          "s31"
+        ],
+        "confidence": "high",
+        "note": "'the ability to create new legacy public apps via the Developer Platform UI will be permanently disabled.'"
+      }
+    },
+    {
+      "id": "r-redirect",
+      "title": "HTTPS redirect URL registered in app-hsmeta.json",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "detail": "At least one redirect URL in auth.redirectUrls. HTTPS only, except http://localhost for testing, and a domain rather than an IP address. With Composio, use the exact URI the Composio dashboard shows.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s10",
+          "s2",
+          "s23"
+        ],
+        "confidence": "high",
+        "note": "'Each app must have at least one auth redirect URL, and it must use HTTPS.'"
+      }
+    },
+    {
+      "id": "r-aup",
+      "title": "Acceptable Use Policy signed",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed",
+        "unlisted-pilot"
+      ],
+      "detail": "A marketplace-distribution app can't be installed outside developer test accounts until a user signs the AUP on the Distribution tab (Begin publishing).",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "'Until the AUP is signed, you won't be able to install your app in accounts other than developer test accounts.'"
+      }
+    },
+    {
+      "id": "r-tpp",
+      "title": "Technology Partner Program Agreement",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "Listing requires reviewing and agreeing to HubSpot's Technology Partner Program Agreement and the Marketplace terms. The agreement has no fees, but HubSpot may terminate it if your app drops below 3 installs 90 days after the listing is published, or if you don't complete the publication requirements within 30 days of acceptance. HubSpot can refuse or unpublish a listing at any time.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s34"
+        ],
+        "confidence": "high",
+        "note": "'you must review and agree to the terms in HubSpot’s Technology Partner Program Agreement.' Agreement 13.3: 'drop below three (3) installs ninety (90) days after we publish your listing ... we may terminate this agreement immediately'."
+      }
+    },
+    {
+      "id": "r-installs",
+      "title": "3 active installs from unaffiliated customers",
+      "category": "business",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "Before you submit, at least three unique HubSpot production accounts not affiliated with your organization must show successful OAuth-authenticated API calls (or signed webhook/extension requests) within the past 30 days. Since August 19, 2026 the submission eligibility check uses this active-install count, so you can't submit with fewer than 3; your active-install count is shown in the developer dashboard and refreshes once a day, so wait a day after crossing the threshold.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s28"
+        ],
+        "confidence": "high",
+        "note": "'your app must have at least three active, unique installs.' Submission-gate change reported by Sidekick Strategies (Sep 2026) from HubSpot's Aug 2026 community announcement."
+      }
+    },
+    {
+      "id": "r-ai-connector",
+      "title": "AI connectors must be user-level or use HubSpot's MCP server",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "If the app primarily connects HubSpot to external generative AI tools, it can only be listed with `isUserLevel: true` (platform 2026.09) or when built on HubSpot's MCP server. An existing account-level app cannot be switched to user-level; you must create a new app.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s9",
+          "s32"
+        ],
+        "confidence": "high",
+        "note": "'it must require user-level permissions by setting access to user-level or be built with HubSpot’s MCP Server.'"
+      }
+    },
+    {
+      "id": "r-versions",
+      "title": "Supported platform version and OAuth v3 endpoints",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "New listings must use OAuth v3 or the date-versioned token endpoints. From Nov 2, 2026, legacy apps and 2023.2/2025.1 projects are rejected for new listings. Classic CRM cards are not allowed.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s6",
+          "s5"
+        ],
+        "confidence": "high",
+        "note": "'must use the new OAuth v3 endpoints'; 'Apps using legacy apps or Projects 2023.2 / 2025.1 will be rejected for new listings'."
+      }
+    },
+    {
+      "id": "r-pages",
+      "title": "Public setup guide, privacy policy, terms and support contact",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "Every listing URL must be live, public and crawlable by the HubSpot Crawler, and no longer than 250 characters. You need a setup guide specific to the HubSpot integration, at least one support contact method, and pricing that matches your website.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5"
+        ],
+        "confidence": "high",
+        "note": "'URLs for your app’s Terms of Service and Privacy Policy must be live and up-to-date.'"
+      }
+    },
+    {
+      "id": "r-scopes",
+      "title": "Least-privilege granular scopes; sensitive scopes need approval",
+      "category": "security",
+      "mandatory": true,
+      "pathIds": [],
+      "detail": "Request only scopes the app uses. Reviewers reject unused ones, and tier-specific scopes should be optional or conditionally required. Use granular scope names: from Sept 8, 2026 HubSpot is migrating the remaining coarse scopes (tickets, timeline, files, hubdb) to granular ones, and its scopes reference recommends the granular names. Sensitive and highly_sensitive scopes for marketplace apps require a request to the Ecosystem Quality team, and HubSpot says the token-security questionnaire it now requires for certification will also be applied to sensitive-scope requests.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s15",
+          "s17",
+          "s6",
+          "s11"
+        ],
+        "confidence": "high",
+        "note": "'request access to specific sensitive scopes from HubSpot’s Ecosystem Quality team'; questionnaire 'will also be implemented for other programs, such as requesting access to sensitive data scopes' (future tense)."
+      }
+    },
+    {
+      "id": "r-domain",
+      "title": "Verified domain (DNS TXT)",
+      "category": "domain",
+      "mandatory": false,
+      "pathIds": [
+        "unlisted-pilot",
+        "marketplace-listed"
+      ],
+      "detail": "Optional. It replaces the 'not verified' banner with your domain on the install screen for unlisted apps, but users still have to type 'I accept the risk'. One verified domain per HubSpot account, shared by all its apps. HubSpot re-checks the TXT record periodically.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "'You can only have one verified domain per developer account.'"
+      }
+    },
+    {
+      "id": "r-brand",
+      "title": "HubSpot branding rules and listing assets",
+      "category": "branding",
+      "mandatory": true,
+      "pathIds": [
+        "marketplace-listed"
+      ],
+      "detail": "Don't use 'HubSpot' or 'Hub' in your app name or logo, and always write 'HubSpot' with a capital S. Provide an 800x800 icon with no text, up to 8 screenshots, and a demo video.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s20"
+        ],
+        "confidence": "high",
+        "note": "'do not combine HubSpot’s name (including “Hub” and “HubSpot”) with your app name or logo.'"
+      }
+    },
+    {
+      "id": "r-cost",
+      "title": "No HubSpot fees",
+      "detail": "HubSpot charges nothing to list or certify an app, or for installs that come through the Marketplace, and takes no revenue share. The Technology Partner Program Agreement says no fees are payable either way. Your costs are your own time and tooling.",
+      "category": "cost",
+      "mandatory": false,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s33",
+          "s34"
+        ],
+        "confidence": "high",
+        "note": "'we do not charge you a fee to list or certify your apps ... There is no revenue sharing.' Agreement section 6: 'No fees, commissions or other payments will be due or payable under this Agreement.'"
+      }
+    }
+  ],
+  "nuances": [
+    {
+      "id": "n-legacy-gone",
+      "title": "Composio's HubSpot credential guide describes a flow that no longer exists",
+      "impact": "high",
+      "detail": "composio.dev/auth/hubspot still says to create a 'developer account' and use Apps > Create App. Since May 26 / June 23, 2026 new legacy public apps can't be created in the UI, and developer accounts were merged into standard accounts. Use the CLI project flow and set redirect URLs and scopes in app-hsmeta.json instead of the old Auth tab.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s24",
+          "s13",
+          "s12"
+        ],
+        "confidence": "high",
+        "note": "Composio: 'you’ll need to create a public app'; HubSpot: legacy public app creation 'permanently disabled'."
+      }
+    },
+    {
+      "id": "n-scope-categories",
+      "title": "Required vs optional must match exactly between Composio and HubSpot",
+      "impact": "high",
+      "detail": "Any scope in the install URL's `scope` parameter must be Required or Conditionally required in the app, and anything in `optional_scope` must be Optional. Otherwise users get 'mismatch between the scopes in the install URL and the app's configured scopes'. Composio's advice is to make only `oauth` required and put tool scopes in optional_scopes. Then each install can add tools later, but a tool fails at call time if the user unticked its scope. Existing connections keep their original grant until they reconnect. Watch out: Composio's own HubSpot example puts the coarse `tickets` and `timeline` scopes in optional_scopes. If your app declares the granular equivalents (crm.objects.tickets.read, timeline.read and so on), put those same granular names in Composio, or the install URL won't match the app's scopes.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s22",
+          "s11",
+          "s17"
+        ],
+        "confidence": "high",
+        "note": "Composio: 'Scopes in Composio scopes must be configured in HubSpot as Required or Conditionally required.'"
+      }
+    },
+    {
+      "id": "n-account-vs-user",
+      "title": "Account-level tokens ignore the user's own HubSpot permissions",
+      "impact": "high",
+      "detail": "With the default account-level access, the token carries every scope the app was granted, even if the installing user can only see their own contacts. An agent acting on that token can read every contact. User-level apps (isUserLevel, 2026.09) limit actions to that user's permissions and annotate audit logs, but they don't support webhooks, app cards, serverless functions, workflow actions or several APIs and scopes (e.g. CPQ quotes, lead scoring). With user-level access, each user whose own HubSpot permissions cover the app's scopes can install it for themselves, so expect one connection per user rather than one per portal.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2",
+          "s9"
+        ],
+        "confidence": "high",
+        "note": "'the resulting access token can view all contacts in the account and not only those owned by the authorizing user.'"
+      }
+    },
+    {
+      "id": "n-seamless-composio",
+      "title": "Marketplace 'Seamless install' doesn't fit a Composio callback",
+      "impact": "high",
+      "detail": "With Seamless install, HubSpot sends `code` and `returnUrl` to your redirect URL, and the endpoint must exchange the code and redirect back to returnUrl, or the user ends up in a login loop. Composio's generic callback is built for flows Composio starts itself, so a HubSpot-initiated install will probably fail. For a listed app, choose 'Login via partner site' and point the install button at your own page that starts the Composio connect flow, or run your own callback.",
+      "evidence": {
+        "kind": "inferred",
+        "sourceIds": [
+          "s19",
+          "s20",
+          "s23"
+        ],
+        "confidence": "medium",
+        "note": "HubSpot: 'Redirecting back to HubSpot is required to avoid an infinite login loop.' Composio behaviour with HubSpot-initiated codes is not documented."
+      }
+    },
+    {
+      "id": "n-metadata",
+      "title": "HubSpot's OAuth discovery documents are misleading",
+      "impact": "medium",
+      "detail": "https://app.hubspot.com/.well-known/oauth-authorization-server still points token_endpoint at the deprecated /oauth/v1/token. https://api.hubapi.com/.well-known/oauth-authorization-server returns the MCP server's metadata (issuer https://mcp.hubspot.com). There is no OpenID discovery document (404) and no registration_endpoint. Hard-code the date-versioned token URL (/oauth/2026-09/token) instead of using auto-discovery.",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s6"
+        ],
+        "confidence": "high",
+        "note": "Probes p1 and p2 (2026-10-19)."
+      }
+    },
+    {
+      "id": "n-refresh",
+      "title": "Refresh handling: track expires_in, keep the newest refresh token",
+      "impact": "medium",
+      "detail": "Access tokens last 30 minutes. HubSpot says a 401 is not a valid signal to refresh, so refresh ahead of expiry. Refresh tokens currently don't expire but die on uninstall. When a refresh fails with 'refresh token is invalid, expired or revoked', treat the portal as disconnected and stop calling it. Composio does this for you on managed or custom auth configs, but after you rotate the client secret, affected accounts must reconnect.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s18",
+          "s14",
+          "s22",
+          "s7"
+        ],
+        "confidence": "high",
+        "note": "'Unauthorized (401) requests are not a valid indicator that a new access token must be retrieved.'"
+      }
+    },
+    {
+      "id": "n-rate-limits",
+      "title": "Rate limits are per installing account, and marketplace apps can't buy more",
+      "impact": "medium",
+      "detail": "Marketplace-distributed OAuth apps get 110 requests per 10 s per portal (excluding CRM Search), and the customer's API Limit Increase add-on doesn't raise it. Private apps get 100-190 per 10 s plus a portal-wide daily cap of 250k to 1M. An agent fanning out search plus batch reads can hit 429s quickly. These figures are published for platform 2025.2 and 2026.03; HubSpot hasn't yet said whether 2026.09 user-level apps get the same pool.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s14"
+        ],
+        "confidence": "medium",
+        "note": "'The API limit increase add-on does not increase the limits of ... apps ... distributed via the HubSpot marketplace.'"
+      }
+    },
+    {
+      "id": "n-mcp-alternative",
+      "title": "HubSpot's own MCP server is an alternative for AI agents",
+      "impact": "medium",
+      "detail": "Instead of a REST app you can create an MCP connector (Development > MCP Connectors) and point your agent at https://mcp.hubspot.com. It enforces user permissions, which satisfies the AI-connector rule. It requires OAuth with PKCE (S256), derives scopes from its tools (users must reinstall when tools change), blocks activity and conversation data in portals with Sensitive Data turned on, and has no dynamic client registration. Composio's HubSpot toolkit calls the REST API, not this server.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s16",
+          "s5"
+        ],
+        "confidence": "high",
+        "note": "'PKCE is required for authenticating with HubSpot's MCP server.' Probe p2 found no registration_endpoint in mcp.hubspot.com metadata."
+      }
+    },
+    {
+      "id": "n-sandbox-claim",
+      "title": "Third-party guides wrongly say sandboxes count toward the 3 installs",
+      "impact": "medium",
+      "detail": "A June 2026 third-party guide says 'Sandboxes count' toward the three installs. HubSpot's requirements say production accounts unaffiliated with your organization, active in the past 30 days. A September 2026 write-up of HubSpot's Aug 19, 2026 submission-gate change says 'Test accounts, sandbox portals, and dormant installs no longer pad your count.' Follow HubSpot.",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": [
+          "s25",
+          "s5",
+          "s28"
+        ],
+        "confidence": "medium",
+        "note": "Appnigma: 'Sandboxes count, real customers count, beta installs count.' Contradicted by s5."
+      }
+    },
+    {
+      "id": "n-installer-perms",
+      "title": "Who can click Connect is restricted, and admins can gate apps",
+      "impact": "medium",
+      "detail": "For account-level apps, installers need Super Admin, or Marketplace Access plus the permission behind each scope (e.g. Import for crm.import); for user-level apps, any user whose own permissions cover the app's scopes can install it. Portals can also require admin approval for app scopes ('this app hasn't been approved ... in your account's app governance settings'). Accounts without a required product get 'This account doesn't have access to some HubSpot features that are required by this app'. Ask a Super Admin to do the install, and put tier-specific scopes in the optional list.",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s3",
+          "s2",
+          "s9"
+        ],
+        "confidence": "high",
+        "note": "Docs list the installer permission rules; probe p4 observed the governance and HUB_UNAUTHORIZED error strings."
+      }
+    },
+    {
+      "id": "n-composio-incident",
+      "title": "Your own app doesn't isolate you from a Composio-side incident",
+      "impact": "medium",
+      "detail": "In May 2026 Composio disclosed unauthorized access to internal systems that held customer credentials (its incident post is dated May 21; HubSpot's notice says May 25). HUBSPOT was on Composio's list of revoked OAuth toolkits, and between May 25 and May 29 HubSpot Security rotated OAuth tokens and API keys for apps using Composio's managed or custom authorization with the HubSpot toolkit. Affected portals saw a banner on Connected Apps and had to reconnect. HubSpot found no evidence that customer accounts were compromised. Bringing your own app changes the consent-screen identity and quota, not where the tokens are stored. Build a reconnect flow, and keep your client secret rotatable (Auth tab > Rotate). Composio says its APIs no longer return connected-account tokens or custom OAuth client secrets.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s29",
+          "s30"
+        ],
+        "confidence": "high",
+        "note": "HubSpot Trust Center (May 28, 2026): 'HubSpot Security rotated OAuth tokens and API keys for apps using Composio's managed or custom authorization options'. Composio: revoked list includes HUBSPOT."
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "b-cap",
+      "title": "25-install cap reached",
+      "symptom": "New installers see 'The app could not be installed because the installation limit has been reached. Please contact the app developer.'",
+      "cause": "Unlisted apps with marketplace distribution on the developer platform are capped at 25 non-test accounts.",
+      "resolution": "Get listed (the only documented way to lift the cap). In the meantime, uninstall stale or churned portals with DELETE /appinstalls/v3/external-install. That probably frees a slot, but HubSpot doesn't document it.",
+      "escalation": "HubSpot support request (the changelog suggests one for migrated legacy apps hitting errors); HubSpot Developer Community forum.",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "confidence": "high",
+        "note": "INSTALLATION_LIMIT string observed in the OAuth UI bundle (probe p4); docs: 'limited to 25 installs'."
+      }
+    },
+    {
+      "id": "b-aup",
+      "title": "Installs fail because the AUP is unsigned",
+      "symptom": "'The app could not be installed because the app developer has not signed the acceptable use policy.'",
+      "cause": "A marketplace-distribution app installed outside developer test accounts before anyone signed the AUP.",
+      "resolution": "Distribution tab > Begin publishing > sign the AUP, then retry the install.",
+      "escalation": "",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "ACCEPTABLE_USE_POLICY_NOT_SIGNED string observed (probe p4)."
+      }
+    },
+    {
+      "id": "b-scope-mismatch",
+      "title": "Scope mismatch between Composio and the app",
+      "symptom": "'Authorization failed because there is a mismatch between the scopes in the install URL and the app's configured scopes', or 'Insufficient scopes were provided', or 'An invalid scope name was provided'.",
+      "cause": "Composio's scopes/optional_scopes don't match the requiredScopes/optionalScopes in app-hsmeta.json, a required scope was left out of the URL, or Composio sends a coarse scope name (e.g. `tickets`, as in Composio's own example) while the app declares the granular equivalents.",
+      "resolution": "Make every Composio `scopes` entry Required (or Conditionally required) and every `optional_scopes` entry Optional in HubSpot, use granular scope names, run `hs project upload`, then reconnect the account.",
+      "escalation": "Composio support for auth-config questions; HubSpot Developer Community for scope definitions.",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s22",
+          "s11",
+          "s17"
+        ],
+        "confidence": "high",
+        "note": "MISMATCH_SCOPE_GROUP / MISSING_SCOPE_GROUP / BAD_SCOPES strings observed (probe p4); Composio troubleshooting: 'confirm every requested scope is enabled in HubSpot and is in the same category'."
+      }
+    },
+    {
+      "id": "b-redirect",
+      "title": "Redirect URI rejected",
+      "symptom": "'The redirect_uri doesn't match the client registered redirect_uri.' or 'The redirect_uri must use https for security reasons.'",
+      "cause": "The URI Composio sends is not in auth.redirectUrls, or it was registered with http, a trailing-slash difference or an IP address.",
+      "resolution": "Copy the redirect URI exactly from the Composio dashboard into redirectUrls, run `hs project upload`, and confirm it on the app's Auth tab.",
+      "escalation": "",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s2",
+          "s10"
+        ],
+        "confidence": "high",
+        "note": "MISMATCH_REDIRECT_URI and HTTPS_REQUIRED strings observed (probe p4)."
+      }
+    },
+    {
+      "id": "b-user-perms",
+      "title": "User isn't allowed to install",
+      "symptom": "'You don't have permission to connect this app.' or 'Authorization failed because this app hasn't been approved to access the required scopes ... in your account's app governance settings.' or 'This account doesn't have access to some HubSpot features that are required by this app.'",
+      "cause": "The installer isn't a Super Admin and lacks Marketplace Access or scope permissions, the portal's admins require app approval, or a required scope needs a HubSpot product tier the portal doesn't have.",
+      "resolution": "Have a Super Admin install, or have the admin approve the app in app governance. Move tier-dependent scopes to optional.",
+      "escalation": "The customer's HubSpot Super Admin; HubSpot support for portal-access questions.",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s2",
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "USER_UNAUTHORIZED, USER_MISSING_APP_GOVERNANCE_APPROVAL_VERBOSE and HUB_UNAUTHORIZED strings observed (probe p4)."
+      }
+    },
+    {
+      "id": "b-unverified",
+      "title": "Prospects drop off at the unverified-app warning",
+      "symptom": "Users see 'You're connecting an unverified app' / 'This app could put your data at risk' and must type 'I accept the risk'. Security-conscious admins refuse.",
+      "cause": "The app (yours or Composio's managed one) isn't listed and approved by HubSpot's Ecosystem Quality team.",
+      "resolution": "Verify your domain so the warning shows it, warn users in advance, recruit design partners for the 3 active installs, then get listed. Listed apps show no warning.",
+      "escalation": "HubSpot Technology Partner team (linked from the listing requirements page).",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s3",
+          "s22"
+        ],
+        "confidence": "high",
+        "note": "Unverified-app strings observed (probe p4); docs: listed apps show no warning banner."
+      }
+    },
+    {
+      "id": "b-listing-rejected",
+      "title": "Listing rejected or returned to Draft",
+      "symptom": "Reviewer email lists missing requirements, or the listing goes back to Draft.",
+      "cause": "Common causes: fewer than 3 qualifying active installs, unused scopes, Shared data table not matching scopes, crawler blocked from your URLs, an AI connector that isn't user-level, unsupported platform version or v1 OAuth endpoints, or 'HubSpot' in the app name.",
+      "resolution": "Fix each item, reply to the review email, and resubmit. Keep only one app in review at a time.",
+      "escalation": "Reply to the Ecosystem Quality review email; Contact the Technology Partner team link on the listing requirements page.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s5",
+          "s6"
+        ],
+        "confidence": "high",
+        "note": "'App listing submissions are manually reviewed ... and will be rejected if they do not meet the criteria'."
+      }
+    },
+    {
+      "id": "b-private-limit",
+      "title": "Private app can't reach a customer's portal",
+      "symptom": "'This account isn't eligible to install this app.' or 'The app has reached its maximum installation limit. This limit is in place while the developer is testing the app.'",
+      "cause": "Private distribution only installs into allowlisted accounts your HubSpot user can access, with a maximum of 10 (100 for Solutions Partners).",
+      "resolution": "Switch `distribution` to marketplace (existing installs keep working) and follow the unlisted/listed paths.",
+      "escalation": "",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "confidence": "high",
+        "note": "PORTAL_NOT_ALLOWLISTED_FOR_APP_INSTALL and APP_PORTAL_INSTALL_ALLOWLIST_LIMIT_REACHED strings observed (probe p4)."
+      }
+    }
+  ],
+  "probes": [
+    {
+      "id": "p1",
+      "name": "RFC 8414 / OIDC metadata on app.hubspot.com",
+      "kind": "oauth_metadata",
+      "request": "GET https://app.hubspot.com/.well-known/oauth-authorization-server ; GET https://app.hubspot.com/.well-known/openid-configuration",
+      "observed": "200 application/json: {\"issuer\": \"https://app.hubspot.com\", \"authorization_endpoint\": \"https://app.hubspot.com/oauth/authorize\", \"token_endpoint\": \"https://api.hubapi.com/oauth/v1/token\", \"response_types_supported\": [\"code\"], \"code_challenge_methods_supported\": [\"S256\"]}. No registration_endpoint, no grant_types_supported. openid-configuration: 404 HTML 'HubSpot Error'.",
+      "conclusion": "Authorize endpoint confirmed. PKCE S256 is advertised. No dynamic client registration and no OIDC discovery. The advertised token endpoint is still the deprecated v1.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p2",
+      "name": "Metadata on api.hubapi.com and mcp.hubspot.com",
+      "kind": "oauth_metadata",
+      "request": "GET https://api.hubapi.com/.well-known/oauth-authorization-server ; GET https://mcp.hubspot.com/.well-known/oauth-authorization-server ; GET https://mcp.hubspot.com/.well-known/oauth-protected-resource",
+      "observed": "200 JSON (identical for api.hubapi.com and mcp.hubspot.com): issuer \"https://mcp.hubspot.com\", authorization_endpoint \"https://mcp.hubspot.com/oauth/authorize/user\", token_endpoint \"https://mcp.hubspot.com/oauth/v3/token\", grant_types_supported [authorization_code, refresh_token, client_credentials, urn:ietf:params:oauth:grant-type:jwt-bearer], token_endpoint_auth_methods_supported [\"client_secret_post\"], introspection_endpoint .../oauth/v3/token/introspect, code_challenge_methods_supported [\"S256\"], no registration_endpoint. Protected resource: {\"resource\":\"https://mcp.hubspot.com\",\"authorization_servers\":[\"https://mcp.hubspot.com\"],\"scopes_supported\":[]}.",
+      "conclusion": "The API host serves the MCP server's metadata, not your app's. The MCP server supports S256 PKCE and client_secret_post, and has no DCR, so MCP connectors must be created by hand in HubSpot.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p3",
+      "name": "Authorize endpoint with an unknown client_id",
+      "kind": "authorize_endpoint",
+      "request": "GET https://app.hubspot.com/oauth/authorize?client_id=greenlight-probe-invalid&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=crm.objects.contacts.read (no redirects followed); also GET .../oauth/authorize/user with code_challenge=...&code_challenge_method=S256",
+      "observed": "Both 200 text/html (82,024 bytes), no Location header: the oauth-ui single-page app shell (static-1.13537). No server-side error or redirect to the redirect_uri.",
+      "conclusion": "The endpoint is live but validates the client in the browser, so a curl probe can't see the error. The error text was read from the UI bundle instead (p4).",
+      "outcome": "inconclusive",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p4",
+      "name": "OAuth consent UI bundle: error strings and PKCE handling",
+      "kind": "other",
+      "request": "GET https://static.hsappstatic.net/oauth-ui/static-1.13537/bundles/public.js (script referenced by the p3 page)",
+      "observed": "200 application/javascript, 3,981,919 bytes. Contains: BAD_CLIENT_ID 'An invalid app client_id was provided. Please contact the app developer.'; MISMATCH_REDIRECT_URI; HTTPS_REQUIRED 'The redirect_uri must use https for security reasons.'; MISMATCH_SCOPE_GROUP; HUB_UNAUTHORIZED; INSTALLATION_LIMIT 'The app could not be installed because the installation limit has been reached.'; ACCEPTABLE_USE_POLICY_NOT_SIGNED; PORTAL_NOT_ALLOWLISTED_FOR_APP_INSTALL; USER_MISSING_APP_GOVERNANCE_APPROVAL_VERBOSE; unverified-app modal with matchText 'I accept the risk'. The URL parser reads code_challenge and code_challenge_method; INVALID_CODE_CHALLENGE(_METHOD) codes exist; isUserLevel apps are sent from /authorize to /oauth/{hub}/authorize/user. Also: MISSING_CODE_CHALLENGE 'Authorization failed because the code challenge parameter is missing. PKCE is required for this authorization request.', INVALID_CODE_CHALLENGE_METHOD 'Only 'S256' method is supported', and a test-URL banner 'PKCE is required to test OAuth 2.1 installs'.",
+      "conclusion": "Confirms the exact install-time errors developers will see, that the standard authorize endpoint accepts PKCE parameters, and that user-level apps use a separate /authorize/user consent route. PKCE is enforced for some install types (OAuth 2.1 installs such as MCP connectors); the bundle doesn't show whether it is enforced for standard project apps.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p5",
+      "name": "Token endpoints with dummy credentials",
+      "kind": "token_endpoint",
+      "request": "POST https://api.hubapi.com/oauth/v3/token, /oauth/2026-09/token and /oauth/v1/token, form body grant_type=authorization_code&client_id=greenlight-probe-invalid&client_secret=greenlight-probe-invalid&code=greenlight-probe-invalid&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback ; control: POST https://api.hubapi.com/oauth/2099-01/token with the same body",
+      "observed": "All three: HTTP 400 {\"status\":\"BAD_AUTH_CODE\",\"message\":\"missing or unknown auth code\",\"correlationId\":\"...\",\"error\":\"invalid_request\",\"error_description\":\"missing or unknown auth code\"} Control (non-existent version 2099-01): HTTP 404 HTML 'Resource not found'.",
+      "conclusion": "v3, 2026-09 and 2026-03 are live (a made-up version 404s, so the 400s are real), and v1 still answers despite being deprecated. Errors carry the RFC 6749 error/error_description fields alongside the legacy status/message.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p6",
+      "name": "Developer signup and app console access",
+      "kind": "portal_access",
+      "request": "GET https://app.hubspot.com/signup-hubspot/developers ; GET https://app.hubspot.com/l/developer-projects ; GET https://app.hubspot.com/l/mcp-auth-apps/ ; GET https://developers.hubspot.com/",
+      "observed": "signup-hubspot/developers: 302 -> https://app.hubspot.com/signup-hubspot/crm?intent=developer (200 'Get started with HubSpot'). developer-projects and mcp-auth-apps: 307 -> https://app.hubspot.com/login?loginRedirectUrl=... . developers.hubspot.com: 200 public.",
+      "conclusion": "The 'developer account' signup is now the standard free CRM signup. The project console and MCP connector pages sit behind a HubSpot login (no paywall seen before login).",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    },
+    {
+      "id": "p7",
+      "name": "Composio HubSpot toolkit lookup",
+      "kind": "composio_lookup",
+      "request": "GET https://docs.composio.dev/toolkits/hubspot.md",
+      "observed": "200. '- **Auth:** OAUTH2, API_KEY', '- **Composio-managed OAuth available?** Yes', 'Tools: 287', 'Triggers: 2', 'Version: 20261015_00'. FAQ: 'the default Composio-managed HubSpot OAuth app is still awaiting HubSpot approval'.",
+      "conclusion": "A managed app exists, but it currently triggers HubSpot's unverified-app warning. Webhook-based triggers need your own app ID and developer API key.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-20T05:49:40Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "a-manifest",
+      "title": "Project config for a Composio-backed HubSpot agent app",
+      "kind": "manifest",
+      "format": "markdown",
+      "content": "## 1. hsproject.json (project root)\n```json\n{\n  \"name\": \"<your_project_name>\",\n  \"srcDir\": \"src\",\n  \"platformVersion\": \"2026.09\"\n}\n```\n\n## 2. src/app/app-hsmeta.json\n```json\n{\n  \"uid\": \"<your_app_uid>\",\n  \"type\": \"app\",\n  \"config\": {\n    \"name\": \"<YOUR_APP_NAME>\",\n    \"description\": \"<YOUR_APP_NAME> lets your AI agent look up and update the HubSpot contacts, companies, deals and tickets you can already access, from <WHERE THE AGENT RUNS>.\",\n    \"logo\": \"/app/app-logo.png\",\n    \"distribution\": \"marketplace\",\n    \"isUserLevel\": true,\n    \"auth\": {\n      \"type\": \"oauth\",\n      \"redirectUrls\": [\"<REDIRECT_URI_SHOWN_IN_COMPOSIO_DASHBOARD>\"],\n      \"requiredScopes\": [\"oauth\"],\n      \"optionalScopes\": [\n        \"crm.objects.contacts.read\",\n        \"crm.objects.contacts.write\",\n        \"crm.objects.companies.read\",\n        \"crm.objects.companies.write\",\n        \"crm.objects.deals.read\",\n        \"crm.objects.deals.write\",\n        \"crm.objects.tickets.read\"\n      ],\n      \"conditionallyRequiredScopes\": []\n    },\n    \"support\": {\n      \"supportEmail\": \"<support@YOUR_DOMAIN>\",\n      \"documentationUrl\": \"https://<YOUR_DOMAIN>/docs/hubspot\",\n      \"supportUrl\": \"https://<YOUR_DOMAIN>/support\"\n    }\n  }\n}\n```\n\n## 3. Composio custom auth config credentials (must mirror the lists above)\n```json\n{\n  \"credentials\": {\n    \"scopes\": \"oauth\",\n    \"optional_scopes\": \"crm.objects.contacts.read crm.objects.contacts.write crm.objects.companies.read crm.objects.companies.write crm.objects.deals.read crm.objects.deals.write crm.objects.tickets.read\"\n  }\n}\n```\n\nNotes\n- `isUserLevel: true` is needed to list an app that mainly connects HubSpot to AI tools, and it can't be added to an existing account-level app later. It also turns off webhooks (Composio's HubSpot webhook triggers), app cards, serverless functions and workflow actions. If you won't be classified as an AI connector and need webhooks, set it to false.\n- Use granular scope names only. Coarse `tickets`, `timeline`, `files` and `hubdb` were replaced from Sept 8, 2026.\n- Remove any scope your tools don't call within 30 days of launch, because reviewers check for unused scopes.\n",
+      "howToUse": "Run `hs project create` (App, marketplace, OAuth), then replace hsproject.json and src/app/app-hsmeta.json with these, fill the <PLACEHOLDERS> (paste the redirect URI from the Composio dashboard), trim the scope list to the tools you actually use, and run `hs project upload`. Then set the same scope split in the Composio auth config."
+    },
+    {
+      "id": "a-checklist",
+      "title": "Marketplace pre-submission checklist",
+      "kind": "checklist",
+      "format": "markdown",
+      "content": "# HubSpot Marketplace pre-submission checklist for <YOUR_APP_NAME>\n\n## Minimum requirements (failing any of these gets the listing rejected)\n- [ ] App is a CLI project on platform 2026.09 (or 2026.03; 2025.2 must move to 2026.09 by March 2027; never legacy, 2023.2 or 2025.1)\n- [ ] `distribution: \"marketplace\"`, `auth.type: \"oauth\"`, and OAuth is the only auth method\n- [ ] AI connector? Then `isUserLevel: true` (or rebuilt on HubSpot's MCP server)\n- [ ] One app ID / client ID for the listing; no redirect to a different app\n- [ ] Token calls use the date-versioned /oauth/2026-09/token (or /oauth/2026-03/token); /oauth/v3/token is accepted today but goes unsupported in September 2027 (ask Composio which one it calls: <ANSWER>)\n- [ ] ≥3 unique production portals, not affiliated with us, with successful API calls in the last 30 days: <PORTAL_ID_1>, <PORTAL_ID_2>, <PORTAL_ID_3>\n- [ ] Every requested scope was called in the last 30 days (export of scopes vs API calls attached)\n- [ ] No classic/legacy CRM cards, no sensitive-data scopes (unless approved by Ecosystem Quality)\n- [ ] App name and logo don't contain \"HubSpot\" or \"Hub\"; \"HubSpot\" spelled with a capital S everywhere\n\n## Listing fields (missing any of these sends the listing back to Draft)\n- [ ] Setup guide specific to the HubSpot integration: https://<YOUR_DOMAIN>/docs/hubspot\n- [ ] Privacy policy https://<YOUR_DOMAIN>/privacy and terms https://<YOUR_DOMAIN>/terms are live\n- [ ] Support page, plus at least one support contact (email/phone/URL)\n- [ ] All URLs ≤250 chars, return 200, and the \"HubSpot Crawler\" user agent is allowed through the WAF/CDN\n- [ ] Shared data table matches the scopes (read+write object = bi-directional sync)\n- [ ] Pricing plans match the website and only include plans that support the integration\n- [ ] 800x800 icon (no text/wordmark), up to 8 screenshots with alt text and placeholder data, demo video\n- [ ] Install experience: \"Login via partner site\" pointing at https://<YOUR_DOMAIN>/connect/hubspot (because the redirect URL is Composio's callback)\n\n## Submission\n- [ ] Super Admin submits; Technology Partner Program Agreement accepted (keep at least 3 installs after launch: the agreement can be terminated if you drop below 3 installs 90 days after publication)\n- [ ] No other app of ours currently in review\n- [ ] Someone named to answer reviewer email within 1 business day: <NAME>\n",
+      "howToUse": "Go through it with your team before clicking Submit. Every unchecked box maps to a documented rejection or Draft reason."
+    },
+    {
+      "id": "a-scopes",
+      "title": "Shared data table, scope justification and listing overview",
+      "kind": "scope_justification",
+      "format": "markdown",
+      "content": "## Shared data table (Listing > App details > Shared data)\n| <YOUR_APP_NAME> object | HubSpot object | Direction |\n|---|---|---|\n| Agent contact lookups and updates | Contacts | Bi-directional (read + write) |\n| Account research notes | Companies | Bi-directional (read + write) |\n| Pipeline summaries and stage updates | Deals | Bi-directional (read + write) |\n| Support context | Tickets | HubSpot to <YOUR_APP_NAME> (read only) |\n\n## Scope justification (use in the review notes and the setup guide)\n- `oauth`: required base scope for OAuth installs.\n- `crm.objects.contacts.read`: the agent finds the contacts a user asks about (\"who did I meet at Acme last week?\") and reads their properties to answer.\n- `crm.objects.contacts.write`: the agent creates or updates a contact only after the user confirms the proposed change in <YOUR_APP_NAME>.\n- `crm.objects.companies.read` / `.write`: same as contacts, for company records the user references.\n- `crm.objects.deals.read` / `.write`: the agent summarises pipeline status and, after confirmation, moves a deal stage or edits the amount and close date.\n- `crm.objects.tickets.read`: read-only support context so the agent can mention open tickets before a customer call.\n\nAll tool scopes are optional. Users can untick any of them at install, and the matching agent actions are then disabled. The app is user-level, so every action is limited to the installing user's own HubSpot permissions and appears in audit logs as \"[User] via <YOUR_APP_NAME>\". We don't request sensitive or highly sensitive data scopes.\n\n## App overview (Listing > App details > App Overview)\n<YOUR_APP_NAME> lets sales and success teams ask their AI agent questions about their own HubSpot CRM and have it make updates they approve. Connect HubSpot in under a minute; the agent then sees only what you can see in HubSpot. Typical uses: prep for a meeting from contact, company and deal history; update a deal stage from a call summary; list stalled deals in your pipeline. Nothing is written to HubSpot without your confirmation.\n",
+      "howToUse": "Paste the table into the Shared data panel, the justification into the Review info tab and setup guide, and the overview into App Overview. Edit object rows so they match your real scopes exactly."
+    },
+    {
+      "id": "a-demo",
+      "title": "Demo video script for the listing",
+      "kind": "demo_script",
+      "format": "markdown",
+      "content": "# Demo video script: <YOUR_APP_NAME> + HubSpot (target 3-4 minutes, 1080p, no real customer data)\n\n0:00-0:20  Title card: \"<YOUR_APP_NAME> for HubSpot\". One sentence: an AI agent that works with the HubSpot records you can already access.\n\n0:20-1:00  Install. Start on https://<YOUR_DOMAIN>/connect/hubspot (the listing's install button). Click Connect HubSpot, pick the test portal, show the HubSpot consent screen with each scope, untick one optional scope to show it's optional, click Connect app, and land back on <YOUR_APP_NAME> showing \"HubSpot connected\".\n\n1:00-1:45  Read flow. Ask the agent \"What's the status of the Acme deal and who is the main contact?\" Show the answer and open the same deal in HubSpot side by side so the data matches.\n\n1:45-2:30  Write flow with confirmation. Ask \"Move the Acme deal to Contract Sent and add a note from today's call.\" Show the agent's proposed-change summary, click Confirm, then refresh HubSpot to show the updated stage and note. Point out the audit-log entry \"[User] via <YOUR_APP_NAME>\".\n\n2:30-3:00  Permissions. Log in as a user who can only see their own records, ask about a deal they don't own, and show the agent cannot see it (user-level access).\n\n3:00-3:30  Disconnect. Settings > Integrations > Disconnect HubSpot in <YOUR_APP_NAME> (which calls the uninstall endpoint), then show the app gone from HubSpot's Connected apps.\n\n3:30-3:45  Support: link to setup guide, support email <support@YOUR_DOMAIN>, privacy policy.\n\nRecording notes: use a developer test account seeded with fictional companies (no John Doe placeholders, no personal data). Narrate each scope the first time it's used. Keep the browser address bar visible during the OAuth step.\n",
+      "howToUse": "Record in a developer test account seeded with fictional data and upload it on the App details tab. It also stands in for the test credentials HubSpot stopped requiring on March 31, 2026."
+    }
+  ],
+  "openQuestions": [
+    "Does `hs project upload` accept requiredScopes: [\"oauth\"] with every tool scope optional (Composio's recommended setup)? Not verified without an account.",
+    "Which HubSpot token endpoint does Composio call (v1, v3 or date-versioned)? New listings must use v3 or newer, and Composio does not document this.",
+    "Does Composio's OAuth flow work unchanged with user-level (isUserLevel) apps and the /oauth/authorize/user consent route, and which of the 287 Composio HubSpot tools fail under user-level API support?",
+    "Is Composio's managed HubSpot app subject to an install cap (legacy public app vs developer-platform app), and will it ever be listed?",
+    "Will a Composio-powered agent product be classified as an 'AI connector' by reviewers? The definition is 'an app that primarily connects HubSpot to external generative AI tools', and the call is the reviewer's.",
+    "Exact authorization-code lifetime, and whether redirect URI matching is exact-string or allows prefixes or query strings.",
+    "Do privately distributed OAuth apps installed into allowlisted (non-owner) portals show the unverified-app confirmation?",
+    "Does HubSpot ever grant exceptions to the 25-install cap? Search snippets attribute a 'no exceptions' statement to HubSpot staff, but the forum threads couldn't be opened to confirm it.",
+    "Real-world 2026 listing review durations and rejection reasons from HubSpot Community threads. community.hubspot.com returned Cloudflare 403 to every fetch, so only a third-party guide was usable.",
+    "What a Marketplace-initiated 'Seamless install' does when the redirect URL is Composio's callback (assumed to fail; untested).",
+    "Does HubSpot accept or enforce PKCE (code_verifier) for standard project-based OAuth apps? S256 is advertised in app.hubspot.com metadata, code_verifier is in the token schema and the consent UI has a 'PKCE is required for this authorization request' error, but HubSpot's app OAuth guides don't describe PKCE and a HubSpot community reply (Cloudflare-blocked, seen only in search snippets) says the standard flow doesn't offer it. No end-to-end test was possible without an app.",
+    "What rate limits apply to platform 2026.09 and user-level apps? HubSpot's limits page only covers 2025.2 and 2026.03 (110 requests per 10 s per installing account for marketplace apps).",
+    "HubSpot's manage-apps page ties the no-banner state to an app that 'has been submitted for certification and officially passes HubSpot's app review process'. Confirm that a listed but not certified app shows no unverified-app confirmation.",
+    "Does uninstalling an app free one of the 25 unlisted-install slots (is the cap on current installs or lifetime installs)? Not documented; community threads only cover the private-app limit.",
+    "For a user-level app, where each user installs for themselves, does the 25-install cap count accounts or individual user installs?",
+    "Does Composio's HUBSPOT API_KEY auth accept a HubSpot Service Key (public beta) for agents that only touch your own portal?"
+  ],
+  "verification": {
+    "status": "partial",
+    "checkedAt": "2026-10-20T05:51:54Z",
+    "summary": "Second adversarial pass: checked 36 claims, 24 supported, 10 corrected, 1 downgraded, 1 unverifiable. Biggest fix: the guide led with /oauth/v3/token, but HubSpot says all semantic-version APIs (v1-v4) go unsupported in September 2027, so the date-versioned /oauth/2026-09/token is now primary. The pass also added the missing cost facts (no listing fees) and the agreement's keep-3-installs termination clause. A cross-guide calibration pass on 2026-10-20 retagged Composio managed status as documented (as in the other guides) and aligned the listing-wait label with its numbers (v37-v38).",
+    "entries": [
+      {
+        "id": "v1",
+        "claim": "Unlisted marketplace OAuth apps are capped at 25 installs (developer test accounts excluded) until listed; listed apps are unlimited.",
+        "location": "summary.headline; paths[unlisted-pilot]; blockers[b-cap]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "note": "s3 Installation limits: 'Marketplace OAuth app prior to listing: can be installed in up to 25 accounts (not including developer test accounts)'. s4 (Sep 22, 2025) is still the governing changelog; searches found no 2026 change to the cap."
+      },
+      {
+        "id": "v2",
+        "claim": "HubSpot documents no exception process for the 25-install cap; forum posts attribute a 'no exceptions' answer to staff.",
+        "location": "summary.drivers[0]; openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "note": "Neither s3 nor s4 offers an exception route. Search snippets of HubSpot Community threads (Jul 31, 2026) quote a moderator: 'we don't grant manual exceptions or temporary increases'. The forum is Cloudflare-blocked (403), so the claim stays framed as forum-sourced."
+      },
+      {
+        "id": "v3",
+        "claim": "Listing needs 3 active installs: unique, unaffiliated production accounts with OAuth API calls or signed webhook/extension requests in the past 30 days.",
+        "location": "requirements[r-installs]; paths[marketplace-listed].stages[ml-pilot]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s5"
+        ],
+        "note": "s5 Minimum requirements, word for word: 'Active installs are the number of unique HubSpot production accounts, unaffiliated with your organization, showing successful app activity within the past 30 days.'"
+      },
+      {
+        "id": "v4",
+        "claim": "Since Aug 19, 2026 the Submit button stays disabled until the daily active-install count reaches 3.",
+        "location": "paths[marketplace-listed].stages[ml-pilot].steps[ml-design-partners]; requirements[r-installs]",
+        "verdict": "corrected",
+        "before": "The listing's Submit button stays disabled until the daily active-install count reaches 3.",
+        "after": "The submission eligibility check counts active installs (refreshed daily), so check the day after you reach 3 before submitting.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s28",
+          "s20"
+        ],
+        "note": "s28 says the 'eligibility gate ... now checks active installs instead of total installs' and the count is 'updated once per day'. It doesn't say the button is disabled; s20 says 'Validate & submit' greys out only for missing fields or missing Super admin rights."
+      },
+      {
+        "id": "v5",
+        "claim": "Listing review: initial review within 10 business days, then up to 60 days from when feedback is shared (about 10-74 calendar days); a third party reports 2-4 weeks for most.",
+        "location": "paths[marketplace-listed].approvalWaitDays; steps[ml-wait]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s5",
+          "s25"
+        ],
+        "note": "s5 'complete an initial review within 10 business days' and 'no more than 60 days from the time feedback is shared'. s25 (Jun 24, 2026): '2-4 weeks for most submissions'. The 10-day minimum is the first-response ceiling, so approval can come sooner. The range and medium confidence are fair."
+      },
+      {
+        "id": "v6",
+        "claim": "AI connectors (apps that primarily connect HubSpot to external generative AI tools) must be user-level or built on HubSpot's MCP server to be listed.",
+        "location": "requirements[r-ai-connector]; summary.headline",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s5",
+          "s32"
+        ],
+        "note": "s5 quoted exactly ('or', not 'and'). Searches confirm the rule started in the Nov 2025 rollup as MCP-only and was loosened once user-level apps went GA in the Sep 15, 2026 Fall Spotlight (s32)."
+      },
+      {
+        "id": "v7",
+        "claim": "User-level apps need platform 2026.09 and CLI 8.15.0, can't be converted from account-level, and don't support webhooks, app cards, serverless functions or workflow actions.",
+        "location": "paths[marketplace-listed].stages[ml-register].steps[ml-scaffold]; nuances[n-account-vs-user]; artifacts[a-manifest]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s9"
+        ],
+        "note": "s9 feature table and warning confirmed. The page also excludes agent tools, app events, app objects, CMS, SCIM and six scopes (CPQ quotes, lead scoring, crm.schemas.custom.write). Associations bulk endpoints and pipeline writes are unsupported too."
+      },
+      {
+        "id": "v8",
+        "claim": "Installers must be Super Admins, or have Marketplace Access plus the permission behind each scope (stated without qualification for the recommended user-level path).",
+        "location": "paths[marketplace-listed].stages[ml-pilot].access; nuances[n-installer-perms]; nuances[n-account-vs-user]",
+        "verdict": "corrected",
+        "before": "The installer must be a Super Admin, or have Marketplace Access plus the permissions behind each requested scope.",
+        "after": "Account-level: Super Admin or Marketplace Access plus scope permissions; user-level: any user whose own permissions cover the scopes installs for themselves (one connection per user). A related open question was added on how the 25 cap counts per-user installs.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3",
+          "s9"
+        ],
+        "note": "s3's permission rule describes account-wide installs. s9: with user-level access 'each user that meets your app's configured scopes that correspond to their in-app permissions can install the app'. The guide recommends isUserLevel: true but never said installs then happen per user."
+      },
+      {
+        "id": "v9",
+        "claim": "Private distribution: up to 10 allowlisted accounts, or 100 when the app is created in a Solutions Partner portal; you can switch to marketplace later without breaking installs.",
+        "location": "paths[private-allowlist]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "note": "s3 'up to 10 allowlisted accounts'; s4 'up to 100 customer portals when the app is created in a Solutions Partner portal' and 'switch it to marketplace distribution later without interrupting existing installs'."
+      },
+      {
+        "id": "v10",
+        "claim": "For internal agents, private OAuth distribution is the HubSpot route.",
+        "location": "paths[private-allowlist].whenYouNeedIt",
+        "verdict": "corrected",
+        "before": "(Service Keys not mentioned)",
+        "after": "whenYouNeedIt notes HubSpot now recommends Service Keys (public beta) for agents that only touch your own portal",
+        "method": "cross_source",
+        "sourceIds": [
+          "s31",
+          "s32"
+        ],
+        "note": "s31 (Sep 15, 2026): 'use Service Keys (now available) ... the recommended path for lightweight integrations, internal tools, and AI agent integrations'. s32: Service keys in public beta under Settings > Integrations > Service Keys. Whether Composio accepts a service key is unknown, so that went to openQuestions."
+      },
+      {
+        "id": "v11",
+        "claim": "Access tokens last 30 minutes (expires_in 1800); the authorization code is single-use and must be exchanged within a 'short window'.",
+        "location": "oauth.tokenLifetime",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s1",
+          "s7",
+          "s36"
+        ],
+        "note": "s1 'currently 30 minutes'; s7 and the 2026-09 page (s36) both say 'expires after 30 minutes' and 'a short window to exchange it'. No exact code lifetime is documented."
+      },
+      {
+        "id": "v12",
+        "claim": "Refresh tokens don't expire 'for now'; a refresh may return a new refresh token; refresh failures return 'refresh token is invalid, expired or revoked'.",
+        "location": "oauth.refreshTokens; nuances[n-refresh]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s18",
+          "s7"
+        ],
+        "note": "s18 (Jan 13, 2026): 'Refresh tokens don’t expire (for now)!' and 'potentially a new refresh token - always use the latest one'. The error string is in s7, which was added to n-refresh's sources. No 2026 changelog announces refresh-token expiry."
+      },
+      {
+        "id": "v13",
+        "claim": "The token URL to use is https://api.hubapi.com/oauth/v3/token, with 2026-09 as the date-versioned equivalent.",
+        "location": "oauth.tokenUrl; nuances[n-metadata]; paths[marketplace-listed].stages[ml-maintain].steps[ml-versions]; artifacts[a-checklist]",
+        "verdict": "corrected",
+        "before": "Primary: /oauth/v3/token (2026-09 as an equivalent)",
+        "after": "Primary: /oauth/2026-09/token; v3 accepted today but a numbered path unsupported from September 2027; v1 replaced before Feb 16, 2027",
+        "method": "cross_source",
+        "sourceIds": [
+          "s35",
+          "s31",
+          "s36",
+          "s27",
+          "s6"
+        ],
+        "note": "s35: 'In September 2027, all legacy APIs using semantic versions (e.g., v4, v3, v2, and v1) will no longer be supported'. s31: 'Do not use v3 or v4 as an intermediate step', and certified apps calling v1-v4 after Sept 2027 lose certification. s36 documents /oauth/2026-09/token. /oauth/v3/token still satisfies the May 2026 listing rule (s6), but leading with it sets developers up for a second migration."
+      },
+      {
+        "id": "v14",
+        "claim": "PKCE is supported (S256).",
+        "location": "oauth.pkce; oauth.evidence; openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s8",
+          "s16"
+        ],
+        "note": "Re-ran p1 and p4: metadata still advertises S256, the 2026-09 token schema lists code_verifier, and the consent UI has MISSING_CODE_CHALLENGE ('PKCE is required for this authorization request') plus a 'PKCE is required to test OAuth 2.1 installs' banner. Against that, a HubSpot community reply (seen only in search snippets) and a Jul 2026 Truto guide say standard apps don't use PKCE. 'supported' stays, but the conflict is now in the evidence note and the open question."
+      },
+      {
+        "id": "v15",
+        "claim": "No dynamic client registration and no OIDC discovery; api.hubapi.com serves the MCP server's metadata; app.hubspot.com metadata still points at /oauth/v1/token.",
+        "location": "oauth.dynamicClientRegistration; nuances[n-metadata]; probes[p1,p2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s16"
+        ],
+        "note": "Re-ran 2026-10-20: openid-configuration 404; no registration_endpoint on app.hubspot.com, api.hubapi.com or mcp.hubspot.com; api.hubapi.com issuer is https://mcp.hubspot.com; app.hubspot.com token_endpoint is .../oauth/v1/token."
+      },
+      {
+        "id": "v16",
+        "claim": "Token endpoints v3, 2026-09, 2026-03 and v1 are all live and return RFC 6749 errors.",
+        "location": "oauth.tokenUrl; probes[p5]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s8",
+          "s27"
+        ],
+        "note": "Re-ran p5: all four return HTTP 400 BAD_AUTH_CODE with error/error_description. Added a control: /oauth/2099-01/token returns 404, so the 400s show real endpoints, not a catch-all."
+      },
+      {
+        "id": "v17",
+        "claim": "Marketplace OAuth apps get 110 requests per 10 s per installing account (CRM Search excluded), the API Limit Increase add-on doesn't apply, and the figures are documented only for 2025.2/2026.03.",
+        "location": "nuances[n-rate-limits]; steps[ml-limits]; steps[pa-limits]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s14"
+        ],
+        "note": "s14 re-read: still names only legacy public apps and '2025.2 and 2026.03'; the private-app table is 100/190 per 10 s and 250k/625k/1M per day. The guide's caveat and medium confidence fit."
+      },
+      {
+        "id": "v18",
+        "claim": "Bring your own app to get your own rate-limit pool.",
+        "location": "composio.note",
+        "verdict": "corrected",
+        "before": "your own rate-limit pool",
+        "after": "your own rate-limit pool (HubSpot meters per installing account, so sharing matters mainly when one portal connects through several Composio-based products)",
+        "method": "cross_source",
+        "sourceIds": [
+          "s23",
+          "s14"
+        ],
+        "note": "s23 says managed apps share quota across Composio users. HubSpot meters each app per installing account (s14), so the shared pool matters mainly when one portal is connected through several Composio-based products. A clarifying clause was added (inferred)."
+      },
+      {
+        "id": "v19",
+        "claim": "Legacy public app UI creation was disabled May 26, 2026 (new accounts) and June 23, 2026 (existing accounts); new apps are CLI projects.",
+        "location": "requirements[r-cli]; summary.drivers; nuances[n-legacy-gone]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s13"
+        ],
+        "note": "s13 dates confirmed. create-an-app docs describe only `hs project create` / `hs get-started`."
+      },
+      {
+        "id": "v20",
+        "claim": "Legacy developer accounts were merged into standard accounts on March 9, 2026; super admins and partner admins have developer access, others need a Developer seat or the 'Developer tools access' permission; up to 10 free test accounts with a 90-day enterprise trial.",
+        "location": "requirements[r-account]; steps[ml-account/up-account/pa-account]; steps[ml-test]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s12",
+          "s26"
+        ],
+        "note": "s12 and s26 quotes confirmed. Re-ran p6: /signup-hubspot/developers still 302s to /signup-hubspot/crm?intent=developer, and developer-projects and mcp-auth-apps 307 to login."
+      },
+      {
+        "id": "v21",
+        "claim": "From Nov 2, 2026 new listings must be on a supported platform (legacy apps and 2023.2/2025.1 rejected); new listings must use OAuth v3 endpoints; since Mar 31, 2026 demo videos replace test credentials.",
+        "location": "requirements[r-versions]; steps[ml-listing]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s6"
+        ],
+        "note": "All confirmed in the May 7, 2026 changelog. It lists the date-based /oauth/2026-03/token paths under 'OAuth v3 endpoints'."
+      },
+      {
+        "id": "v22",
+        "claim": "Projects 2025.2 must migrate to 2026.09 by March 2027; v4 APIs become unsupported on March 30, 2027.",
+        "location": "requirements[r-cli]; steps[ml-versions]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s31"
+        ],
+        "note": "s31: 'Apps on the Projects 2025.2 framework, or older, need to migrate to the current version (2026.09) by March 2027' and 'Support for v4 is ending ... March 30, 2027'."
+      },
+      {
+        "id": "v23",
+        "claim": "Coarse scopes are being replaced by granular ones from Sept 8, 2026, and granular-scope migration is a listing requirement.",
+        "location": "summary.drivers[5]",
+        "verdict": "corrected",
+        "before": "supported platform versions, OAuth v3 or date-versioned token endpoints, and granular-scope migrations are all listing requirements",
+        "after": "platform version and OAuth endpoints are listing requirements; numbered APIs go unsupported by Sept 2027; granular migration is a recommendation",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s17",
+          "s5"
+        ],
+        "note": "s17 describes per-app migrations with an Auto rollout date and recommends granular scopes. s5's minimum and listing requirements don't mention granular scopes. The earlier pass fixed this in r-scopes, but the driver still said it."
+      },
+      {
+        "id": "v24",
+        "claim": "Composio's recommended setup (only `oauth` required, tool scopes optional) works with granular scope names.",
+        "location": "nuances[n-scope-categories]; blockers[b-scope-mismatch]",
+        "verdict": "corrected",
+        "before": "(no warning) / 'or a deprecated coarse scope name was used'",
+        "after": "Warning that Composio's example uses coarse tickets/timeline; the mismatch cause is Composio sending coarse names while the app declares granular ones",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s22",
+          "s17"
+        ],
+        "note": "s22's own Example B puts the coarse `tickets timeline` scopes in optional_scopes. A developer who copies it while declaring the granular names in app-hsmeta.json (as this guide's manifest does) gets a scope mismatch. A warning was added, and the blocker cause was reworded from an unverified 'deprecated coarse scope name' error."
+      },
+      {
+        "id": "v25",
+        "claim": "Composio offers a managed HubSpot OAuth app; it is 'still awaiting HubSpot approval' (so users see the unverified-app warning) and can't add new scopes; HubSpot webhook triggers need your own app ID and developer API key.",
+        "location": "composio",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s21",
+          "s22"
+        ],
+        "note": "Re-fetched toolkits/hubspot.md (Version 20261015_00, 287 tools, Auth OAUTH2, API_KEY, 'Composio-managed OAuth available? Yes'). HUBSPOT is listed on managed-auth (s21)."
+      },
+      {
+        "id": "v26",
+        "claim": "Managed auth enforces a 15-minute minimum polling interval, and the Composio dashboard shows the redirect URI to register.",
+        "location": "composio.note; steps[*-redirect]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s23",
+          "s24"
+        ],
+        "note": "s23 quotes confirmed. s24 still prints https://backend.composio.dev/api/v3/toolkits/auth/callback and the retired 'Create App' flow, as the guide says."
+      },
+      {
+        "id": "v27",
+        "claim": "On May 25, 2026 Composio disclosed the incident; HubSpot rotated tokens for apps using Composio's managed or custom auth May 25-29 and found no customer compromise.",
+        "location": "nuances[n-composio-incident]; composio.note",
+        "verdict": "corrected",
+        "before": "On May 25, 2026 Composio disclosed unauthorized access...",
+        "after": "In May 2026 Composio disclosed ... (its incident post is dated May 21; HubSpot's notice says May 25)",
+        "method": "cross_source",
+        "sourceIds": [
+          "s29",
+          "s30"
+        ],
+        "note": "The HubSpot Trust Center notice (May 28; updates May 29 and June 3) is confirmed. Composio's own incident post is dated May 21, 2026, with a timeline from May 21, so 'disclosed on May 25' is HubSpot's framing, not the disclosure date."
+      },
+      {
+        "id": "v28",
+        "claim": "Costs: the guide gave no HubSpot fees for listing or certification.",
+        "location": "requirements[r-cost] (new)",
+        "verdict": "corrected",
+        "before": "(no cost statement)",
+        "after": "r-cost: no HubSpot fees to list, certify or for Marketplace installs; no revenue share",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s33",
+          "s34"
+        ],
+        "note": "The protocol requires costs. s33: 'we do not charge you a fee to list or certify your apps ... There is no revenue sharing.' The TPP Agreement (s34) section 6 says 'No Fees'. A requirement with category cost was added."
+      },
+      {
+        "id": "v29",
+        "claim": "Technology Partner Program Agreement: agree to it to list; HubSpot can refuse or unpublish at any time.",
+        "location": "requirements[r-tpp]; artifacts[a-checklist]",
+        "verdict": "corrected",
+        "before": "Listing requires agreeing to the TPP Agreement; HubSpot can refuse or unpublish at any time.",
+        "after": "Adds: no fees; termination risk if installs fall below 3 at 90 days after publication or publication isn't completed within 30 days",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s34",
+          "s5"
+        ],
+        "note": "The agreement (Last Modified May 4, 2026) section 13.3 adds an ongoing obligation the guide left out: HubSpot may terminate if you 'drop below three (3) installs ninety (90) days after we publish your listing', or don't finish publication requirements within 30 days of acceptance."
+      },
+      {
+        "id": "v30",
+        "claim": "Uninstalling stale portals with DELETE /appinstalls/v3/external-install frees room under the 25-install cap.",
+        "location": "paths[unlisted-pilot].stages[up-maintain].steps[up-count]; blockers[b-cap]",
+        "verdict": "downgraded",
+        "before": "Uninstall stale or churned portals (implied to free cap slots), confidence medium",
+        "after": "Probably frees a slot, but not documented; confidence low; open question added",
+        "method": "cross_source",
+        "sourceIds": [
+          "s4",
+          "s6"
+        ],
+        "note": "The endpoint is documented (s6), but no HubSpot page says the cap counts current rather than lifetime installs. The only evidence is community threads where staff suggested uninstalling to get under the private-app limit. The step's confidence was lowered to low, the caveat added, and an open question created."
+      },
+      {
+        "id": "v31",
+        "claim": "AUP must be signed before installs outside test accounts; domain verification usually within an hour (up to 48 h), one domain per account, TXT re-checked regularly; unverified installs require typing 'I accept the risk'.",
+        "location": "requirements[r-aup, r-domain]; steps[ml-aup, ml-domain, up-onboard]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3"
+        ],
+        "note": "All quotes are in s3 as of 2026-10-20. The typed confirmation is tied to the app 'not yet been verified by the HubSpot Ecosystem Quality team', so a verified domain alone doesn't remove it."
+      },
+      {
+        "id": "v32",
+        "claim": "Install-time error strings ('I accept the risk', installation limit, AUP unsigned, allowlist, scope mismatch, redirect, developer-account block, /authorize/user route).",
+        "location": "blockers[*]; probes[p3,p4]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s3"
+        ],
+        "note": "Re-downloaded oauth-ui static-1.13537/bundles/public.js (3,981,919 bytes, still the version the authorize page references) and found every quoted string."
+      },
+      {
+        "id": "v33",
+        "claim": "Sensitive and highly_sensitive scopes for marketplace apps need an Ecosystem Quality request; the token-security questionnaire 'will also be' applied there.",
+        "location": "requirements[r-scopes]; oauth.scopes",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s15",
+          "s6"
+        ],
+        "note": "s15: 'you’ll need to request access to specific sensitive scopes from HubSpot’s Ecosystem Quality team'. It names 2025.2 and 2026.03, not 2026.09. The s6 footnote is future tense, as the guide now says."
+      },
+      {
+        "id": "v34",
+        "claim": "Listing wizard: seven tabs, up to 8 screenshots, 800x800 icon, demo video, Super Admin submits, one app in review at a time; Seamless install requires redirecting back to returnUrl.",
+        "location": "paths[marketplace-listed].stages[ml-review]; nuances[n-seamless-composio]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s20",
+          "s5",
+          "s19"
+        ],
+        "note": "s20: 'seven tabs', 'up to eight images', '800px by 800px', 'must be a Super Admin'. s5: one app at a time. s19: 'Redirecting back to HubSpot is required to avoid an infinite login loop.'"
+      },
+      {
+        "id": "v35",
+        "claim": "Recommended path difficulty 4 (Hard).",
+        "location": "summary.difficulty; paths[marketplace-listed].difficulty",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s5",
+          "s33"
+        ],
+        "note": "A multi-week manual review with feedback rounds fits rubric 4. It isn't 5: the 3-install threshold is small and documented, listing is free (s33), and HubSpot's discretion to refuse is the standard Marketplace clause, not a partner application."
+      },
+      {
+        "id": "v36",
+        "claim": "Hands-on effort: 16-40 h (listed), 2-6 h (unlisted), 2-5 h (private).",
+        "location": "paths[*].handsOnEffortHours",
+        "verdict": "unverifiable",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s5",
+          "s20",
+          "s25"
+        ],
+        "note": "No provider estimate exists. s25's case study gives calendar weeks, not hours. The ranges are already labelled inferred, so they were left unchanged."
+      },
+      {
+        "id": "v37",
+        "claim": "Composio offers a managed HubSpot OAuth app (evidence kind 'tested')",
+        "location": "composio.evidence",
+        "verdict": "downgraded",
+        "before": "kind 'tested'",
+        "after": "kind 'documented' (confidence still high)",
+        "method": "cross_source",
+        "sourceIds": [
+          "s21",
+          "s22"
+        ],
+        "note": "Cross-guide calibration. Probe p7 fetched Composio's toolkit doc, so it observed documentation, not behaviour. The GitHub, Instagram, LinkedIn, Notion, Salesforce and Shopify guides ran the same kind of composio_lookup probe and tag managed status 'documented'. The claim itself still stands (v25), and Composio's managed-auth page still lists HubSpot as managed."
+      },
+      {
+        "id": "v38",
+        "claim": "Marketplace review wait label '~2-10 weeks after you submit'",
+        "location": "paths[marketplace-listed].approvalWaitDays.label; paths[unlisted-pilot].stages[up-maintain].steps[up-plan-listing].duration",
+        "verdict": "corrected",
+        "before": "'~2-10 weeks after you submit'; empty step duration",
+        "after": "'10 days to about 10.5 weeks after you submit'; 'Minutes to decide; the listing work itself is the Marketplace-listed path'",
+        "method": "cross_source",
+        "sourceIds": [
+          "s5"
+        ],
+        "note": "Labels only. The numbers are unchanged (10-74 days). 10 days is about 1.5 weeks and 74 days about 10.5 weeks, so the old label overstated the minimum and understated the maximum. The pass also filled the guide's one empty step duration."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+      "title": "OAuth Quickstart Guide",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "The access token will expire after the number of seconds given in the expires_in field of the response, currently 30 minutes."
+    },
+    {
+      "id": "s2",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+      "title": "Working with OAuth",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "For security reasons, this URL must use https in production. (When testing using localhost, http can be used.) You also must use a domain, as IP addresses are not supported."
+    },
+    {
+      "id": "s3",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot",
+      "title": "Manage apps in HubSpot",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Marketplace OAuth app prior to listing: can be installed in up to 25 accounts (not including developer test accounts)."
+    },
+    {
+      "id": "s4",
+      "url": "https://developers.hubspot.com/changelog/new-marketplace-distribution-app-install-limits",
+      "title": "New Marketplace Distribution App Install Limits (changelog, Sep 22, 2025)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Starting on September 22nd, 2025, apps that are created or migrated to version 2025.2 are capped at 25 installs until they are listed on the HubSpot Marketplace."
+    },
+    {
+      "id": "s5",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements",
+      "title": "App listing requirements in the HubSpot Marketplace",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Installs: your app must have at least three active, unique installs."
+    },
+    {
+      "id": "s6",
+      "url": "https://developers.hubspot.com/changelog/app-listing-and-app-certification-requirement-updates-for-may-2026",
+      "title": "App Listing and App Certification Requirement Updates for May 2026 (changelog)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Effective immediately, all new app listings, certification submissions, and apps undergoing recertification, must use the new OAuth v3 endpoints."
+    },
+    {
+      "id": "s7",
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/manage-oauth-tokens",
+      "title": "Manage OAuth access tokens using the v3 APIs",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "This token is provided as a Bearer token in the request, and expires after 30 minutes."
+    },
+    {
+      "id": "s8",
+      "url": "https://developers.hubspot.com/docs/api-reference/latest/authentication/oauth-tokens/refresh-oauth-token",
+      "title": "OAuth token endpoint (2026-09 API reference)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Authenticates a client and returns access and refresh tokens."
+    },
+    {
+      "id": "s9",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/user-level-apps",
+      "title": "Configure user-level access for an app",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Please note: existing apps using account-level access cannot currently be migrated to user-level access."
+    },
+    {
+      "id": "s10",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/app-configuration",
+      "title": "App configuration (app-hsmeta.json reference)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Each app must have at least one auth redirect URL, and it must use HTTPS. The only exception is that http://localhost is allowed for testing."
+    },
+    {
+      "id": "s11",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+      "title": "Scopes",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Optional scopes: scopes that are not required to successfully install your app."
+    },
+    {
+      "id": "s12",
+      "url": "https://developers.hubspot.com/docs/getting-started/account-types",
+      "title": "HubSpot Account Types",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "as of March 9, 2026, all legacy developer accounts were migrated to standard HubSpot accounts."
+    },
+    {
+      "id": "s13",
+      "url": "https://developers.hubspot.com/changelog/legacy-public-app-creation-sunset",
+      "title": "Legacy Public App Creation Sunset (changelog, Apr 23, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Beginning May 26, 2026, the ability to create new legacy public apps via the Developer Platform UI will be permanently disabled."
+    },
+    {
+      "id": "s14",
+      "url": "https://developers.hubspot.com/docs/developer-tooling/platform/usage-guidelines",
+      "title": "API usage guidelines and limits",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "each HubSpot account that installs your app is limited to 110 requests every 10 seconds."
+    },
+    {
+      "id": "s15",
+      "url": "https://developers.hubspot.com/docs/api-reference/latest/crm/properties/sensitive-data",
+      "title": "Access and manage Sensitive Data",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "you’ll need to request access to specific sensitive scopes from HubSpot’s Ecosystem Quality team."
+    },
+    {
+      "id": "s16",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/integrate-with-the-remote-hubspot-mcp-server",
+      "title": "Integrate AI tools with the HubSpot MCP server",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "PKCE is required for authenticating with HubSpot's MCP server."
+    },
+    {
+      "id": "s17",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/migrate-an-app/update-your-app-to-granular-scopes",
+      "title": "Update your app to use granular scopes",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Starting on September 8, 2026, HubSpot has introduced new granular scopes to replace the remaining coarse-grained scopes for specific APIs."
+    },
+    {
+      "id": "s18",
+      "url": "https://developers.hubspot.com/blog/oauth-token-management-hubspot-integrations",
+      "title": "Production-Ready OAuth Token Management for HubSpot Integrations (HubSpot Developer Blog, Jan 13, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Refresh tokens don’t expire (for now)! They stay valid indefinitely unless the user uninstalls your app or you revoke them manually."
+    },
+    {
+      "id": "s19",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/understand-app-install-flow",
+      "title": "Understand app installation flow with the option for partner sign in",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Redirecting back to HubSpot is required to avoid an infinite login loop."
+    },
+    {
+      "id": "s20",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/listing-your-app",
+      "title": "HubSpot Marketplace | Listing your app",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "In the Demo video section, upload a video to show how your app works."
+    },
+    {
+      "id": "s21",
+      "url": "https://docs.composio.dev/toolkits/managed-auth",
+      "title": "Composio - Managed OAuth apps",
+      "publisher": "composio",
+      "accessedAt": "2026-10-19",
+      "excerpt": "A toolkit appears under Composio-managed OAuth available when Composio manages at least one OAuth method."
+    },
+    {
+      "id": "s22",
+      "url": "https://docs.composio.dev/toolkits/hubspot",
+      "title": "Composio - HubSpot toolkit",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "HubSpot shows this warning because the default Composio-managed HubSpot OAuth app is still awaiting HubSpot approval."
+    },
+    {
+      "id": "s23",
+      "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+      "title": "Composio - Managed vs custom auth",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "For OAuth toolkits, the dashboard shows the redirect URI to add in the provider's developer portal."
+    },
+    {
+      "id": "s24",
+      "url": "https://composio.dev/auth/hubspot",
+      "title": "Composio - How to create OAuth credentials for HubSpot",
+      "publisher": "composio",
+      "accessedAt": "2026-10-19",
+      "excerpt": "A developer account is required because you’ll need to create a public app, which must be linked to a developer account to work with the HubSpot API."
+    },
+    {
+      "id": "s25",
+      "url": "https://appnigma.ai/blogs/hubspot-marketplace-complete-guide/",
+      "title": "HubSpot Marketplace: The Complete Guide for ISVs and B2B SaaS Builders (2026), Appnigma, Jun 24, 2026",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Timeline in 2026: 2-4 weeks for most submissions, longer for complex apps or apps with security questionnaire follow-up."
+    },
+    {
+      "id": "s26",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/developer-seats",
+      "title": "Manage developer seats",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "By default, all super admins and partner admins have access to the developer platform."
+    },
+    {
+      "id": "s27",
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/v1/migration-guide",
+      "title": "Migrate from the OAuth v1 API to the latest date-based versioned API",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "On February 16, 2027, HubSpot will deprecate the legacy OAuth v1 endpoints in favor of the latest OAuth API (2026-03)."
+    },
+    {
+      "id": "s28",
+      "url": "https://www.sidekickstrategies.com/hubspot-updates/hubspot-marketplace-submission-eligibility-active-installs",
+      "title": "HubSpot Marketplace Active Installs Eligibility Update (Sidekick Strategies, Sep 11, 2026)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "developers can now see their active install count inside their Developer Account dashboard, updated once per day."
+    },
+    {
+      "id": "s29",
+      "url": "https://trust.hubspot.com/",
+      "title": "HubSpot Trust Center: Composio security incident notice (May 28, 2026, updated June 3, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "HubSpot Security rotated OAuth tokens and API keys for apps using Composio's managed or custom authorization options"
+    },
+    {
+      "id": "s30",
+      "url": "https://composio.dev/blog/composio-may-2026-security-incident",
+      "title": "Composio May 2026 security incident update (updated Sep 16, 2026)",
+      "publisher": "composio",
+      "accessedAt": "2026-10-20",
+      "excerpt": "APIs no longer return connected-account tokens or custom OAuth client secrets."
+    },
+    {
+      "id": "s31",
+      "url": "https://developers.hubspot.com/changelog/legacy-apis-and-legacy-apps-whats-going-unsupported-and-when",
+      "title": "Legacy APIs and Apps: What's Going Unsupported and When (changelog, Sep 15, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Projects 2025.2 is going unsupported. ... need to migrate to the current version (2026.09) by March 2027."
+    },
+    {
+      "id": "s32",
+      "url": "https://developers.hubspot.com/changelog/fall-2026-spotlight",
+      "title": "Fall 2026 Spotlight - Developer / Builder Updates (changelog, Sep 15, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Projects version 2026.09 is now generally available"
+    },
+    {
+      "id": "s33",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/apply-for-certification/certification-requirements",
+      "title": "HubSpot Marketplace | App certification requirements (FAQ)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "No, we do not charge you a fee to list or certify your apps in the HubSpot Marketplace, nor a fee for installs generated through the HubSpot Marketplace. There is no revenue sharing."
+    },
+    {
+      "id": "s34",
+      "url": "https://legal.hubspot.com/technology-program-agreement",
+      "title": "HubSpot Technology Partner Program Agreement (Last Modified May 4, 2026)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "If you are accepted to the Technology Partner Program and: (i) drop below three (3) installs ninety (90) days after we publish your listing on our integrations page, or (ii) do not complete all the requirements for publication of your listing within thirty (30) days after acceptance, then we may terminate this agreement immediately on written notice to you."
+    },
+    {
+      "id": "s35",
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/migration-guide",
+      "title": "Legacy API migration guide",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "In September 2027, all legacy APIs using semantic versions (e.g., v4, v3, v2, and v1) will no longer be supported."
+    },
+    {
+      "id": "s36",
+      "url": "https://developers.hubspot.com/docs/api-reference/latest/authentication/manage-oauth-tokens",
+      "title": "Manage OAuth access tokens with the 2026-09 API",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "To get OAuth access and refresh tokens, make a URL-form encoded POST request to /oauth/2026-09/token."
+    }
+  ],
+  "meta": {
+    "generatedAt": "2026-10-19T18:09:11Z",
+    "generatedBy": "library",
+    "model": "claude-code-research-agent",
+    "durationSec": 1494,
+    "lastReviewedAt": "2026-10-20T06:13:05Z"
+  }
+}

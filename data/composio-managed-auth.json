@@ -1,0 +1,2010 @@
+{
+ "source": "https://docs.composio.dev/toolkits/managed-auth.md",
+ "fetchedAt": "2026-10-19",
+ "toolkits": [
+  {
+   "name": "Airtable",
+   "slug": "AIRTABLE",
+   "managed": true,
+   "docsPath": "/toolkits/airtable.md"
+  },
+  {
+   "name": "Apaleo",
+   "slug": "APALEO",
+   "managed": true,
+   "docsPath": "/toolkits/apaleo.md"
+  },
+  {
+   "name": "Asana",
+   "slug": "ASANA",
+   "managed": true,
+   "docsPath": "/toolkits/asana.md"
+  },
+  {
+   "name": "Attio",
+   "slug": "ATTIO",
+   "managed": true,
+   "docsPath": "/toolkits/attio.md"
+  },
+  {
+   "name": "Basecamp",
+   "slug": "BASECAMP",
+   "managed": true,
+   "docsPath": "/toolkits/basecamp.md"
+  },
+  {
+   "name": "Bitbucket",
+   "slug": "BITBUCKET",
+   "managed": true,
+   "docsPath": "/toolkits/bitbucket.md"
+  },
+  {
+   "name": "Blackbaud",
+   "slug": "BLACKBAUD",
+   "managed": true,
+   "docsPath": "/toolkits/blackbaud.md"
+  },
+  {
+   "name": "Boldsign",
+   "slug": "BOLDSIGN",
+   "managed": true,
+   "docsPath": "/toolkits/boldsign.md"
+  },
+  {
+   "name": "Box",
+   "slug": "BOX",
+   "managed": true,
+   "docsPath": "/toolkits/box.md"
+  },
+  {
+   "name": "Cal",
+   "slug": "CAL",
+   "managed": true,
+   "docsPath": "/toolkits/cal.md"
+  },
+  {
+   "name": "Calendly",
+   "slug": "CALENDLY",
+   "managed": true,
+   "docsPath": "/toolkits/calendly.md"
+  },
+  {
+   "name": "Canva",
+   "slug": "CANVA",
+   "managed": true,
+   "docsPath": "/toolkits/canva.md"
+  },
+  {
+   "name": "Capsule CRM",
+   "slug": "CAPSULE_CRM",
+   "managed": true,
+   "docsPath": "/toolkits/capsule_crm.md"
+  },
+  {
+   "name": "ClickUp",
+   "slug": "CLICKUP",
+   "managed": true,
+   "docsPath": "/toolkits/clickup.md"
+  },
+  {
+   "name": "Confluence",
+   "slug": "CONFLUENCE",
+   "managed": true,
+   "docsPath": "/toolkits/confluence.md"
+  },
+  {
+   "name": "Contentful",
+   "slug": "CONTENTFUL",
+   "managed": true,
+   "docsPath": "/toolkits/contentful.md"
+  },
+  {
+   "name": "Crowdin",
+   "slug": "CROWDIN",
+   "managed": true,
+   "docsPath": "/toolkits/crowdin.md"
+  },
+  {
+   "name": "Dart",
+   "slug": "DART",
+   "managed": true,
+   "docsPath": "/toolkits/dart.md"
+  },
+  {
+   "name": "Daytona",
+   "slug": "DAYTONA",
+   "managed": true,
+   "docsPath": "/toolkits/daytona.md"
+  },
+  {
+   "name": "Dialpad",
+   "slug": "DIALPAD",
+   "managed": true,
+   "docsPath": "/toolkits/dialpad.md"
+  },
+  {
+   "name": "Discord",
+   "slug": "DISCORD",
+   "managed": true,
+   "docsPath": "/toolkits/discord.md"
+  },
+  {
+   "name": "Discord Bot",
+   "slug": "DISCORDBOT",
+   "managed": true,
+   "docsPath": "/toolkits/discordbot.md"
+  },
+  {
+   "name": "Dropbox",
+   "slug": "DROPBOX",
+   "managed": true,
+   "docsPath": "/toolkits/dropbox.md"
+  },
+  {
+   "name": "Dub",
+   "slug": "DUB",
+   "managed": true,
+   "docsPath": "/toolkits/dub.md"
+  },
+  {
+   "name": "Dynamics 365",
+   "slug": "DYNAMICS365",
+   "managed": true,
+   "docsPath": "/toolkits/dynamics365.md"
+  },
+  {
+   "name": "Eventbrite",
+   "slug": "EVENTBRITE",
+   "managed": true,
+   "docsPath": "/toolkits/eventbrite.md"
+  },
+  {
+   "name": "Excel",
+   "slug": "EXCEL",
+   "managed": true,
+   "docsPath": "/toolkits/excel.md"
+  },
+  {
+   "name": "Exist",
+   "slug": "EXIST",
+   "managed": true,
+   "docsPath": "/toolkits/exist.md"
+  },
+  {
+   "name": "Facebook",
+   "slug": "FACEBOOK",
+   "managed": true,
+   "docsPath": "/toolkits/facebook.md"
+  },
+  {
+   "name": "Fathom",
+   "slug": "FATHOM",
+   "managed": true,
+   "docsPath": "/toolkits/fathom.md"
+  },
+  {
+   "name": "Figma",
+   "slug": "FIGMA",
+   "managed": true,
+   "docsPath": "/toolkits/figma.md"
+  },
+  {
+   "name": "Freeagent",
+   "slug": "FREEAGENT",
+   "managed": true,
+   "docsPath": "/toolkits/freeagent.md"
+  },
+  {
+   "name": "FreshBooks",
+   "slug": "FRESHBOOKS",
+   "managed": true,
+   "docsPath": "/toolkits/freshbooks.md"
+  },
+  {
+   "name": "GitHub",
+   "slug": "GITHUB",
+   "managed": true,
+   "docsPath": "/toolkits/github.md"
+  },
+  {
+   "name": "GitLab",
+   "slug": "GITLAB",
+   "managed": true,
+   "docsPath": "/toolkits/gitlab.md"
+  },
+  {
+   "name": "Gmail",
+   "slug": "GMAIL",
+   "managed": true,
+   "docsPath": "/toolkits/gmail.md"
+  },
+  {
+   "name": "Gong",
+   "slug": "GONG",
+   "managed": true,
+   "docsPath": "/toolkits/gong.md"
+  },
+  {
+   "name": "Google Ads",
+   "slug": "GOOGLEADS",
+   "managed": true,
+   "docsPath": "/toolkits/googleads.md"
+  },
+  {
+   "name": "Google Analytics",
+   "slug": "GOOGLE_ANALYTICS",
+   "managed": true,
+   "docsPath": "/toolkits/google_analytics.md"
+  },
+  {
+   "name": "Google BigQuery",
+   "slug": "GOOGLEBIGQUERY",
+   "managed": true,
+   "docsPath": "/toolkits/googlebigquery.md"
+  },
+  {
+   "name": "Google Calendar",
+   "slug": "GOOGLECALENDAR",
+   "managed": true,
+   "docsPath": "/toolkits/googlecalendar.md"
+  },
+  {
+   "name": "Google Classroom",
+   "slug": "GOOGLE_CLASSROOM",
+   "managed": true,
+   "docsPath": "/toolkits/google_classroom.md"
+  },
+  {
+   "name": "Google Docs",
+   "slug": "GOOGLEDOCS",
+   "managed": true,
+   "docsPath": "/toolkits/googledocs.md"
+  },
+  {
+   "name": "Google Drive",
+   "slug": "GOOGLEDRIVE",
+   "managed": true,
+   "docsPath": "/toolkits/googledrive.md"
+  },
+  {
+   "name": "Google Maps",
+   "slug": "GOOGLE_MAPS",
+   "managed": true,
+   "docsPath": "/toolkits/google_maps.md"
+  },
+  {
+   "name": "Google Meet",
+   "slug": "GOOGLEMEET",
+   "managed": true,
+   "docsPath": "/toolkits/googlemeet.md"
+  },
+  {
+   "name": "Google Photos",
+   "slug": "GOOGLEPHOTOS",
+   "managed": true,
+   "docsPath": "/toolkits/googlephotos.md"
+  },
+  {
+   "name": "Google Search Console",
+   "slug": "GOOGLE_SEARCH_CONSOLE",
+   "managed": true,
+   "docsPath": "/toolkits/google_search_console.md"
+  },
+  {
+   "name": "Google Sheets",
+   "slug": "GOOGLESHEETS",
+   "managed": true,
+   "docsPath": "/toolkits/googlesheets.md"
+  },
+  {
+   "name": "Google Slides",
+   "slug": "GOOGLESLIDES",
+   "managed": true,
+   "docsPath": "/toolkits/googleslides.md"
+  },
+  {
+   "name": "Google Super",
+   "slug": "GOOGLESUPER",
+   "managed": true,
+   "docsPath": "/toolkits/googlesuper.md"
+  },
+  {
+   "name": "Google Tasks",
+   "slug": "GOOGLETASKS",
+   "managed": true,
+   "docsPath": "/toolkits/googletasks.md"
+  },
+  {
+   "name": "Gorgias",
+   "slug": "GORGIAS",
+   "managed": true,
+   "docsPath": "/toolkits/gorgias.md"
+  },
+  {
+   "name": "Greenhouse",
+   "slug": "GREENHOUSE",
+   "managed": true,
+   "docsPath": "/toolkits/greenhouse.md"
+  },
+  {
+   "name": "Gumroad",
+   "slug": "GUMROAD",
+   "managed": true,
+   "docsPath": "/toolkits/gumroad.md"
+  },
+  {
+   "name": "Harvest",
+   "slug": "HARVEST",
+   "managed": true,
+   "docsPath": "/toolkits/harvest.md"
+  },
+  {
+   "name": "HubSpot",
+   "slug": "HUBSPOT",
+   "managed": true,
+   "docsPath": "/toolkits/hubspot.md"
+  },
+  {
+   "name": "Hugging Face",
+   "slug": "HUGGING_FACE",
+   "managed": true,
+   "docsPath": "/toolkits/hugging_face.md"
+  },
+  {
+   "name": "Instagram",
+   "slug": "INSTAGRAM",
+   "managed": true,
+   "docsPath": "/toolkits/instagram.md"
+  },
+  {
+   "name": "Intercom",
+   "slug": "INTERCOM",
+   "managed": true,
+   "docsPath": "/toolkits/intercom.md"
+  },
+  {
+   "name": "Jira",
+   "slug": "JIRA",
+   "managed": true,
+   "docsPath": "/toolkits/jira.md"
+  },
+  {
+   "name": "Kit",
+   "slug": "KIT",
+   "managed": true,
+   "docsPath": "/toolkits/kit.md"
+  },
+  {
+   "name": "Linear",
+   "slug": "LINEAR",
+   "managed": true,
+   "docsPath": "/toolkits/linear.md"
+  },
+  {
+   "name": "LinkedIn",
+   "slug": "LINKEDIN",
+   "managed": true,
+   "docsPath": "/toolkits/linkedin.md"
+  },
+  {
+   "name": "Linkhut",
+   "slug": "LINKHUT",
+   "managed": true,
+   "docsPath": "/toolkits/linkhut.md"
+  },
+  {
+   "name": "Mailchimp",
+   "slug": "MAILCHIMP",
+   "managed": true,
+   "docsPath": "/toolkits/mailchimp.md"
+  },
+  {
+   "name": "Microsoft Teams",
+   "slug": "MICROSOFT_TEAMS",
+   "managed": true,
+   "docsPath": "/toolkits/microsoft_teams.md"
+  },
+  {
+   "name": "Miro",
+   "slug": "MIRO",
+   "managed": true,
+   "docsPath": "/toolkits/miro.md"
+  },
+  {
+   "name": "Monday",
+   "slug": "MONDAY",
+   "managed": true,
+   "docsPath": "/toolkits/monday.md"
+  },
+  {
+   "name": "Moneybird",
+   "slug": "MONEYBIRD",
+   "managed": true,
+   "docsPath": "/toolkits/moneybird.md"
+  },
+  {
+   "name": "Mural",
+   "slug": "MURAL",
+   "managed": true,
+   "docsPath": "/toolkits/mural.md"
+  },
+  {
+   "name": "NotebookLM",
+   "slug": "NOTEBOOK_LM",
+   "managed": true,
+   "docsPath": "/toolkits/notebook_lm.md"
+  },
+  {
+   "name": "Notion",
+   "slug": "NOTION",
+   "managed": true,
+   "docsPath": "/toolkits/notion.md"
+  },
+  {
+   "name": "Omnisend",
+   "slug": "OMNISEND",
+   "managed": true,
+   "docsPath": "/toolkits/omnisend.md"
+  },
+  {
+   "name": "OneDrive",
+   "slug": "ONE_DRIVE",
+   "managed": true,
+   "docsPath": "/toolkits/one_drive.md"
+  },
+  {
+   "name": "Outlook",
+   "slug": "OUTLOOK",
+   "managed": true,
+   "docsPath": "/toolkits/outlook.md"
+  },
+  {
+   "name": "PagerDuty",
+   "slug": "PAGERDUTY",
+   "managed": true,
+   "docsPath": "/toolkits/pagerduty.md"
+  },
+  {
+   "name": "Pinterest",
+   "slug": "PINTEREST",
+   "managed": true,
+   "docsPath": "/toolkits/pinterest.md"
+  },
+  {
+   "name": "Pinterest Ads",
+   "slug": "PINTEREST_ADS",
+   "managed": true,
+   "docsPath": "/toolkits/pinterest_ads.md"
+  },
+  {
+   "name": "Prisma",
+   "slug": "PRISMA",
+   "managed": true,
+   "docsPath": "/toolkits/prisma.md"
+  },
+  {
+   "name": "Productboard",
+   "slug": "PRODUCTBOARD",
+   "managed": true,
+   "docsPath": "/toolkits/productboard.md"
+  },
+  {
+   "name": "Pushbullet",
+   "slug": "PUSHBULLET",
+   "managed": true,
+   "docsPath": "/toolkits/pushbullet.md"
+  },
+  {
+   "name": "QuickBooks",
+   "slug": "QUICKBOOKS",
+   "managed": true,
+   "docsPath": "/toolkits/quickbooks.md"
+  },
+  {
+   "name": "Reddit",
+   "slug": "REDDIT",
+   "managed": true,
+   "docsPath": "/toolkits/reddit.md"
+  },
+  {
+   "name": "Reddit Ads",
+   "slug": "REDDIT_ADS",
+   "managed": true,
+   "docsPath": "/toolkits/reddit_ads.md"
+  },
+  {
+   "name": "Roam",
+   "slug": "ROAM",
+   "managed": true,
+   "docsPath": "/toolkits/roam.md"
+  },
+  {
+   "name": "Salesforce",
+   "slug": "SALESFORCE",
+   "managed": true,
+   "docsPath": "/toolkits/salesforce.md"
+  },
+  {
+   "name": "Sentry",
+   "slug": "SENTRY",
+   "managed": true,
+   "docsPath": "/toolkits/sentry.md"
+  },
+  {
+   "name": "Servicem8",
+   "slug": "SERVICEM8",
+   "managed": true,
+   "docsPath": "/toolkits/servicem8.md"
+  },
+  {
+   "name": "SharePoint",
+   "slug": "SHARE_POINT",
+   "managed": true,
+   "docsPath": "/toolkits/share_point.md"
+  },
+  {
+   "name": "Shippo",
+   "slug": "SHIPPO",
+   "managed": true,
+   "docsPath": "/toolkits/shippo.md"
+  },
+  {
+   "name": "Slack",
+   "slug": "SLACK",
+   "managed": true,
+   "docsPath": "/toolkits/slack.md"
+  },
+  {
+   "name": "Slackbot",
+   "slug": "SLACKBOT",
+   "managed": true,
+   "docsPath": "/toolkits/slackbot.md"
+  },
+  {
+   "name": "Splitwise",
+   "slug": "SPLITWISE",
+   "managed": true,
+   "docsPath": "/toolkits/splitwise.md"
+  },
+  {
+   "name": "Square",
+   "slug": "SQUARE",
+   "managed": true,
+   "docsPath": "/toolkits/square.md"
+  },
+  {
+   "name": "Stack Exchange",
+   "slug": "STACK_EXCHANGE",
+   "managed": true,
+   "docsPath": "/toolkits/stack_exchange.md"
+  },
+  {
+   "name": "Stripe",
+   "slug": "STRIPE",
+   "managed": true,
+   "docsPath": "/toolkits/stripe.md"
+  },
+  {
+   "name": "Supabase",
+   "slug": "SUPABASE",
+   "managed": true,
+   "docsPath": "/toolkits/supabase.md"
+  },
+  {
+   "name": "Ticketmaster",
+   "slug": "TICKETMASTER",
+   "managed": true,
+   "docsPath": "/toolkits/ticketmaster.md"
+  },
+  {
+   "name": "Ticktick",
+   "slug": "TICKTICK",
+   "managed": true,
+   "docsPath": "/toolkits/ticktick.md"
+  },
+  {
+   "name": "TikTok Ads",
+   "slug": "TIKTOK_ADS",
+   "managed": true,
+   "docsPath": "/toolkits/tiktok_ads.md"
+  },
+  {
+   "name": "Timely",
+   "slug": "TIMELY",
+   "managed": true,
+   "docsPath": "/toolkits/timely.md"
+  },
+  {
+   "name": "Todoist",
+   "slug": "TODOIST",
+   "managed": true,
+   "docsPath": "/toolkits/todoist.md"
+  },
+  {
+   "name": "Trello",
+   "slug": "TRELLO",
+   "managed": true,
+   "docsPath": "/toolkits/trello.md"
+  },
+  {
+   "name": "Twitch",
+   "slug": "TWITCH",
+   "managed": true,
+   "docsPath": "/toolkits/twitch.md"
+  },
+  {
+   "name": "Typeform",
+   "slug": "TYPEFORM",
+   "managed": true,
+   "docsPath": "/toolkits/typeform.md"
+  },
+  {
+   "name": "WakaTime",
+   "slug": "WAKATIME",
+   "managed": true,
+   "docsPath": "/toolkits/wakatime.md"
+  },
+  {
+   "name": "Webex",
+   "slug": "WEBEX",
+   "managed": true,
+   "docsPath": "/toolkits/webex.md"
+  },
+  {
+   "name": "WhatsApp",
+   "slug": "WHATSAPP",
+   "managed": true,
+   "docsPath": "/toolkits/whatsapp.md"
+  },
+  {
+   "name": "Wrike",
+   "slug": "WRIKE",
+   "managed": true,
+   "docsPath": "/toolkits/wrike.md"
+  },
+  {
+   "name": "Yandex",
+   "slug": "YANDEX",
+   "managed": true,
+   "docsPath": "/toolkits/yandex.md"
+  },
+  {
+   "name": "YNAB",
+   "slug": "YNAB",
+   "managed": true,
+   "docsPath": "/toolkits/ynab.md"
+  },
+  {
+   "name": "YouTube",
+   "slug": "YOUTUBE",
+   "managed": true,
+   "docsPath": "/toolkits/youtube.md"
+  },
+  {
+   "name": "Zendesk",
+   "slug": "ZENDESK",
+   "managed": true,
+   "docsPath": "/toolkits/zendesk.md"
+  },
+  {
+   "name": "Zeplin",
+   "slug": "ZEPLIN",
+   "managed": true,
+   "docsPath": "/toolkits/zeplin.md"
+  },
+  {
+   "name": "Zoho",
+   "slug": "ZOHO",
+   "managed": true,
+   "docsPath": "/toolkits/zoho.md"
+  },
+  {
+   "name": "Zoho Bigin",
+   "slug": "ZOHO_BIGIN",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_bigin.md"
+  },
+  {
+   "name": "Zoho Books",
+   "slug": "ZOHO_BOOKS",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_books.md"
+  },
+  {
+   "name": "Zoho Desk",
+   "slug": "ZOHO_DESK",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_desk.md"
+  },
+  {
+   "name": "Zoho Inventory",
+   "slug": "ZOHO_INVENTORY",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_inventory.md"
+  },
+  {
+   "name": "Zoho Invoice",
+   "slug": "ZOHO_INVOICE",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_invoice.md"
+  },
+  {
+   "name": "Zoho Mail",
+   "slug": "ZOHO_MAIL",
+   "managed": true,
+   "docsPath": "/toolkits/zoho_mail.md"
+  },
+  {
+   "name": "Zoom",
+   "slug": "ZOOM",
+   "managed": true,
+   "docsPath": "/toolkits/zoom.md"
+  },
+  {
+   "name": "Adobe Marketing Agent MCP",
+   "slug": "ADOBE_MARKETING_AGENT_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/adobe_marketing_agent_mcp.md"
+  },
+  {
+   "name": "AdRoll",
+   "slug": "ADROLL",
+   "managed": false,
+   "docsPath": "/toolkits/adroll.md"
+  },
+  {
+   "name": "Ahrefs",
+   "slug": "AHREFS",
+   "managed": false,
+   "docsPath": "/toolkits/ahrefs.md"
+  },
+  {
+   "name": "Ahrefs MCP",
+   "slug": "AHREFS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/ahrefs_mcp.md"
+  },
+  {
+   "name": "Aircall",
+   "slug": "AIRCALL",
+   "managed": false,
+   "docsPath": "/toolkits/aircall.md"
+  },
+  {
+   "name": "AirOps MCP",
+   "slug": "AIROPS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/airops_mcp.md"
+  },
+  {
+   "name": "Alpaca",
+   "slug": "ALPACA",
+   "managed": false,
+   "docsPath": "/toolkits/alpaca.md"
+  },
+  {
+   "name": "Amplitude MCP",
+   "slug": "AMPLITUDE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/amplitude_mcp.md"
+  },
+  {
+   "name": "Apify MCP",
+   "slug": "APIFY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/apify_mcp.md"
+  },
+  {
+   "name": "Atlassian MCP",
+   "slug": "ATLASSIAN_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/atlassian_mcp.md"
+  },
+  {
+   "name": "Audioscrape MCP",
+   "slug": "AUDIOSCRAPE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/audioscrape_mcp.md"
+  },
+  {
+   "name": "AWeber",
+   "slug": "AWEBER",
+   "managed": false,
+   "docsPath": "/toolkits/aweber.md"
+  },
+  {
+   "name": "Azure Monitor Activity Log",
+   "slug": "AZURE_MONITOR_ACTIVITY_LOG",
+   "managed": false,
+   "docsPath": "/toolkits/azure_monitor_activity_log.md"
+  },
+  {
+   "name": "BambooHR",
+   "slug": "BAMBOOHR",
+   "managed": false,
+   "docsPath": "/toolkits/bamboohr.md"
+  },
+  {
+   "name": "Beeminder",
+   "slug": "BEEMINDER",
+   "managed": false,
+   "docsPath": "/toolkits/beeminder.md"
+  },
+  {
+   "name": "Better Stack MCP",
+   "slug": "BETTER_STACK_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/better_stack_mcp.md"
+  },
+  {
+   "name": "Bitly",
+   "slug": "BITLY",
+   "managed": false,
+   "docsPath": "/toolkits/bitly.md"
+  },
+  {
+   "name": "Bitwarden",
+   "slug": "BITWARDEN",
+   "managed": false,
+   "docsPath": "/toolkits/bitwarden.md"
+  },
+  {
+   "name": "Blackboard",
+   "slug": "BLACKBOARD",
+   "managed": false,
+   "docsPath": "/toolkits/blackboard.md"
+  },
+  {
+   "name": "Borneo",
+   "slug": "BORNEO",
+   "managed": false,
+   "docsPath": "/toolkits/borneo.md"
+  },
+  {
+   "name": "Box MCP",
+   "slug": "BOX_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/box_mcp.md"
+  },
+  {
+   "name": "Brevo",
+   "slug": "BREVO",
+   "managed": false,
+   "docsPath": "/toolkits/brevo.md"
+  },
+  {
+   "name": "Brex",
+   "slug": "BREX",
+   "managed": false,
+   "docsPath": "/toolkits/brex.md"
+  },
+  {
+   "name": "Buffer",
+   "slug": "BUFFER",
+   "managed": false,
+   "docsPath": "/toolkits/buffer.md"
+  },
+  {
+   "name": "Calendly MCP",
+   "slug": "CALENDLY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/calendly_mcp.md"
+  },
+  {
+   "name": "Candid MCP",
+   "slug": "CANDID_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/candid_mcp.md"
+  },
+  {
+   "name": "Canva MCP",
+   "slug": "CANVA_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/canva_mcp.md"
+  },
+  {
+   "name": "Canvas",
+   "slug": "CANVAS",
+   "managed": false,
+   "docsPath": "/toolkits/canvas.md"
+  },
+  {
+   "name": "Carbon Voice MCP",
+   "slug": "CARBON_VOICE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/carbon_voice_mcp.md"
+  },
+  {
+   "name": "Cashfree MCP",
+   "slug": "CASHFREE_PAYMENTS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/cashfree_payments_mcp.md"
+  },
+  {
+   "name": "Circleback MCP",
+   "slug": "CIRCLEBACK_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/circleback_mcp.md"
+  },
+  {
+   "name": "Clarify MCP",
+   "slug": "CLARIFY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/clarify_mcp.md"
+  },
+  {
+   "name": "Clay MCP",
+   "slug": "CLAY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/clay_mcp.md"
+  },
+  {
+   "name": "ClickHouse MCP",
+   "slug": "CLICKHOUSE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/clickhouse_mcp.md"
+  },
+  {
+   "name": "ClickUp MCP",
+   "slug": "CLICKUP_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/clickup_mcp.md"
+  },
+  {
+   "name": "Clio Manage",
+   "slug": "CLIO_MANAGE",
+   "managed": false,
+   "docsPath": "/toolkits/clio_manage.md"
+  },
+  {
+   "name": "Clockify",
+   "slug": "CLOCKIFY",
+   "managed": false,
+   "docsPath": "/toolkits/clockify.md"
+  },
+  {
+   "name": "Close MCP",
+   "slug": "CLOSE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/close_mcp.md"
+  },
+  {
+   "name": "Cloudflare MCP",
+   "slug": "CLOUDFLARE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/cloudflare_mcp.md"
+  },
+  {
+   "name": "Clover",
+   "slug": "CLOVER",
+   "managed": false,
+   "docsPath": "/toolkits/clover.md"
+  },
+  {
+   "name": "Coinbase Agents MCP",
+   "slug": "COINBASE_AGENTS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/coinbase_agents_mcp.md"
+  },
+  {
+   "name": "Coinbase Wallet MCP",
+   "slug": "COINBASE_WALLET_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/coinbase_wallet_mcp.md"
+  },
+  {
+   "name": "Commerce Layer",
+   "slug": "COMMERCE_LAYER",
+   "managed": false,
+   "docsPath": "/toolkits/commerce_layer.md"
+  },
+  {
+   "name": "Common Room MCP",
+   "slug": "COMMON_ROOM_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/common_room_mcp.md"
+  },
+  {
+   "name": "Consensus MCP",
+   "slug": "CONSENSUS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/consensus_mcp.md"
+  },
+  {
+   "name": "Constant Contact",
+   "slug": "CONSTANT_CONTACT",
+   "managed": false,
+   "docsPath": "/toolkits/constant_contact.md"
+  },
+  {
+   "name": "Contacts+",
+   "slug": "CONTACTS_PLUS",
+   "managed": false,
+   "docsPath": "/toolkits/contacts_plus.md"
+  },
+  {
+   "name": "Contentsquare MCP",
+   "slug": "CONTENTSQUARE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/contentsquare_mcp.md"
+  },
+  {
+   "name": "Coupa",
+   "slug": "COUPA",
+   "managed": false,
+   "docsPath": "/toolkits/coupa.md"
+  },
+  {
+   "name": "Cradl AI",
+   "slug": "CRADL_AI",
+   "managed": false,
+   "docsPath": "/toolkits/cradl_ai.md"
+  },
+  {
+   "name": "Craft MCP",
+   "slug": "CRAFT_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/craft_mcp.md"
+  },
+  {
+   "name": "Customer.io MCP",
+   "slug": "CUSTOMERIO_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/customerio_mcp.md"
+  },
+  {
+   "name": "D2L Brightspace",
+   "slug": "D2LBRIGHTSPACE",
+   "managed": false,
+   "docsPath": "/toolkits/d2lbrightspace.md"
+  },
+  {
+   "name": "Databricks",
+   "slug": "DATABRICKS",
+   "managed": false,
+   "docsPath": "/toolkits/databricks.md"
+  },
+  {
+   "name": "Datadog",
+   "slug": "DATADOG",
+   "managed": false,
+   "docsPath": "/toolkits/datadog.md"
+  },
+  {
+   "name": "Datadog MCP",
+   "slug": "DATADOG_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/datadog_mcp.md"
+  },
+  {
+   "name": "Descript MCP",
+   "slug": "DESCRIPT_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/descript_mcp.md"
+  },
+  {
+   "name": "DevCycle",
+   "slug": "DEV_CYCLE",
+   "managed": false,
+   "docsPath": "/toolkits/dev_cycle.md"
+  },
+  {
+   "name": "DigitalOcean",
+   "slug": "DIGITAL_OCEAN",
+   "managed": false,
+   "docsPath": "/toolkits/digital_ocean.md"
+  },
+  {
+   "name": "Disqus",
+   "slug": "DISQUS",
+   "managed": false,
+   "docsPath": "/toolkits/disqus.md"
+  },
+  {
+   "name": "DocuSign",
+   "slug": "DOCUSIGN",
+   "managed": false,
+   "docsPath": "/toolkits/docusign.md"
+  },
+  {
+   "name": "Dribbble",
+   "slug": "DRIBBBLE",
+   "managed": false,
+   "docsPath": "/toolkits/dribbble.md"
+  },
+  {
+   "name": "Dropbox Sign",
+   "slug": "DROPBOX_SIGN",
+   "managed": false,
+   "docsPath": "/toolkits/dropbox_sign.md"
+  },
+  {
+   "name": "Egnyte",
+   "slug": "EGNYTE",
+   "managed": false,
+   "docsPath": "/toolkits/egnyte.md"
+  },
+  {
+   "name": "Epic Games",
+   "slug": "EPIC_GAMES",
+   "managed": false,
+   "docsPath": "/toolkits/epic_games.md"
+  },
+  {
+   "name": "Era Context MCP",
+   "slug": "ERA_CONTEXT_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/era_context_mcp.md"
+  },
+  {
+   "name": "Eraser MCP",
+   "slug": "ERASER_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/eraser_mcp.md"
+  },
+  {
+   "name": "Fellow.ai MCP",
+   "slug": "FELLOW_AI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/fellow_ai_mcp.md"
+  },
+  {
+   "name": "Financial Datasets AI MCP",
+   "slug": "FINANCIAL_DATASETS_AI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/financial_datasets_ai_mcp.md"
+  },
+  {
+   "name": "Follow Up Boss",
+   "slug": "FOLLOW_UP_BOSS",
+   "managed": false,
+   "docsPath": "/toolkits/follow_up_boss.md"
+  },
+  {
+   "name": "FuseAI MCP",
+   "slug": "FUSEAI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/fuseai_mcp.md"
+  },
+  {
+   "name": "Gagelist",
+   "slug": "GAGELIST",
+   "managed": false,
+   "docsPath": "/toolkits/gagelist.md"
+  },
+  {
+   "name": "GetResponse",
+   "slug": "GETRESPONSE",
+   "managed": false,
+   "docsPath": "/toolkits/getresponse.md"
+  },
+  {
+   "name": "Glide MCP",
+   "slug": "GLIDE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/glide_mcp.md"
+  },
+  {
+   "name": "GoCardless MCP",
+   "slug": "GOCARDLESS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/gocardless_mcp.md"
+  },
+  {
+   "name": "Google Admin",
+   "slug": "GOOGLE_ADMIN",
+   "managed": false,
+   "docsPath": "/toolkits/google_admin.md"
+  },
+  {
+   "name": "Google AdSense",
+   "slug": "GOOGLE_ADSENSE",
+   "managed": false,
+   "docsPath": "/toolkits/google_adsense.md"
+  },
+  {
+   "name": "Google Chat",
+   "slug": "GOOGLE_CHAT",
+   "managed": false,
+   "docsPath": "/toolkits/google_chat.md"
+  },
+  {
+   "name": "Google Data Studio",
+   "slug": "GOOGLE_DATA_STUDIO",
+   "managed": false,
+   "docsPath": "/toolkits/google_data_studio.md"
+  },
+  {
+   "name": "Googlecontacts",
+   "slug": "GOOGLECONTACTS",
+   "managed": false,
+   "docsPath": "/toolkits/googlecontacts.md"
+  },
+  {
+   "name": "Googleforms",
+   "slug": "GOOGLEFORMS",
+   "managed": false,
+   "docsPath": "/toolkits/googleforms.md"
+  },
+  {
+   "name": "Grafana Cloud MCP",
+   "slug": "GRAFANA_CLOUD_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/grafana_cloud_mcp.md"
+  },
+  {
+   "name": "Granola MCP",
+   "slug": "GRANOLA_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/granola_mcp.md"
+  },
+  {
+   "name": "Greptile MCP",
+   "slug": "GREPTILE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/greptile_mcp.md"
+  },
+  {
+   "name": "Gusto",
+   "slug": "GUSTO",
+   "managed": false,
+   "docsPath": "/toolkits/gusto.md"
+  },
+  {
+   "name": "Help Scout",
+   "slug": "HELP_SCOUT",
+   "managed": false,
+   "docsPath": "/toolkits/help_scout.md"
+  },
+  {
+   "name": "Higgsfield MCP",
+   "slug": "HIGGSFIELD_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/higgsfield_mcp.md"
+  },
+  {
+   "name": "HighLevel Agency",
+   "slug": "HIGHLEVEL_AGENCY",
+   "managed": false,
+   "docsPath": "/toolkits/highlevel_agency.md"
+  },
+  {
+   "name": "HighLevel Location",
+   "slug": "HIGHLEVEL_LOCATION",
+   "managed": false,
+   "docsPath": "/toolkits/highlevel_location.md"
+  },
+  {
+   "name": "Honeycomb MCP",
+   "slug": "HONEYCOMB_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/honeycomb_mcp.md"
+  },
+  {
+   "name": "Ignav Flights MCP",
+   "slug": "IGNAV_FLIGHTS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/ignav_flights_mcp.md"
+  },
+  {
+   "name": "Jentic MCP",
+   "slug": "JENTIC_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/jentic_mcp.md"
+  },
+  {
+   "name": "Jobber",
+   "slug": "JOBBER",
+   "managed": false,
+   "docsPath": "/toolkits/jobber.md"
+  },
+  {
+   "name": "Kernel MCP",
+   "slug": "KERNEL_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/kernel_mcp.md"
+  },
+  {
+   "name": "Kintone REST",
+   "slug": "KINTONE_REST",
+   "managed": false,
+   "docsPath": "/toolkits/kintone_rest.md"
+  },
+  {
+   "name": "Klaviyo",
+   "slug": "KLAVIYO",
+   "managed": false,
+   "docsPath": "/toolkits/klaviyo.md"
+  },
+  {
+   "name": "Kommo",
+   "slug": "KOMMO",
+   "managed": false,
+   "docsPath": "/toolkits/kommo.md"
+  },
+  {
+   "name": "LaunchDarkly",
+   "slug": "LAUNCH_DARKLY",
+   "managed": false,
+   "docsPath": "/toolkits/launch_darkly.md"
+  },
+  {
+   "name": "Legal Data Hunter MCP",
+   "slug": "LEGAL_DATA_HUNTER_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/legal_data_hunter_mcp.md"
+  },
+  {
+   "name": "Lever",
+   "slug": "LEVER",
+   "managed": false,
+   "docsPath": "/toolkits/lever.md"
+  },
+  {
+   "name": "Lightspeed Retail X-Series",
+   "slug": "LIGHTSPEED",
+   "managed": false,
+   "docsPath": "/toolkits/lightspeed.md"
+  },
+  {
+   "name": "LILT MCP",
+   "slug": "LILT_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/lilt_mcp.md"
+  },
+  {
+   "name": "Linear MCP",
+   "slug": "LINEAR_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/linear_mcp.md"
+  },
+  {
+   "name": "Linkedin Ads",
+   "slug": "LINKEDIN_ADS",
+   "managed": false,
+   "docsPath": "/toolkits/linkedin_ads.md"
+  },
+  {
+   "name": "Lodgify",
+   "slug": "LODGIFY",
+   "managed": false,
+   "docsPath": "/toolkits/lodgify.md"
+  },
+  {
+   "name": "Longbridge MCP",
+   "slug": "LONGBRIDGE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/longbridge_mcp.md"
+  },
+  {
+   "name": "Lucid MCP",
+   "slug": "LUCID_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/lucid_mcp.md"
+  },
+  {
+   "name": "Magic Patterns MCP",
+   "slug": "MAGIC_PATTERNS_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/magic_patterns_mcp.md"
+  },
+  {
+   "name": "MarcoPolo MCP",
+   "slug": "MARCOPOLO_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/marcopolo_mcp.md"
+  },
+  {
+   "name": "Matterport",
+   "slug": "MATTERPORT",
+   "managed": false,
+   "docsPath": "/toolkits/matterport.md"
+  },
+  {
+   "name": "Mercury MCP",
+   "slug": "MERCURY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/mercury_mcp.md"
+  },
+  {
+   "name": "Meta Ads",
+   "slug": "METAADS",
+   "managed": false,
+   "docsPath": "/toolkits/metaads.md"
+  },
+  {
+   "name": "Microsoft OneNote",
+   "slug": "ONENOTE",
+   "managed": false,
+   "docsPath": "/toolkits/onenote.md"
+  },
+  {
+   "name": "Microsoft Power Bi",
+   "slug": "MICROSOFT_POWER_BI",
+   "managed": false,
+   "docsPath": "/toolkits/microsoft_power_bi.md"
+  },
+  {
+   "name": "Microsoft To Do",
+   "slug": "MICROSOFT_TODO",
+   "managed": false,
+   "docsPath": "/toolkits/microsoft_todo.md"
+  },
+  {
+   "name": "Midpage MCP",
+   "slug": "MIDPAGE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/midpage_mcp.md"
+  },
+  {
+   "name": "Mintlify MCP",
+   "slug": "MINTLIFY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/mintlify_mcp.md"
+  },
+  {
+   "name": "Mobbin MCP",
+   "slug": "MOBBIN_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/mobbin_mcp.md"
+  },
+  {
+   "name": "Modem MCP",
+   "slug": "MODEM_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/modem_mcp.md"
+  },
+  {
+   "name": "Monday MCP",
+   "slug": "MONDAY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/monday_mcp.md"
+  },
+  {
+   "name": "MongoDB",
+   "slug": "MONGODB",
+   "managed": false,
+   "docsPath": "/toolkits/mongodb.md"
+  },
+  {
+   "name": "MongoDB MCP",
+   "slug": "MONGODB_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/mongodb_mcp.md"
+  },
+  {
+   "name": "Neo4J",
+   "slug": "NEO4J",
+   "managed": false,
+   "docsPath": "/toolkits/neo4j.md"
+  },
+  {
+   "name": "Neon MCP",
+   "slug": "NEON_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/neon_mcp.md"
+  },
+  {
+   "name": "Netlify MCP",
+   "slug": "NETLIFY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/netlify_mcp.md"
+  },
+  {
+   "name": "Netsuite",
+   "slug": "NETSUITE",
+   "managed": false,
+   "docsPath": "/toolkits/netsuite.md"
+  },
+  {
+   "name": "Notion MCP",
+   "slug": "NOTION_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/notion_mcp.md"
+  },
+  {
+   "name": "Octagon MCP",
+   "slug": "OCTAGON_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/octagon_mcp.md"
+  },
+  {
+   "name": "Otter.ai MCP",
+   "slug": "OTTER_AI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/otter_ai_mcp.md"
+  },
+  {
+   "name": "PandaDoc MCP",
+   "slug": "PANDADOC_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/pandadoc_mcp.md"
+  },
+  {
+   "name": "Parallel Task MCP",
+   "slug": "PARALLEL_TASK_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/parallel_task_mcp.md"
+  },
+  {
+   "name": "Parma",
+   "slug": "PARMA",
+   "managed": false,
+   "docsPath": "/toolkits/parma.md"
+  },
+  {
+   "name": "Particl MCP",
+   "slug": "PARTICL_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/particl_mcp.md"
+  },
+  {
+   "name": "Paypal",
+   "slug": "PAYPAL",
+   "managed": false,
+   "docsPath": "/toolkits/paypal.md"
+  },
+  {
+   "name": "Peec AI MCP",
+   "slug": "PEEC_AI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/peec_ai_mcp.md"
+  },
+  {
+   "name": "Personio",
+   "slug": "PERSONIO",
+   "managed": false,
+   "docsPath": "/toolkits/personio.md"
+  },
+  {
+   "name": "Pinecone",
+   "slug": "PINECONE",
+   "managed": false,
+   "docsPath": "/toolkits/pinecone.md"
+  },
+  {
+   "name": "Pipedrive",
+   "slug": "PIPEDRIVE",
+   "managed": false,
+   "docsPath": "/toolkits/pipedrive.md"
+  },
+  {
+   "name": "Plaid MCP",
+   "slug": "PLAID_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/plaid_mcp.md"
+  },
+  {
+   "name": "Plain MCP",
+   "slug": "PLAIN_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/plain_mcp.md"
+  },
+  {
+   "name": "PlanetScale",
+   "slug": "PLANETSCALE",
+   "managed": false,
+   "docsPath": "/toolkits/planetscale.md"
+  },
+  {
+   "name": "PostHog MCP",
+   "slug": "POSTHOG_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/posthog_mcp.md"
+  },
+  {
+   "name": "Pylon MCP",
+   "slug": "PYLON_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/pylon_mcp.md"
+  },
+  {
+   "name": "QuickNode MCP",
+   "slug": "QUICKNODE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/quicknode_mcp.md"
+  },
+  {
+   "name": "Railway",
+   "slug": "RAILWAY",
+   "managed": false,
+   "docsPath": "/toolkits/railway.md"
+  },
+  {
+   "name": "Railway MCP",
+   "slug": "RAILWAY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/railway_mcp.md"
+  },
+  {
+   "name": "Ramp",
+   "slug": "RAMP",
+   "managed": false,
+   "docsPath": "/toolkits/ramp.md"
+  },
+  {
+   "name": "Ramp MCP",
+   "slug": "RAMP_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/ramp_mcp.md"
+  },
+  {
+   "name": "Razorpay",
+   "slug": "RAZORPAY",
+   "managed": false,
+   "docsPath": "/toolkits/razorpay.md"
+  },
+  {
+   "name": "Read AI MCP",
+   "slug": "READ_AI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/read_ai_mcp.md"
+  },
+  {
+   "name": "Recruitee",
+   "slug": "RECRUITEE",
+   "managed": false,
+   "docsPath": "/toolkits/recruitee.md"
+  },
+  {
+   "name": "Reloadly",
+   "slug": "RELOADLY",
+   "managed": false,
+   "docsPath": "/toolkits/reloadly.md"
+  },
+  {
+   "name": "Resend",
+   "slug": "RESEND",
+   "managed": false,
+   "docsPath": "/toolkits/resend.md"
+  },
+  {
+   "name": "Resend MCP",
+   "slug": "RESEND_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/resend_mcp.md"
+  },
+  {
+   "name": "Salesforce Service Cloud",
+   "slug": "SALESFORCE_SERVICE_CLOUD",
+   "managed": false,
+   "docsPath": "/toolkits/salesforce_service_cloud.md"
+  },
+  {
+   "name": "Scheduleonce",
+   "slug": "SCHEDULEONCE",
+   "managed": false,
+   "docsPath": "/toolkits/scheduleonce.md"
+  },
+  {
+   "name": "Scorecard MCP",
+   "slug": "SCORECARD_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/scorecard_mcp.md"
+  },
+  {
+   "name": "SearchAPI MCP",
+   "slug": "SEARCHAPI_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/searchapi_mcp.md"
+  },
+  {
+   "name": "Semrush MCP",
+   "slug": "SEMRUSH_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/semrush_mcp.md"
+  },
+  {
+   "name": "Sendloop",
+   "slug": "SENDLOOP",
+   "managed": false,
+   "docsPath": "/toolkits/sendloop.md"
+  },
+  {
+   "name": "SendPulse",
+   "slug": "SEND_PULSE",
+   "managed": false,
+   "docsPath": "/toolkits/send_pulse.md"
+  },
+  {
+   "name": "Sentry MCP",
+   "slug": "SENTRY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/sentry_mcp.md"
+  },
+  {
+   "name": "ServiceNow",
+   "slug": "SERVICENOW",
+   "managed": false,
+   "docsPath": "/toolkits/servicenow.md"
+  },
+  {
+   "name": "ServiceTitan",
+   "slug": "SERVICETITAN",
+   "managed": false,
+   "docsPath": "/toolkits/servicetitan.md"
+  },
+  {
+   "name": "SharePoint Graph",
+   "slug": "SHAREPOINT_GRAPH",
+   "managed": false,
+   "docsPath": "/toolkits/sharepoint_graph.md"
+  },
+  {
+   "name": "Shopify",
+   "slug": "SHOPIFY",
+   "managed": false,
+   "docsPath": "/toolkits/shopify.md"
+  },
+  {
+   "name": "Sideshow MCP",
+   "slug": "SIDESHOW_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/sideshow_mcp.md"
+  },
+  {
+   "name": "SignNow",
+   "slug": "SIGN_NOW",
+   "managed": false,
+   "docsPath": "/toolkits/sign_now.md"
+  },
+  {
+   "name": "Simplescraper MCP",
+   "slug": "SIMPLESCRAPER_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/simplescraper_mcp.md"
+  },
+  {
+   "name": "Snapchat",
+   "slug": "SNAPCHAT",
+   "managed": false,
+   "docsPath": "/toolkits/snapchat.md"
+  },
+  {
+   "name": "Snowflake",
+   "slug": "SNOWFLAKE",
+   "managed": false,
+   "docsPath": "/toolkits/snowflake.md"
+  },
+  {
+   "name": "SoundCloud",
+   "slug": "SOUNDCLOUD",
+   "managed": false,
+   "docsPath": "/toolkits/soundcloud.md"
+  },
+  {
+   "name": "Splice MCP",
+   "slug": "SPLICE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/splice_mcp.md"
+  },
+  {
+   "name": "Spotify",
+   "slug": "SPOTIFY",
+   "managed": false,
+   "docsPath": "/toolkits/spotify.md"
+  },
+  {
+   "name": "Statsig MCP",
+   "slug": "STATSIG_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/statsig_mcp.md"
+  },
+  {
+   "name": "Storyblok",
+   "slug": "STORYBLOK",
+   "managed": false,
+   "docsPath": "/toolkits/storyblok.md"
+  },
+  {
+   "name": "Stripe MCP",
+   "slug": "STRIPE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/stripe_mcp.md"
+  },
+  {
+   "name": "Stytch MCP",
+   "slug": "STYTCH_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/stytch_mcp.md"
+  },
+  {
+   "name": "Supabase MCP",
+   "slug": "SUPABASE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/supabase_mcp.md"
+  },
+  {
+   "name": "Supabase Read MCP",
+   "slug": "SUPABASE_READ_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/supabase_read_mcp.md"
+  },
+  {
+   "name": "SurveyMonkey",
+   "slug": "SURVEY_MONKEY",
+   "managed": false,
+   "docsPath": "/toolkits/survey_monkey.md"
+  },
+  {
+   "name": "Synthesize Bio MCP",
+   "slug": "SYNTHESIZE_BIO_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/synthesize_bio_mcp.md"
+  },
+  {
+   "name": "Tally",
+   "slug": "TALLY",
+   "managed": false,
+   "docsPath": "/toolkits/tally.md"
+  },
+  {
+   "name": "Tavily MCP",
+   "slug": "TAVILY_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/tavily_mcp.md"
+  },
+  {
+   "name": "ThoughtSpot Spotter MCP",
+   "slug": "THOUGHTSPOT_SPOTTER_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/thoughtspot_spotter_mcp.md"
+  },
+  {
+   "name": "Ticket Tailor MCP",
+   "slug": "TICKET_TAILOR_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/ticket_tailor_mcp.md"
+  },
+  {
+   "name": "Tiktok",
+   "slug": "TIKTOK",
+   "managed": false,
+   "docsPath": "/toolkits/tiktok.md"
+  },
+  {
+   "name": "TinyFish MCP",
+   "slug": "TINYFISH_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/tinyfish_mcp.md"
+  },
+  {
+   "name": "Todoist MCP",
+   "slug": "TODOIST_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/todoist_mcp.md"
+  },
+  {
+   "name": "Toneden",
+   "slug": "TONEDEN",
+   "managed": false,
+   "docsPath": "/toolkits/toneden.md"
+  },
+  {
+   "name": "Twitter",
+   "slug": "TWITTER",
+   "managed": false,
+   "docsPath": "/toolkits/twitter.md"
+  },
+  {
+   "name": "Vantage MCP",
+   "slug": "VANTAGE_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/vantage_mcp.md"
+  },
+  {
+   "name": "Vercel",
+   "slug": "VERCEL",
+   "managed": false,
+   "docsPath": "/toolkits/vercel.md"
+  },
+  {
+   "name": "Vercel MCP",
+   "slug": "VERCEL_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/vercel_mcp.md"
+  },
+  {
+   "name": "Vibe",
+   "slug": "VIBE",
+   "managed": false,
+   "docsPath": "/toolkits/vibe.md"
+  },
+  {
+   "name": "Vibe Prospecting MCP",
+   "slug": "VIBE_PROSPECTING_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/vibe_prospecting_mcp.md"
+  },
+  {
+   "name": "vidIQ MCP",
+   "slug": "VIDIQ_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/vidiq_mcp.md"
+  },
+  {
+   "name": "Vimeo",
+   "slug": "VIMEO",
+   "managed": false,
+   "docsPath": "/toolkits/vimeo.md"
+  },
+  {
+   "name": "Webflow",
+   "slug": "WEBFLOW",
+   "managed": false,
+   "docsPath": "/toolkits/webflow.md"
+  },
+  {
+   "name": "Whop",
+   "slug": "WHOP",
+   "managed": false,
+   "docsPath": "/toolkits/whop.md"
+  },
+  {
+   "name": "WildApricot",
+   "slug": "WILD_APRICOT",
+   "managed": false,
+   "docsPath": "/toolkits/wild_apricot.md"
+  },
+  {
+   "name": "Wispr Flow MCP",
+   "slug": "WISPR_FLOW_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/wispr_flow_mcp.md"
+  },
+  {
+   "name": "Wix",
+   "slug": "WIX",
+   "managed": false,
+   "docsPath": "/toolkits/wix.md"
+  },
+  {
+   "name": "Wix MCP",
+   "slug": "WIX_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/wix_mcp.md"
+  },
+  {
+   "name": "WordPress.com",
+   "slug": "WORDPRESS_COM",
+   "managed": false,
+   "docsPath": "/toolkits/wordpress_com.md"
+  },
+  {
+   "name": "Workable",
+   "slug": "WORKABLE",
+   "managed": false,
+   "docsPath": "/toolkits/workable.md"
+  },
+  {
+   "name": "Workday",
+   "slug": "WORKDAY",
+   "managed": false,
+   "docsPath": "/toolkits/workday.md"
+  },
+  {
+   "name": "Xero",
+   "slug": "XERO",
+   "managed": false,
+   "docsPath": "/toolkits/xero.md"
+  },
+  {
+   "name": "Zernio MCP",
+   "slug": "ZERNIO_MCP",
+   "managed": false,
+   "docsPath": "/toolkits/zernio_mcp.md"
+  },
+  {
+   "name": "Zoom Team Chat",
+   "slug": "ZOOM_CHAT",
+   "managed": false,
+   "docsPath": "/toolkits/zoom_chat.md"
+  },
+  {
+   "name": "Zoominfo",
+   "slug": "ZOOMINFO",
+   "managed": false,
+   "docsPath": "/toolkits/zoominfo.md"
+  }
+ ]
+}

@@ -1,0 +1,2708 @@
+{
+  "schemaVersion": 1,
+  "slug": "instagram",
+  "app": {
+    "name": "Instagram",
+    "website": "https://www.instagram.com",
+    "category": "Social media"
+  },
+  "provider": {
+    "name": "Meta (Meta for Developers - Instagram Platform)",
+    "developerPortalUrl": "https://developers.facebook.com/",
+    "docsUrl": "https://developers.facebook.com/documentation/instagram-platform",
+    "appConsoleUrl": "https://developers.facebook.com/apps"
+  },
+  "oauthSupport": "limited",
+  "summary": {
+    "headline": "To let customers connect their own Instagram Business/Creator accounts to your agent, budget 1-13 weeks (typically 3-6) for Meta Business Verification, Tech Provider access verification and per-permission App Review with screencasts. Standard Access works today, but only for accounts that hold a role on your app.",
+    "overview": "Instagram OAuth is owned by Meta and configured in the Meta App Dashboard on a Business-type app, and it only serves Instagram professional (Business or Creator) accounts. The Instagram Login flavour, which Composio's toolkit uses, needs no Facebook Page and issues 60-day tokens that you refresh yourself. Accounts you own work under Standard Access with no review, but serving anyone else requires Advanced Access: Business Verification, Tech Provider access verification and App Review, then Live mode. Composio's managed app lets you prototype without any of this, but it shows Composio's branding, may lack the comment permission, and has no webhooks.",
+    "difficulty": 4,
+    "difficultyLabel": "Hard",
+    "drivers": [
+      "Advanced Access requires Business Verification of your legal business details (official documents only if Meta can't match a record)",
+      "Separate Tech Provider access verification (~5 days) for instagram_business_basic and content_publish",
+      "App Review per permission, with a screencast and unique description each; first submissions are often rejected, and 2026 reports say the dashboard now warns of up to 20 days per round (reported)",
+      "Only professional accounts can connect; personal accounts are impossible",
+      "Non-standard token lifecycle (no refresh_token; refresh the access token before day 60)",
+      "Annual Data Use Checkup (being folded into Meta's Data Access Renewal), and re-review for every new permission"
+    ],
+    "bestCase": "Your business is already verified and a verified Tech Provider, and one clean App Review submission is decided quickly (Meta's walkthrough says within a week, though 2026 reports say the dashboard now allows up to 20 days). Customers can connect about 1-3 weeks after you start, with roughly 12 hours of hands-on work.",
+    "worstCase": "Business Verification bounces on mismatched business details (Meta allows up to 14 business days per decision), then App Review rejects the screencasts two or more times at up to ~20 days per round. In one 2026 case, submissions made on May 20 and June 14 were both rejected and a third was approved on July 28 (the author, a paid consultant, reports 3-4 months overall). Webhook triggers and customer connections stay blocked the whole time."
+  },
+  "recommendedPathId": "advanced-access-instagram-login",
+  "paths": [
+    {
+      "id": "advanced-access-instagram-login",
+      "name": "Advanced Access with Instagram Login (customers connect their own accounts)",
+      "summary": "Complete Business Verification, Tech Provider access verification and App Review (a screencast and usage description for each permission), then switch the app to Live. Any Instagram Business/Creator account can then connect through your own branded Composio auth config. No Facebook Page is needed.",
+      "whenYouNeedIt": "A multi-tenant agent product where customers connect Instagram professional accounts you don't own or manage, to publish posts, reply to comments, answer DMs or read profile and media data. This is what most AI-agent integrations need.",
+      "exampleScopes": [
+        "instagram_business_basic",
+        "instagram_business_content_publish",
+        "instagram_business_manage_comments",
+        "instagram_business_manage_messages"
+      ],
+      "difficulty": 4,
+      "handsOnEffortHours": {
+        "min": 12,
+        "max": 35,
+        "label": "12-35 hours",
+        "basis": "Inferred sum. Setup and Business login configuration: 2-3 h. Privacy policy plus deauthorize and data-deletion endpoints: 2-6 h. Tester calls for each permission: 1-2 h. Making the app reviewer-testable: 2-6 h. Business Verification documents: 1-2 h. Access verification form: about 0.5 h. Screencasts for 3-4 permissions: 3-8 h. Usage descriptions: 1-2 h. Allowance for one resubmission: 2-6 h. Assumes your web app already exists.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s3",
+            "s13",
+            "s12"
+          ],
+          "confidence": "low",
+          "note": "Task list comes from Meta's review requirements. The per-task hours are estimates."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 7,
+        "max": 90,
+        "label": "1-13 weeks (typically 3-6)",
+        "basis": "Business Verification comes first: Meta says a decision 'may take up to 14 business days' (third parties report 3-10 working days; skip this if your portfolio is already verified). Access verification is decided 'within approximately 5 days' (Meta); it needs Business Verification first but is 'independent of App Review', so the two can overlap. App Review: Meta's walkthrough still says 'a decision within a week', but 2026 reports say the dashboard now warns of up to 20 days, with 17-19 day reviews reported in May 2026 (PostMoore saw 5-7 business days in April 2026; a consultant reports ~10-day averages in October 2026). Each rejection adds a full cycle: one Mar 13, 2026 rejection was approved Apr 1, 2026; in another, submissions on May 20 and Jun 14, 2026 were both rejected before a third was approved on Jul 28, 2026.",
+        "evidence": {
+          "kind": "reported",
+          "sourceIds": [
+            "s13",
+            "s12",
+            "s26",
+            "s25",
+            "s22",
+            "s23",
+            "s28",
+            "s29",
+            "s34",
+            "s35"
+          ],
+          "confidence": "medium",
+          "note": "Official per-step figures (s12, s13, s26) plus 2026 community and vendor reports (s22, s23, s28, s29, s34, s35). The 20-day dashboard notice is reported by four vendor/consultant sources (s28, s29, s34, s35), not by a Meta doc. Meta publishes no end-to-end SLA."
+        }
+      },
+      "endState": "Any Instagram Business or Creator account owner can connect your branded app and grant the permissions Meta approved, and webhooks fire for them. You then owe an annual Data Use Checkup and a new review for any added permission.",
+      "stages": [
+        {
+          "id": "b-register",
+          "name": "Register, create the app and connect a business",
+          "kind": "register",
+          "access": "Nobody yet.",
+          "steps": [
+            {
+              "id": "b-register-1",
+              "title": "Register, create a Business-type app and add Instagram (Instagram login)",
+              "detail": "Same as the Standard path: register as a Meta developer (phone and email codes), then Create App > Other > Business, then Instagram > Set up. 'API setup with Instagram login' is added automatically.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "30 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s16",
+                  "s4"
+                ],
+                "confidence": "high",
+                "note": "Meta registration and app-creation guides."
+              }
+            },
+            {
+              "id": "b-register-2",
+              "title": "Connect the app to a business portfolio",
+              "detail": "In App settings > Basic > Verification, connect the app to a business portfolio, or create one. The app must be connected to a business that has completed Business Verification before you can publish it. Any app admin can connect it, but only a business Admin can complete verification.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4",
+                  "s11"
+                ],
+                "confidence": "high",
+                "note": "\"You're required to connect your app to a business that has completed Business Verification before you can publish your app.\""
+              }
+            },
+            {
+              "id": "b-register-3",
+              "title": "Complete App settings for review",
+              "detail": "Settings > Basic: app icon at 1024x1024 with no Meta trademarks, Privacy Policy URL, App Category, and a business/contact email you monitor (review results go there). Set App Purpose to 'Clients'.",
+              "owner": "developer",
+              "agentAssist": "An agent can draft the Instagram-specific privacy policy sections: data collected, purpose, retention, and how to request deletion.",
+              "duration": "30-90 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "\"App icon (1024x1024)\", \"Privacy Policy URL\", \"App Category\", \"Business Email\"; App Purpose 'Clients'."
+              }
+            }
+          ]
+        },
+        {
+          "id": "b-configure",
+          "name": "Wire up login, callbacks and Composio",
+          "kind": "configure",
+          "access": "Only people with a role on the app. Customers cannot connect yet.",
+          "steps": [
+            {
+              "id": "b-configure-1",
+              "title": "Create a Composio auth config with your own Instagram credentials",
+              "detail": "Create an Instagram auth config with your own OAuth app in Composio. Paste its redirect URI into Business login settings > OAuth redirect URIs exactly as shown. Then paste the Instagram App ID and Instagram app secret from Business login settings into Composio.",
+              "owner": "developer",
+              "agentAssist": "An agent can cross-check the redirect URI, including any trailing slash, and confirm that the client_id is the Instagram App ID.",
+              "duration": "20 min",
+              "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s21",
+                  "s2"
+                ],
+                "confidence": "high",
+                "note": "Composio shows the redirect URI. Meta requires an exact match."
+              }
+            },
+            {
+              "id": "b-configure-2",
+              "title": "Ship the deauthorize and data-deletion callbacks",
+              "detail": "Implement HTTPS endpoints for 'Deauthorize callback URL' and 'Data deletion request URL'. The deletion callback parses the signed_request and returns JSON {url, confirmation_code}, and the url must point to a human-readable status page. Your privacy policy must also explain how users request deletion.",
+              "owner": "agent",
+              "agentAssist": "An agent can write the endpoint code and status page. A developer deploys them.",
+              "duration": "2-6 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s15",
+                  "s4"
+                ],
+                "confidence": "high",
+                "note": "\"Return a JSON response that contains a URL ... and an alphanumeric confirmation code\"."
+              }
+            },
+            {
+              "id": "b-configure-3",
+              "title": "Trim the permission list to what the agent actually uses",
+              "detail": "In the 'Complete app review' pop-up, uncheck recommended permissions you won't use. Requesting unused permissions gets the submission rejected. Each permission other than basic depends on instagram_business_basic, so include basic too.",
+              "owner": "agent",
+              "agentAssist": "An agent can map each agent tool you plan to expose to the single permission it needs.",
+              "duration": "15 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s4"
+                ],
+                "confidence": "high",
+                "note": "\"If you request permissions or features that your app does not use ... your submission will not be approved.\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "b-test",
+          "name": "Test on Standard Access and log API calls",
+          "kind": "test",
+          "access": "Only role users and Instagram testers who accepted the invite. Customers' accounts still cannot connect.",
+          "steps": [
+            {
+              "id": "b-test-1",
+              "title": "Add public Business/Creator test accounts as Instagram testers",
+              "detail": "Add one or more professional test accounts under App roles > Roles, or under Generate access tokens. The account must be public, and the invite is accepted inside Instagram. For messaging, the tester also needs a role on the Instagram professional account.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "20 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": [
+                  "s4",
+                  "s9",
+                  "s24"
+                ],
+                "confidence": "medium",
+                "note": "Meta: account \"must be public\". Messaging testers \"must have a role on your app\". Invite path reported by the community."
+              }
+            },
+            {
+              "id": "b-test-2",
+              "title": "Make at least one successful API call per requested permission",
+              "detail": "For example: basic, GET /me. content_publish, create and publish a test container. manage_comments, reply to a comment on the tester's own media. manage_messages, reply inside the 24-hour messaging window. Calls must fall within 30 days before you submit, and they take up to 2 days to be logged. Until then, 'Request advanced access' stays greyed out.",
+              "owner": "agent",
+              "agentAssist": "An agent can run these calls through Composio tools using the tester connection and record the response IDs.",
+              "duration": "1-2 h + up to 2 days logging",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s13",
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "\"The API call data will be logged within 2 days of your successful API call\"."
+              }
+            },
+            {
+              "id": "b-test-3",
+              "title": "Make the app reviewer-testable",
+              "detail": "Put the app on a public web URL. Instagram Login supports web and mobile web only, and there should be no VPN or Vercel-style protection. Add a visible 'Connect Instagram' button that follows Meta brand guidelines, a reviewer login for your own app, and an English UI.",
+              "owner": "developer",
+              "agentAssist": "An agent can prepare the step-by-step reviewer instructions (see artifact).",
+              "duration": "2-6 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "\"Confirm that your app can be loaded and tested externally\"; \"Web or mobile Web is the only platform that currently supports Instagram API with Instagram Login.\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "b-review",
+          "name": "Business Verification, access verification and App Review",
+          "kind": "review",
+          "access": "Still only role users. Nobody else can grant permissions until approval and Live mode.",
+          "steps": [
+            {
+              "id": "b-review-1",
+              "title": "Complete Business Verification",
+              "detail": "Start at App Dashboard > Settings > Basic > Verification > Start Verification, which opens the business in Meta Business Suite > Security Center. Someone with full control of the business portfolio confirms the legal business name, address, phone and website (the website must load over HTTPS), then confirms the connection by email, phone, text, WhatsApp or domain. If Meta finds no matching record it asks for official documents (for example a business license or articles of incorporation) that show the legal name plus an address or phone number. Editing the business details restarts verification.",
+              "owner": "developer",
+              "agentAssist": "An agent can make a document checklist and compare the legal name and address strings with what the portfolio shows.",
+              "duration": "1-2 h hands-on; up to 14 business days (Meta), often 3-10 working days (reported)",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s11",
+                  "s26",
+                  "s31",
+                  "s25"
+                ],
+                "confidence": "high",
+                "note": "Meta: 'A decision on your verification submission may take up to 14 business days.' Re-fetched directly from the Help Center page on 2026-10-20, along with the HTTPS-website and conditional-document wording."
+              }
+            },
+            {
+              "id": "b-review-2",
+              "title": "Complete access verification (Tech Provider)",
+              "detail": "Open App Dashboard > Basics > Verifications > Access verification, or use the link in Meta's email. A business Admin categorizes and describes how the business uses other businesses' data to serve them. This is required for instagram_business_basic and instagram_business_content_publish, among others, and Business Verification must be done first.",
+              "owner": "developer",
+              "agentAssist": "An agent can draft the use-case description (see artifact).",
+              "duration": "30 min + ~5 days decision",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12"
+                ],
+                "confidence": "high",
+                "note": "\"a decision will be made within approximately 5 days\"; list includes instagram_business_basic."
+              }
+            },
+            {
+              "id": "b-review-3",
+              "title": "Record one screencast per permission",
+              "detail": "Record in 1080p or better, with the UI in English, captions or tooltips on screen, and the mouse rather than the keyboard. Show the full Instagram login, the permission grant, and then the feature that uses that permission. Reviewers will not listen to audio.",
+              "owner": "developer",
+              "agentAssist": "An agent can write the shot list and caption text for each permission (see artifact).",
+              "duration": "3-8 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s13",
+                  "s3",
+                  "s22"
+                ],
+                "confidence": "high",
+                "note": "\"Omit audio; our reviewers will not listen to it.\" A rejection reported in 2026 was 'Screencast Not Aligned with Use Case Details'."
+              }
+            },
+            {
+              "id": "b-review-4",
+              "title": "Fill in the request and submit",
+              "detail": "Go to Instagram > API setup with Instagram login > Complete app review > Continue to app review > App Review > Requests > Edit. Write a unique usage description for each permission (Meta says 'Do not copy and paste'), add the verification instructions and reviewer credentials, and answer the data handling questions. Then click Submit for Review and accept the Platform Onboarding Terms.",
+              "owner": "developer",
+              "agentAssist": "An agent can draft the descriptions and reviewer instructions, and run the pre-submission checklist.",
+              "duration": "1-2 h",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s3",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "Submission flow per Meta's Instagram App Review page and the walkthrough."
+              }
+            },
+            {
+              "id": "b-review-5",
+              "title": "Wait for the decision and fix any rejections",
+              "detail": "Meta's walkthrough says to expect a decision within a week, but 2026 reports say the App Review dashboard now warns of up to 20 days, and reviews of 17-19 days were reported in May 2026 (one consultant reports ~10-day averages in October 2026). The rejection notice names the failing permission. Fix the screencast or description and resubmit only that package; each resubmission is another full cycle.",
+              "owner": "provider",
+              "agentAssist": "",
+              "duration": "Up to ~20 days per cycle (2026 reports); 3-13 weeks with rejections (reported)",
+              "url": "",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": [
+                  "s13",
+                  "s28",
+                  "s29",
+                  "s22",
+                  "s23",
+                  "s34",
+                  "s35"
+                ],
+                "confidence": "medium",
+                "note": "Official 'within a week' figure is contradicted by 2026 vendor reports of a 20-day dashboard notice."
+              }
+            }
+          ]
+        },
+        {
+          "id": "b-live",
+          "name": "Go Live",
+          "kind": "live",
+          "access": "Any Instagram Business or Creator account can connect and grant the approved permissions. In Live mode, unapproved permissions cannot be requested from anyone. Personal accounts can never connect.",
+          "steps": [
+            {
+              "id": "b-live-1",
+              "title": "Switch App Mode to Live after approval",
+              "detail": "Complete the Data Use Checkup or data handling questions if prompted, because they are required before going Live. Then flip the App Mode toggle. Don't switch early: Meta warns that Live mode restricts everyone, including role users, to approved permissions, and that test posts become public.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s13",
+                  "s14"
+                ],
+                "confidence": "high",
+                "note": "\"switching to Live mode prematurely may make your app unusable for users who have a role on your app\"."
+              }
+            },
+            {
+              "id": "b-live-2",
+              "title": "Verify with an account that has no role",
+              "detail": "Connect a customer-like Business account that has no app role, and call /me plus one endpoint per permission. Error code 100 ('Unsupported get request ... missing permissions') means Tech Provider verification is missing or was lost.",
+              "owner": "agent",
+              "agentAssist": "An agent can run the verification calls and interpret the error codes.",
+              "duration": "30 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s12"
+                ],
+                "confidence": "high",
+                "note": "Error 100 is returned when the app's business is not a verified Tech Provider."
+              }
+            }
+          ]
+        },
+        {
+          "id": "b-maintain",
+          "name": "Keep access",
+          "kind": "maintain",
+          "access": "Same as Live, as long as tokens, verification status and the Data Use Checkup stay current.",
+          "steps": [
+            {
+              "id": "b-maintain-1",
+              "title": "Refresh long-lived tokens before day 60",
+              "detail": "Instagram issues no OAuth refresh_token. Call GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=... once a token is at least 24 hours old and before it expires. A token that lapses requires the user to log in again. Confirm whether Composio does this for your auth config.",
+              "owner": "agent",
+              "agentAssist": "An agent can schedule refreshes and alert you before expiry.",
+              "duration": "1 h setup",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s2",
+                  "s5"
+                ],
+                "confidence": "high",
+                "note": "\"at least 24 hours old\"; \"valid for 60 days from the date at which they are refreshed\"."
+              }
+            },
+            {
+              "id": "b-maintain-2",
+              "title": "Complete the annual Data Use Checkup",
+              "detail": "An app admin certifies the permissions, allowed usage and data handling once a year, and it must be done before the app can switch to Live. Meta is consolidating the Data Use Checkup, data handling questions, App Review and the Data Protection Assessment into a single 'data access renewal' assessment, rolled out in phases, so you may receive that instead. Deadlines arrive by email to app admins; Meta's pages publish no fixed window.",
+              "owner": "developer",
+              "agentAssist": "An agent can pre-fill the answers from your privacy policy and integration notes.",
+              "duration": "1-2 h per year",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s14",
+                  "s30"
+                ],
+                "confidence": "high",
+                "note": "\"The Data Use Checkup is an annual assessment\"; data access renewal \"consolidates most of these existing assessments\"."
+              }
+            },
+            {
+              "id": "b-maintain-3",
+              "title": "Re-review for new permissions and keep verification status",
+              "detail": "Advanced Access is approved one permission at a time, so adding a permission means a new App Review. Tech Provider status lapses if Business Verification becomes unverified, if the app is disconnected from the business, or if the business is restricted.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "Per change",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s10",
+                  "s12"
+                ],
+                "confidence": "high",
+                "note": "\"Advanced Access ... must be approved on an individual permission and feature basis\"; 'Losing Verified Status'."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "standard-own-accounts",
+      "name": "Standard Access: only your own (role-holding) Instagram accounts",
+      "summary": "No App Review. Create a Business-type Meta app, add the Instagram product with Instagram Login, add your professional accounts as Instagram testers, and connect them through your own Composio auth config.",
+      "whenYouNeedIt": "Internal agents, a private pilot, or an agency setup where every Instagram account that connects belongs to you or has been given a role on your app. Not for self-serve customers.",
+      "exampleScopes": [
+        "instagram_business_basic",
+        "instagram_business_content_publish",
+        "instagram_business_manage_comments",
+        "instagram_business_manage_messages"
+      ],
+      "difficulty": 2,
+      "handsOnEffortHours": {
+        "min": 1,
+        "max": 3,
+        "label": "1-3 hours",
+        "basis": "Inferred from the dashboard steps (register, create app, add Instagram product, configure Business login settings, add testers, copy credentials into Composio). No review material is needed.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s4",
+            "s16"
+          ],
+          "confidence": "medium",
+          "note": "Step list taken from Meta's app-creation guide; time per step is an estimate."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 0,
+        "max": 0,
+        "label": "None",
+        "basis": "Standard Access is granted automatically, and App Review is 'Not required' when the app is only for a business you own or manage.",
+        "evidence": {
+          "kind": "documented",
+          "sourceIds": [
+            "s3",
+            "s10"
+          ],
+          "confidence": "high",
+          "note": "\"All Business, Consumer, and Gaming apps are automatically approved for Standard Access\"; App Review 'Not required' for own-business scenario."
+        }
+      },
+      "endState": "Instagram Business/Creator accounts that hold a role on your app (for example, Instagram testers who accepted the invite) can connect, and your agent can call the API for them. Nobody else can grant permissions. Some features, including webhooks for app users, need Advanced Access and a Live app.",
+      "stages": [
+        {
+          "id": "a-register",
+          "name": "Register and create the Meta app",
+          "kind": "register",
+          "access": "Nobody yet. The app exists only in the App Dashboard.",
+          "steps": [
+            {
+              "id": "a-register-1",
+              "title": "Register as a Meta developer",
+              "detail": "While logged into Facebook, open the registration page, agree to the Platform Terms and Developer Policies, enter the confirmation codes sent to your phone and email, and pick an occupation.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "https://developers.facebook.com/async/registration",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s16"
+                ],
+                "confidence": "high",
+                "note": "Steps 1-4 of 'Register as a Meta Developer'."
+              }
+            },
+            {
+              "id": "a-register-2",
+              "title": "Create a Business-type app",
+              "detail": "My Apps > Create App > use case 'Other' > app type 'Business' > app name and contact email. Instagram can only be added to Business-type apps. Each person can hold a developer or admin role on at most 15 apps that are not connected to a verified business, and archived apps count toward that limit.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4"
+                ],
+                "confidence": "high",
+                "note": "\"Select the Other use case\" / \"Select Business\" / \"maximum of 15 apps\"."
+              }
+            },
+            {
+              "id": "a-register-3",
+              "title": "Add the Instagram product with 'API setup with Instagram login'",
+              "detail": "On the app dashboard, scroll to Instagram and click Set up. 'API setup with Instagram login' is added automatically. Do not switch to 'API setup with Facebook login' unless you need Page-linked features: an app can use one login type, not both.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "5 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4",
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "\"API setup with Instagram login is automatically added to your app.\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "a-configure",
+          "name": "Configure Business login and Composio",
+          "kind": "configure",
+          "access": "Only Instagram accounts that hold a role on the app.",
+          "steps": [
+            {
+              "id": "a-configure-1",
+              "title": "Create a Composio auth config that uses your own OAuth app",
+              "detail": "In the Composio dashboard, create an Instagram auth config that uses your own credentials instead of Composio-managed auth. Copy the redirect URI that the dashboard shows. Do not type one in by hand.",
+              "owner": "developer",
+              "agentAssist": "An agent can walk through the auth-config fields and check that the copied redirect URI matches what you later paste into Meta.",
+              "duration": "10 min",
+              "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s21"
+                ],
+                "confidence": "high",
+                "note": "\"the dashboard shows the redirect URI to add in the provider's developer portal\"."
+              }
+            },
+            {
+              "id": "a-configure-2",
+              "title": "Register the redirect URI and the callback URLs",
+              "detail": "Go to Instagram > API setup with Instagram login > 3. Set up Instagram business login > Business login settings. Paste Composio's redirect URI into 'OAuth redirect URIs' exactly as shown, then check whether the dashboard added a trailing slash. Also fill in 'Deauthorize callback URL' and 'Data deletion request URL', then Save.",
+              "owner": "developer",
+              "agentAssist": "An agent can scaffold the deauthorize and data-deletion endpoints. Each one parses the signed_request and returns {url, confirmation_code}.",
+              "duration": "15-30 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s2",
+                  "s4",
+                  "s15"
+                ],
+                "confidence": "high",
+                "note": "\"Make sure this exactly matches one of the base URIs ... the App Dashboard might have added a trailing slash\"."
+              }
+            },
+            {
+              "id": "a-configure-3",
+              "title": "Copy the Instagram App ID and Instagram app secret into Composio",
+              "detail": "Use the 'Instagram App ID' and 'Instagram app secret' from Business login settings, not the Meta App ID under Settings > Basic. Keep the secret server-side, because it is needed for the token exchange and long-lived token calls.",
+              "owner": "developer",
+              "agentAssist": "An agent can confirm the token endpoint is reachable. An unknown client_id returns 'Invalid platform app' (probe p2).",
+              "duration": "5 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s2"
+                ],
+                "confidence": "high",
+                "note": "client_id is \"Your app's Instagram App ID displayed in ... Business login settings > Instagram App ID\"."
+              }
+            }
+          ]
+        },
+        {
+          "id": "a-test",
+          "name": "Add testers and connect",
+          "kind": "test",
+          "access": "Only Instagram professional accounts that hold a role on the app, such as Instagram testers who accepted the invite. To generate tokens from the dashboard, the account must be public.",
+          "steps": [
+            {
+              "id": "a-test-1",
+              "title": "Add Instagram testers and accept the invite",
+              "detail": "Use App roles > Roles > Instagram Testers, or Instagram > API setup with Instagram login > Generate access tokens > Add account. The account must be a Business or Creator account, and Meta's dashboard flow requires it to be public. The tester then accepts the invite in Instagram (community-reported path: Settings > Website permissions > Apps and websites > Tester invites).",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10-20 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": [
+                  "s4",
+                  "s24"
+                ],
+                "confidence": "medium",
+                "note": "Meta: \"This account must be public.\" Invite-acceptance path comes from a community README."
+              }
+            },
+            {
+              "id": "a-test-2",
+              "title": "Connect through Composio and run a smoke test",
+              "detail": "Start a Composio connection with the tester account, then call GET https://graph.instagram.com/v26.0/me?fields=user_id,username with the resulting token to confirm the right professional account is connected.",
+              "owner": "agent",
+              "agentAssist": "An agent can run the connection check and the /me call and report the account type.",
+              "duration": "15 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s1",
+                  "s19",
+                  "s33"
+                ],
+                "confidence": "medium",
+                "note": "Get started shows GET graph.instagram.com/v26.0/me?fields=user_id,username. The Composio toolkit supports Business/Creator accounts only."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "facebook-login-page-linked",
+      "name": "Advanced Access with Facebook Login for Business (Page-linked accounts)",
+      "summary": "The same verifications and App Review, but users sign in with Facebook, and each Instagram professional account must be linked to a Facebook Page that the user can manage. This path unlocks hashtag search, Business Discovery, product tagging, partnership ads and ads permissions.",
+      "whenYouNeedIt": "Your agent needs features that Instagram Login lacks, such as hashtag search, Business Discovery of other accounts, product tagging, partnership or branded-content ads, or ads_management. It also fits when your customers already run Instagram through Facebook Pages and business portfolios.",
+      "exampleScopes": [
+        "instagram_basic",
+        "instagram_content_publish",
+        "instagram_manage_comments",
+        "instagram_manage_insights",
+        "pages_show_list",
+        "pages_read_engagement"
+      ],
+      "difficulty": 4,
+      "handsOnEffortHours": {
+        "min": 15,
+        "max": 40,
+        "label": "15-40 hours",
+        "basis": "Inferred: the Instagram Login advanced path plus setting up Facebook Login for Business, mapping Page to Instagram account (/me/accounts), and recording longer screencasts that include Page selection.",
+        "evidence": {
+          "kind": "inferred",
+          "sourceIds": [
+            "s17",
+            "s3"
+          ],
+          "confidence": "low",
+          "note": "No source gives effort. This extends the estimate for the Instagram Login path."
+        }
+      },
+      "approvalWaitDays": {
+        "min": 7,
+        "max": 90,
+        "label": "1-13 weeks (typically 3-6)",
+        "basis": "Same sequence as the Instagram Login path: Business Verification (Meta: up to 14 business days), access verification (~5 days, can overlap with App Review), then App Review (Meta's docs say 'within a week'; 2026 reports say the dashboard now warns of up to 20 days per round), plus rejection cycles.",
+        "evidence": {
+          "kind": "reported",
+          "sourceIds": [
+            "s13",
+            "s12",
+            "s26",
+            "s25",
+            "s22",
+            "s23",
+            "s28",
+            "s29",
+            "s34",
+            "s35"
+          ],
+          "confidence": "medium",
+          "note": "Official per-step figures (s12, s13, s26) plus 2026 community and vendor reports (s22, s23, s28, s29, s34, s35). The 20-day dashboard notice is reported by four vendor/consultant sources (s28, s29, s34, s35), not by a Meta doc. Meta publishes no end-to-end SLA."
+        }
+      },
+      "endState": "Any Facebook user who can perform admin-equivalent tasks on a Page linked to an Instagram professional account can connect. You hold user and Page tokens, and long-lived Page tokens have no expiration date, though Meta says they can still be invalidated under certain conditions.",
+      "stages": [
+        {
+          "id": "c-register",
+          "name": "Create the app with API setup with Facebook login",
+          "kind": "register",
+          "access": "Nobody yet.",
+          "steps": [
+            {
+              "id": "c-register-1",
+              "title": "Create a Business-type app and choose 'API setup with Facebook login'",
+              "detail": "Create App > Other > Business. In the Instagram product, choose 'API setup with Facebook login' and add Facebook Login for Business. This app then cannot also use Instagram Login.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "20 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s4",
+                  "s17",
+                  "s3"
+                ],
+                "confidence": "high",
+                "note": "\"select the API setup with Facebook login\"; \"Your app can either use Facebook Login or Instagram Login but not both.\""
+              }
+            },
+            {
+              "id": "c-register-2",
+              "title": "Connect a business portfolio and fill in App settings",
+              "detail": "Fill in the same items as the Instagram Login path: business portfolio, 1024x1024 icon, privacy policy, category, contact email, and the data-deletion callback.",
+              "owner": "developer",
+              "agentAssist": "An agent can draft the privacy-policy sections and the deletion callback.",
+              "duration": "1-2 h",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s11",
+                  "s13",
+                  "s15"
+                ],
+                "confidence": "high",
+                "note": "Same App settings requirements."
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-configure",
+          "name": "Configure redirect URIs and Page mapping",
+          "kind": "configure",
+          "access": "Only role users.",
+          "steps": [
+            {
+              "id": "c-configure-1",
+              "title": "Register Composio's redirect URI under Facebook Login",
+              "detail": "Add the redirect URI from your Composio auth config to Facebook Login > Settings > Client OAuth Settings > Valid OAuth Redirect URIs. Check with Composio that its Instagram toolkit can run against a Facebook-Login app (see open questions).",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "15 min",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s17",
+                  "s21"
+                ],
+                "confidence": "medium",
+                "note": "Meta documents the redirect field. Whether the Composio toolkit works on this login type is unverified."
+              }
+            },
+            {
+              "id": "c-configure-2",
+              "title": "Map Facebook Pages to Instagram accounts",
+              "detail": "After login, call GET https://graph.facebook.com/v26.0/me/accounts?fields=id,name,access_token,instagram_business_account. Store the Page ID, the Page access token and the instagram_business_account ID for each Page. Messaging uses the Page token.",
+              "owner": "agent",
+              "agentAssist": "An agent can write the mapping code and test it.",
+              "duration": "1-3 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s17"
+                ],
+                "confidence": "high",
+                "note": "\"Capture the Page ID (id), Page access token (access_token), and Instagram Professional account ID\"."
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-test",
+          "name": "Test with role users who manage a linked Page",
+          "kind": "test",
+          "access": "Only role users who can perform tasks on a Page linked to an Instagram professional account.",
+          "steps": [
+            {
+              "id": "c-test-1",
+              "title": "Link a test Instagram professional account to a Facebook Page",
+              "detail": "The tester must be able to perform admin-equivalent tasks on the linked Page and must hold a role on the app.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "20 min",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s1"
+                ],
+                "confidence": "high",
+                "note": "\"your app user must also be able to perform admin-equivalent tasks on the linked Facebook Page.\""
+              }
+            },
+            {
+              "id": "c-test-2",
+              "title": "Make at least one successful call per permission within 30 days of submitting",
+              "detail": "Include the Page permissions you request, such as pages_show_list and pages_read_engagement.",
+              "owner": "agent",
+              "agentAssist": "An agent can run the calls with Graph API Explorer or through Composio.",
+              "duration": "1-2 h",
+              "url": "https://developers.facebook.com/tools/explorer/",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "\"Make at least 1 successful API call using each permission\"."
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-review",
+          "name": "Verifications and App Review",
+          "kind": "review",
+          "access": "Only role users.",
+          "steps": [
+            {
+              "id": "c-review-1",
+              "title": "Complete Business Verification and access verification (Tech Provider)",
+              "detail": "Same as the Instagram Login path. instagram_basic, instagram_content_publish, pages_show_list, pages_read_engagement and business_management are all on the access-verification list.",
+              "owner": "developer",
+              "agentAssist": "An agent can draft the access-verification description.",
+              "duration": "1-2 h + 1-4 weeks wait",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s11",
+                  "s12",
+                  "s26"
+                ],
+                "confidence": "high",
+                "note": "The access-verification permission list includes these."
+              }
+            },
+            {
+              "id": "c-review-2",
+              "title": "Submit App Review with screencasts that show Facebook login and Page selection",
+              "detail": "Submit one screencast and one unique description per permission. Meta's own guidance notes that private apps reviewers can't test may request only instagram_basic and instagram_manage_comments.",
+              "owner": "developer",
+              "agentAssist": "An agent can write the screencast scripts.",
+              "duration": "4-10 h",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s1",
+                  "s3",
+                  "s13"
+                ],
+                "confidence": "high",
+                "note": "'Private apps' note in the Instagram Platform overview."
+              }
+            },
+            {
+              "id": "c-review-3",
+              "title": "Wait for the decision",
+              "detail": "Meta's docs say to expect a decision within a week; 2026 reports say the dashboard now warns of up to 20 days. Each rejection means re-recording the failing permission's screencast and resubmitting.",
+              "owner": "provider",
+              "agentAssist": "",
+              "duration": "Up to ~20 days per cycle (2026 reports); 3-13 weeks with rejections (reported)",
+              "url": "",
+              "evidence": {
+                "kind": "reported",
+                "sourceIds": [
+                  "s13",
+                  "s28",
+                  "s22",
+                  "s34"
+                ],
+                "confidence": "medium",
+                "note": "Same basis as the Instagram Login path."
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-live",
+          "name": "Go Live and maintain",
+          "kind": "live",
+          "access": "Any Facebook user with tasks on a Page linked to an Instagram professional account, for approved permissions only.",
+          "steps": [
+            {
+              "id": "c-live-1",
+              "title": "Switch to Live and keep the Data Use Checkup current",
+              "detail": "Switch to Live only after approval, then complete the Data Use Checkup every year. New permissions need a new review.",
+              "owner": "developer",
+              "agentAssist": "",
+              "duration": "10 min + 1-2 h per year",
+              "url": "https://developers.facebook.com/apps",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s13",
+                  "s14"
+                ],
+                "confidence": "high",
+                "note": "Live-mode and Data Use Checkup rules."
+              }
+            },
+            {
+              "id": "c-live-2",
+              "title": "Handle token types",
+              "detail": "Long-lived user tokens last about 60 days. Long-lived Page tokens derived from them have no expiration date, but Meta says they can still 'expire or are invalidated under certain conditions' (the cited page doesn't list them; a password change or losing the Page task are the usual suspects). Re-prompt the user to log in when a Page token stops working.",
+              "owner": "agent",
+              "agentAssist": "An agent can implement the invalidation handling.",
+              "duration": "1-2 h",
+              "url": "",
+              "evidence": {
+                "kind": "documented",
+                "sourceIds": [
+                  "s18"
+                ],
+                "confidence": "medium",
+                "note": "\"Long-lived Page access token do not have an expiration date and only expire or are invalidated under certain conditions.\" Example causes are not on that page."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "composio": {
+    "managed": "yes",
+    "toolkitSlug": "instagram",
+    "note": "Composio offers a managed OAuth app for its Instagram toolkit (Instagram Login, OAuth2), so you can prototype with no Meta setup. Users then see Composio on the consent screen. Bring your own Meta app when you need your own branding, comment-management tools (Composio says the managed app may lack the comment permission and that 'an owned Meta app is the current unblock path for production usage'), real-time DMs or comments (the toolkit has 0 triggers, and webhook delivery needs a Live Meta app with your callback configured), a dedicated quota, or custom scopes. Register the exact redirect URI that Composio's dashboard shows for your auth config.",
+    "evidence": {
+      "kind": "documented",
+      "sourceIds": [
+        "s19",
+        "s20",
+        "s21"
+      ],
+      "confidence": "high",
+      "note": "Toolkit page: 'Composio-managed OAuth available? Yes' (probe p7). FAQ on the missing comment permission."
+    }
+  },
+  "oauth": {
+    "authorizationUrl": "https://www.instagram.com/oauth/authorize (Instagram Login; api.instagram.com/oauth/authorize redirects here). Facebook Login path: https://www.facebook.com/v26.0/dialog/oauth",
+    "tokenUrl": "https://api.instagram.com/oauth/access_token (POST, code -> short-lived token); then GET https://graph.instagram.com/access_token?grant_type=ig_exchange_token (long-lived). Facebook Login path: GET https://graph.facebook.com/v26.0/oauth/access_token",
+    "pkce": "unknown",
+    "refreshTokens": "No OAuth refresh_token is issued. Refresh the long-lived access token itself with GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token. The token must be at least 24 hours old, unexpired, and granted instagram_business_basic. A token that isn't refreshed within 60 days expires for good, and the user must authorize again.",
+    "tokenLifetime": "Authorization code: 1 hour, single use. Short-lived Instagram User token: 1 hour. Long-lived: 60 days (expires_in 5183944 s), and each refresh gives 60 days from the refresh. Tokens generated in the App Dashboard are long-lived (60 days). Facebook Login path: user tokens last hours, long-lived user tokens about 60 days, and long-lived Page tokens have no expiration date.",
+    "redirectUris": "Register redirect URIs in Instagram > API setup with Instagram login > Business login settings > OAuth redirect URIs (Facebook Login: Valid OAuth Redirect URIs). The redirect_uri must exactly match a registered URI, and the dashboard may add a trailing slash, so check the saved list. The token exchange must send the same URI. Meta appends '#_' to the code, so strip it. All examples are https. Localhost and http support for Instagram Login is not documented. Webhook callbacks need a valid TLS certificate (no self-signed). Use the redirect URI that Composio's dashboard shows.",
+    "scopes": "Comma-separated or URL-encoded space-separated. Instagram Login: instagram_business_basic (required, and the base for all others), instagram_business_content_publish, instagram_business_manage_comments, instagram_business_manage_messages, plus instagram_business_manage_insights, which the app-creation flow adds by default. The old business_* values stopped working on January 27, 2025. Facebook Login: instagram_basic, instagram_content_publish, instagram_manage_comments, instagram_manage_insights, instagram_manage_messages and more, plus pages_show_list and pages_read_engagement. Standard Access is granted automatically but only for role users. Advanced Access is approved permission by permission through App Review.",
+    "dynamicClientRegistration": "no",
+    "evidence": {
+      "kind": "documented",
+      "sourceIds": [
+        "s2",
+        "s5",
+        "s1",
+        "s17",
+        "s18",
+        "s33",
+        "s37",
+        "s40"
+      ],
+      "confidence": "high",
+      "note": "Endpoints and lifetimes from Meta docs. Probes p1-p5 confirmed the endpoints are live and that no discovery metadata advertises PKCE or a registration_endpoint. Dashboard-generated tokens being long-lived (60 days) comes from Get started (s33); the OAuth Authorize reference (s37) lists no code_challenge parameter."
+    }
+  },
+  "agentVsYou": {
+    "agentCan": [
+      "Re-run this guide's read-only probes (authorize, token, refresh endpoints) to confirm the Instagram App ID and redirect URI are wired correctly",
+      "Draft the usage description for each permission, the reviewer verification instructions and the Tech Provider use-case text (artifacts)",
+      "Write the screencast shot lists and on-screen caption text for each permission",
+      "Draft privacy-policy sections on Instagram data use and deletion, and scaffold the deauthorize and data-deletion callbacks (signed_request parsing, JSON {url, confirmation_code})",
+      "Make the required successful API call for each permission with a tester connection, and record that it happened within 30 days of submission",
+      "Cross-check the Composio redirect URI against Meta's saved list (trailing slash) and handle the '#_' suffix on codes",
+      "Schedule long-lived token refreshes (24 h to 60 days) if Composio doesn't, and watch content_publishing_limit and error codes 190/100",
+      "Run the pre-submission checklist and track the annual Data Use Checkup due date",
+      "If your Meta developer account has the beta, connect Meta's Developer Tools MCP server (https://mcp.facebook.com/devtools) so the agent can read App Review status and submission requirements, compliance actions and webhook subscriptions. It cannot submit App Review for you (beta, reported by PPC Land)"
+    ],
+    "youMust": [
+      "Log in to Facebook, register as a Meta developer (phone and email confirmation codes) and accept the Platform Terms and Developer Policies",
+      "Create the Business-type app, connect it to a business portfolio, and own the App Mode toggle",
+      "With full control of the business portfolio, complete Business Verification (legal name, address, phone, HTTPS website; official documents if Meta asks), and as a business Admin fill in the access verification (Tech Provider) form",
+      "Provide a public Instagram Business/Creator test account, add it as an Instagram tester and accept the invite inside Instagram",
+      "Paste Composio's redirect URI into Meta, and the Instagram App ID and secret into Composio, keeping the secret server-side",
+      "Record the screencasts and click Submit for Review, agreeing to the Platform Onboarding Terms",
+      "Give reviewers test credentials for your own app (never your personal Meta account)",
+      "Switch the app to Live after approval and complete the annual Data Use Checkup as app admin"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "r-dev-account",
+      "title": "Meta developer account (free)",
+      "detail": "A Facebook account registered as a Meta developer. Registration means accepting the Platform Terms and Developer Policies and confirming codes sent to a phone number and an email address. No fee.",
+      "category": "account",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s16"
+        ],
+        "confidence": "high",
+        "note": "\"We will send a confirmation code to the phone number and email address\"."
+      }
+    },
+    {
+      "id": "r-business-app",
+      "title": "Business-type Meta app with the Instagram product",
+      "detail": "Only Business-type apps can add Instagram. Pick one login type, Instagram Login or Facebook Login, per app. Each person can hold a developer or admin role on at most 15 apps not connected to a verified business, and archived apps count.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s4",
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "\"Your app must be a business type app to be able to add the Instagram product.\""
+      }
+    },
+    {
+      "id": "r-professional-accounts",
+      "title": "Instagram professional (Business or Creator) accounts",
+      "detail": "Every end user and every tester must use a Business or Creator account. Personal accounts lost API access when Basic Display was shut down on December 4, 2024. Test accounts added for dashboard tokens must be public, and comment and mention webhooks only fire for public accounts.",
+      "category": "account",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1",
+          "s4",
+          "s6",
+          "s7"
+        ],
+        "confidence": "high",
+        "note": "\"your app users must have an Instagram professional account\"; \"This account must be public.\""
+      }
+    },
+    {
+      "id": "r-business-verification",
+      "title": "Business Verification of the business portfolio that owns the app",
+      "detail": "Required for Advanced Access. Someone with full control of the business portfolio completes it in Meta Business Suite > Security Center by confirming the legal business details (the business website must load over HTTPS) and the connection (email, phone, domain), and uploading official documents showing the legal name plus an address or phone number if Meta asks. Until it is done, users from other businesses can't grant permissions and features stay inactive.",
+      "category": "business",
+      "mandatory": true,
+      "pathIds": [
+        "advanced-access-instagram-login",
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s11",
+          "s10",
+          "s1",
+          "s26"
+        ],
+        "confidence": "high",
+        "note": "\"Business Verification is required to get Advanced Access.\""
+      }
+    },
+    {
+      "id": "r-tech-provider",
+      "title": "Access verification as a Tech Provider",
+      "detail": "A business that claims an app used by other businesses must be verified as a Tech Provider for instagram_business_basic, instagram_business_content_publish, instagram_basic, instagram_content_publish, instagram_manage_insights, pages_* and others. Business Verification is a prerequisite, and a decision comes in about 5 days. Without it, calls for users who have no role fail with error 100.",
+      "category": "business",
+      "mandatory": true,
+      "pathIds": [
+        "advanced-access-instagram-login",
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s12"
+        ],
+        "confidence": "high",
+        "note": "\"must be verified as a Tech Provider before other businesses can use the app.\""
+      }
+    },
+    {
+      "id": "r-app-settings",
+      "title": "Privacy policy URL, 1024x1024 icon, category and contact email",
+      "detail": "Required in App settings before App Review. The icon must not use Meta trademarks or logos. The privacy policy URL is shown to users on Meta's consent screens. Review results go to the contact email.",
+      "category": "branding",
+      "mandatory": true,
+      "pathIds": [
+        "advanced-access-instagram-login",
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s3",
+          "s13"
+        ],
+        "confidence": "high",
+        "note": "\"App icon (1024x1024)\", \"Privacy Policy URL\", \"App Category\", \"Business Email\"."
+      }
+    },
+    {
+      "id": "r-data-deletion",
+      "title": "Data deletion path, plus deauthorize and data-deletion callbacks",
+      "detail": "All apps must explain in their privacy policy how users can request deletion of their data. The Instagram Business login settings also ask for a Deauthorize callback URL and a Data deletion request URL. Deletion callbacks must be HTTPS and return {url, confirmation_code}.",
+      "category": "legal",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s15",
+          "s4"
+        ],
+        "confidence": "high",
+        "note": "\"all apps must inform users in their privacy policy how to request deletion of their data.\""
+      }
+    },
+    {
+      "id": "r-testable-app",
+      "title": "A web app that reviewers can load and test",
+      "detail": "It must be publicly reachable, with a visible login button that follows Meta brand guidelines and step-by-step reviewer instructions, plus test credentials for your own app (never your personal Meta account). Instagram Login supports web and mobile web only. Prefer an English UI.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [
+        "advanced-access-instagram-login",
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s27",
+          "s3",
+          "s13"
+        ],
+        "confidence": "high",
+        "note": "\"If we are unable to access your app to test it, your entire submission will be rejected\" (App Review overview, s27). The walkthrough adds \"We will test your app so be sure that we can access it.\""
+      }
+    },
+    {
+      "id": "r-api-call-proof",
+      "title": "At least one successful API call per requested permission within 30 days",
+      "detail": "'Request advanced access' stays greyed out until a successful call is logged, which takes up to 2 days. Make the calls with a tester token.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [
+        "advanced-access-instagram-login",
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s13",
+          "s3"
+        ],
+        "confidence": "high",
+        "note": "\"Calls must be made within 30 days of submitting for App Review\"."
+      }
+    },
+    {
+      "id": "r-redirect-uri",
+      "title": "Exact-match redirect URI copied from Composio",
+      "detail": "Register the redirect URI that Composio's dashboard shows. For Instagram Login it goes in Business login settings > OAuth redirect URIs, and for Facebook Login in Valid OAuth Redirect URIs. It must match exactly, and the dashboard may add a trailing slash. The token exchange must send the same URI.",
+      "category": "technical",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2",
+          "s17",
+          "s21"
+        ],
+        "confidence": "high",
+        "note": "\"This must be the same URI or we will reject the request.\""
+      }
+    },
+    {
+      "id": "r-secret-server-side",
+      "title": "Server-side secret handling and token refresh",
+      "detail": "Requests for long-lived tokens include the Instagram app secret and must be made server-side. Long-lived tokens must be refreshed (each one must be at least 24 hours old) before 60 days pass, or the user has to authorize again.",
+      "category": "security",
+      "mandatory": true,
+      "pathIds": [],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2",
+          "s5"
+        ],
+        "confidence": "high",
+        "note": "\"Requests for long-lived tokens must be made in server-side code.\""
+      }
+    },
+    {
+      "id": "r-page-link",
+      "title": "Facebook Page linked to each Instagram account (Facebook Login only)",
+      "detail": "With Facebook Login, the Instagram professional account must be linked to a Facebook Page, and the user must be able to perform admin-equivalent tasks on that Page.",
+      "category": "account",
+      "mandatory": true,
+      "pathIds": [
+        "facebook-login-page-linked"
+      ],
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1"
+        ],
+        "confidence": "high",
+        "note": "\"Facebook Login serves app users whose Instagram professional account is linked to a Facebook Page.\""
+      }
+    }
+  ],
+  "nuances": [
+    {
+      "id": "n-one-login-type",
+      "title": "Choose Instagram Login or Facebook Login once, per app",
+      "detail": "An app can use one login type or the other, not both. Instagram Login (graph.instagram.com, instagram_business_* scopes, no Page needed) cannot do hashtag search, product tagging, partnership ads or ads. Composio describes its toolkit as an Instagram Login toolkit, so start there unless you need those features.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s3",
+          "s1",
+          "s19"
+        ],
+        "confidence": "high",
+        "note": "\"Your app can either use Facebook Login or Instagram Login but not both.\""
+      }
+    },
+    {
+      "id": "n-instagram-app-id",
+      "title": "The Instagram App ID and secret are not the Meta App ID and secret",
+      "detail": "Instagram Login uses the 'Instagram App ID' and 'Instagram app secret' shown under Business login settings. The token endpoint answers an unknown client with {\"error_message\": \"Invalid platform app\"} (probe p2). Pasting the Meta App ID from Settings > Basic into Composio is a likely way to hit that error.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2",
+          "s1"
+        ],
+        "confidence": "medium",
+        "note": "The docs name a separate Instagram App ID. Linking the wrong-ID mistake to this error is an inference from the probe."
+      }
+    },
+    {
+      "id": "n-no-refresh-token",
+      "title": "No OAuth refresh_token: the access token itself is refreshed",
+      "detail": "Flow: code (1 h, single use), then a short-lived token (1 h), then a long-lived token (60 days, expires_in 5183944) via grant_type=ig_exchange_token, then refresh via grant_type=ig_refresh_token. A refresh only works when the token is at least 24 hours old and not yet expired. Generic OAuth clients that wait for a refresh_token will let connections die at day 60.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1",
+          "s2",
+          "s5"
+        ],
+        "confidence": "high",
+        "note": "\"Tokens that have not been refreshed in 60 days will expire and can no longer be refreshed.\""
+      }
+    },
+    {
+      "id": "n-permission-names",
+      "title": "Permission names differ between Meta pages",
+      "detail": "The OAuth scope is instagram_business_content_publish, but the Instagram App Review page lists 'instagram_business_content_publishing'. The app-creation flow also adds instagram_business_manage_insights by default, while the App Review page leaves it off its list. The old scope values (business_basic and so on) stopped working on January 27, 2025. Request exactly what the App Dashboard shows.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2",
+          "s3",
+          "s4",
+          "s6"
+        ],
+        "confidence": "medium",
+        "note": "Names compared across four official pages on 2026-10-19."
+      }
+    },
+    {
+      "id": "n-standard-not-full",
+      "title": "Standard Access is not a full test environment",
+      "detail": "Meta warns that 'some features might not work properly until your app has been granted Advanced Access'. Webhooks for app users need a Live app, Advanced Access and Business Verification, and comment and mention notifications only fire for public accounts. Plan to test real-time triggers only after approval.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1",
+          "s7"
+        ],
+        "confidence": "high",
+        "note": "\"Your app must be Live to receive notifications for app users.\""
+      }
+    },
+    {
+      "id": "n-composio-managed-gaps",
+      "title": "Composio's managed app has gaps that push you to your own app",
+      "detail": "Composio's toolkit docs say that reply-to-comment can fail on the managed app because it may lack the comment permission, and that an owned Meta app is 'the current unblock path for production usage'. The toolkit lists 0 triggers, and its webhook-enable action needs a Live Meta app whose callback you configure, which only works with your own app. On the managed app, users see Composio on the consent screen.",
+      "impact": "high",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s19",
+          "s21"
+        ],
+        "confidence": "high",
+        "note": "Composio Instagram toolkit FAQ (version 20261014_00)."
+      }
+    },
+    {
+      "id": "n-rate-limits",
+      "title": "Rate limits are per app-and-user pair and scale with impressions",
+      "detail": "Non-messaging calls are limited to 4800 x the account's impressions per rolling 24 hours, counted per app and user pair. Publishing is limited to 100 API posts per 24 hours per account (content-publishing page, updated Jun 30, 2026), though the same page's carousel section says 50 and the content_publishing_limit reference (updated Jul 23, 2024) says quota_total is 'currently 50', so read that endpoint live. DMs can only be sent inside the standard messaging window (usually 24 hours), or the 7-day Human Agent window with the human_agent tag. A vendor figure of '200 calls per user per hour' does not match Meta's current formula.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1",
+          "s8",
+          "s9",
+          "s38"
+        ],
+        "confidence": "medium",
+        "note": "\"Calls within 24 hours = 4800 * Number of Impressions\". The 100-vs-50 publishing figures conflict across Meta pages."
+      }
+    },
+    {
+      "id": "n-live-timing",
+      "title": "Switching to Live too early breaks your own testing",
+      "detail": "Meta's walkthrough says Live mode limits everyone, even users with a role, to approved permissions, and that test posts become public. The Data Use Checkup must be done before switching to Live. Flip the toggle only after App Review approves the permissions.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s13",
+          "s14",
+          "s39"
+        ],
+        "confidence": "high",
+        "note": "\"switching to Live mode prematurely may make your app unusable for users who have a role on your app\"."
+      }
+    },
+    {
+      "id": "n-ai-disclosure",
+      "title": "Automated DM replies must disclose that they are automated where the law requires",
+      "detail": "Meta's messaging policy requires automated chat experiences to disclose automation where required by law. The disclosure goes at the start of a conversation, after a significant lapse of time, and when a chat moves from a human to automation, with California and Germany called out. Meta recommends disclosure even where it is not required, and says you can (optionally) provide an escalation path to a human, for example via Handover Protocol. Build the disclosure into the agent's DM persona and show it in the manage_messages screencast.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s9"
+        ],
+        "confidence": "high",
+        "note": "\"automated chat experiences must disclose that a person is interacting with an automated service\"."
+      }
+    },
+    {
+      "id": "n-status-can-lapse",
+      "title": "Tech Provider and Business Verification status can lapse silently",
+      "detail": "If Business Verification becomes unverified, the app is disconnected from its business, or the business is restricted, calls for users who have no role start failing with error 100, even though App Review approval still stands.",
+      "impact": "medium",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s12"
+        ],
+        "confidence": "high",
+        "note": "'Losing Verified Status' conditions."
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "b-insufficient-role",
+      "title": "'Insufficient developer role' when someone tries to connect",
+      "symptom": "Instagram login fails with 'Insufficient developer role', or a similar refusal, for accounts other than yours. Community reports show the payload {\"error_type\": \"OAuthException\", \"code\": 400, \"error_message\": \"Insufficient developer role\"}, mostly from the older Basic Display API, so the Business Login wording may differ.",
+      "cause": "The app is in Development mode or only has Standard Access, and the connecting Instagram account has no role on the app or hasn't accepted the tester invite.",
+      "resolution": "For testing, add the account as an Instagram tester and accept the invite in Instagram (Website permissions > Apps and websites > Tester invites). For customers, complete Advanced Access (verifications plus App Review) and switch to Live.",
+      "escalation": "developers.facebook.com/support (AI Developer Assistant first, since Aug 2026, reported) or the Meta Developer Community forum.",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": [
+          "s24",
+          "s10",
+          "s32",
+          "s41"
+        ],
+        "confidence": "medium",
+        "note": "Community README troubleshooting (s24) and a Basic Display-era GitHub issue with the JSON payload (s41). Meta's docs say Standard Access permissions can only be requested from role users."
+      }
+    },
+    {
+      "id": "b-invalid-platform-app",
+      "title": "'Invalid platform app' on authorize or token exchange",
+      "symptom": "POST https://api.instagram.com/oauth/access_token returns 400 {\"error_type\": \"OAuthException\", \"code\": 400, \"error_message\": \"Invalid platform app\"}. The authorize URL shows a generic Instagram error page instead of the consent screen.",
+      "cause": "The client_id is not an Instagram App ID with Instagram business login configured. A common cause is the Meta App ID from Settings > Basic, or an app where only the Facebook-login setup was added.",
+      "resolution": "Copy the Instagram App ID and Instagram app secret from Instagram > API setup with Instagram login > Business login settings into Composio, and make sure the Instagram product uses Instagram login.",
+      "escalation": "",
+      "evidence": {
+        "kind": "tested",
+        "sourceIds": [
+          "s2"
+        ],
+        "confidence": "medium",
+        "note": "Probe p2 reproduced the error with an unknown numeric client_id. Attributing it to a wrong ID is inferred."
+      }
+    },
+    {
+      "id": "b-redirect-mismatch",
+      "title": "Redirect URI mismatch or an invalid code",
+      "symptom": "The token exchange is rejected, or the code returns 'Matching code was not found or was already used'.",
+      "cause": "The registered URI differs from the one sent, often because the dashboard added a trailing slash. Other causes: the code was used twice or after 1 hour, or the '#_' suffix Meta appends was not stripped.",
+      "resolution": "Paste Composio's redirect URI exactly, compare it against the saved list, use each code once within an hour, and strip '#_' from the code.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s2"
+        ],
+        "confidence": "high",
+        "note": "Trailing-slash and '#_' warnings; 1-hour single-use code."
+      }
+    },
+    {
+      "id": "b-review-rejected",
+      "title": "App Review rejected: 'Screencast Not Aligned with Use Case Details'",
+      "symptom": "The submission is not approved for one or more permissions, citing the screencast or Developer Policy 1.6 ('Build a Trustworthy Product').",
+      "cause": "The recording doesn't show the full Meta login and permission grant, isn't in English or lacks captions, shows a personal account, or requests a permission the app doesn't visibly use.",
+      "resolution": "Re-record one video per permission covering login, then grant, then feature, with captions naming the permission at the moment it is used. Remove unused permissions and resubmit. One reported fix cycle took about 2.5 weeks (rejected Mar 13, approved Apr 1, 2026); budget up to ~20 days per round in late 2026.",
+      "escalation": "Reply through App Review > Requests in the dashboard, or ask at developers.facebook.com/support (Meta's AI Developer Assistant is the first-line support path since Aug 2026, reported). Meta has no published appeal SLA.",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": [
+          "s22",
+          "s13",
+          "s3",
+          "s28",
+          "s32"
+        ],
+        "confidence": "medium",
+        "note": "Rejection text quoted by PostMoore (2026). Screencast rules come from Meta."
+      }
+    },
+    {
+      "id": "b-greyed-advanced",
+      "title": "The 'Request advanced access' button is greyed out",
+      "symptom": "In App Review > Permissions and Features, a permission can't be added to the submission.",
+      "cause": "No successful API call using that permission has been logged in the last 30 days, and logging takes up to 2 days. Some permissions also need access verification first.",
+      "resolution": "Make one successful call per permission with a tester token, wait up to 2 days, and complete access verification if prompted.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s13"
+        ],
+        "confidence": "high",
+        "note": "\"the Request advanced access button will remain grayed out until a successful API has been logged\"."
+      }
+    },
+    {
+      "id": "b-bv-rejected",
+      "title": "Business Verification rejected or stuck",
+      "symptom": "Verification is declined or stays pending past Meta's stated 'up to 14 business days', which blocks access verification and App Review.",
+      "cause": "Third parties report delays when information doesn't match (for example the legal name or address in the portfolio vs. the documents), when documents need manual review, or when the business category is sensitive. Editing the business details mid-review restarts verification.",
+      "resolution": "Make the portfolio's legal name, address and website match the registration document exactly, upload current official documents if asked, and don't edit details or open a second request while one is pending.",
+      "escalation": "Meta Business Support (Business Help Center) for the business portfolio; developers.facebook.com/support, where Meta's AI Developer Assistant has been the first-line channel since Aug 2026 (reported).",
+      "evidence": {
+        "kind": "reported",
+        "sourceIds": [
+          "s25",
+          "s26",
+          "s11",
+          "s32"
+        ],
+        "confidence": "medium",
+        "note": "Duochat lists 'Information mismatch is found', 'Documents need manual review' and 'Business category is sensitive'. Meta (s26): editing business details means verifying again. Neither ranks the causes."
+      }
+    },
+    {
+      "id": "b-error-100",
+      "title": "Calls for customers fail with error 100 after approval",
+      "symptom": "'Unsupported get request. Object with ID ... does not exist, cannot be loaded due to missing permissions, or does not support this operation.' This happens only for users who have no role.",
+      "cause": "The app's business is not, or is no longer, a verified Tech Provider.",
+      "resolution": "Complete or restore access verification (Basics > Verifications > Access verification). Keep the app connected to the verified business.",
+      "escalation": "Developer alert inbox in the App Dashboard.",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s12"
+        ],
+        "confidence": "high",
+        "note": "Verification Check error code 100."
+      }
+    },
+    {
+      "id": "b-personal-account",
+      "title": "A user only has a personal Instagram account",
+      "symptom": "The connection fails or Composio tools return permission errors, and the user can't complete login as a professional account.",
+      "cause": "The Instagram API serves only Business and Creator accounts. Basic Display, which served personal accounts, was shut down on December 4, 2024.",
+      "resolution": "Ask the user to switch to a professional account in the Instagram app (free), then reconnect. There is no workaround for personal accounts.",
+      "escalation": "",
+      "evidence": {
+        "kind": "documented",
+        "sourceIds": [
+          "s1",
+          "s6",
+          "s19"
+        ],
+        "confidence": "high",
+        "note": "\"Must be a Business or Creator account; personal accounts are rejected.\" (Composio)"
+      }
+    }
+  ],
+  "probes": [
+    {
+      "id": "p1",
+      "name": "Instagram authorize endpoint with an unknown client",
+      "kind": "authorize_endpoint",
+      "request": "GET https://www.instagram.com/oauth/authorize?client_id=greenlight-probe-invalid&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=instagram_business_basic (browser User-Agent, redirects not followed). Repeated with client_id=1000000000000001, and with the api.instagram.com host.",
+      "observed": "200, no Location header. ~590 KB Instagram web shell whose route data is \"canonicalRouteName\":\"comet.igweb.PolarisErrorRoute\" with page_logging name \"httpErrorPage\". The numeric fake ID gave the same result. https://api.instagram.com/oauth/authorize returned 302 to https://www.instagram.com/oauth/authorize?... with the same query.",
+      "conclusion": "The authorize endpoint is live at www.instagram.com, and the documented api.instagram.com host redirects there. An unknown client gets a generic error page and is never redirected to the supplied redirect_uri, so a misconfigured client_id shows up as a blank Instagram error, not an OAuth error parameter.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:48:31Z"
+    },
+    {
+      "id": "p2",
+      "name": "Instagram token endpoint with an unknown client",
+      "kind": "token_endpoint",
+      "request": "POST https://api.instagram.com/oauth/access_token (form: client_id=1000000000000001, client_secret=000...0, grant_type=authorization_code, redirect_uri=https://example.com/callback, code=greenlight-probe-invalid). Also sent with a non-numeric client_id=greenlight-probe-invalid.",
+      "observed": "400 {\"error_type\": \"OAuthException\", \"code\": 400, \"error_message\": \"Invalid platform app\"}. With the non-numeric client_id: 400, body 'bad request'.",
+      "conclusion": "The token endpoint is live and identifies an unrecognised Instagram App ID as 'Invalid platform app'. client_id must be the numeric Instagram App ID.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:50:12Z"
+    },
+    {
+      "id": "p3",
+      "name": "Long-lived exchange and refresh endpoints with an invalid token",
+      "kind": "token_endpoint",
+      "request": "GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=greenlight-probe-invalid ; GET https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=greenlight-probe-invalid&access_token=greenlight-probe-invalid",
+      "observed": "Both returned 400 {\"error\":{\"message\":\"Invalid OAuth access token - Cannot parse access token\",\"type\":\"OAuthException\",\"code\":190,...}}",
+      "conclusion": "The documented exchange and refresh endpoints exist on graph.instagram.com and take the access token itself, not a separate refresh_token.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:49:55Z"
+    },
+    {
+      "id": "p4",
+      "name": "OAuth/OIDC discovery metadata (Instagram and Facebook)",
+      "kind": "oauth_metadata",
+      "request": "GET https://www.instagram.com/.well-known/openid-configuration ; GET https://www.instagram.com/.well-known/oauth-authorization-server ; GET https://api.instagram.com/.well-known/openid-configuration ; GET https://www.facebook.com/.well-known/openid-configuration ; GET https://www.facebook.com/.well-known/oauth-authorization-server",
+      "observed": "instagram.com openid-configuration: 200 JSON {issuer https://www.instagram.com, authorization_endpoint https://www.instagram.com/oauth/dialog, response_types_supported [code], id_token RS256}, with no token_endpoint, code_challenge_methods_supported or registration_endpoint. instagram.com oauth-authorization-server: 200 text/html (the web app, not metadata). api.instagram.com openid-configuration: 404. facebook.com openid-configuration: 200 {response_types_supported [id_token, 'token id_token']}, again with no registration_endpoint or PKCE methods. facebook.com oauth-authorization-server: 404.",
+      "conclusion": "Neither host publishes OAuth server metadata for the Business Login flows. The OIDC documents that exist (an Instagram /oauth/dialog OIDC endpoint and Facebook Limited Login) advertise no PKCE methods and no dynamic client registration. Apps are created only in the App Dashboard.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:50:04Z"
+    },
+    {
+      "id": "p5",
+      "name": "Facebook Login dialog with an unknown client",
+      "kind": "authorize_endpoint",
+      "request": "GET https://www.facebook.com/v26.0/dialog/oauth?client_id=greenlight-probe-invalid&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=instagram_basic&locale=en_US (Accept-Language: en-US)",
+      "observed": "200, no redirect. Page text: 'Invalid app ID — The provided app ID does not look like a valid app ID.'",
+      "conclusion": "The Facebook Login dialog (v26.0, the current Graph version in the docs) is live and rejects unknown app IDs on-page without redirecting.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:49:24Z"
+    },
+    {
+      "id": "p6",
+      "name": "Meta App Dashboard access",
+      "kind": "portal_access",
+      "request": "GET https://developers.facebook.com/apps/ ; GET https://developers.facebook.com/apps/creation/ ; GET https://developers.facebook.com/docs/instagram-platform/",
+      "observed": "/apps/ and /apps/creation/: 302 to https://business.facebook.com/business/loginpage/?next=... ; /docs/instagram-platform/: 301 to https://developers.facebook.com/documentation/instagram-platform",
+      "conclusion": "The app console is behind a Meta login wall, with no paywall visible. The docs have moved from /docs/ to /documentation/, and old links redirect.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T17:50:31Z"
+    },
+    {
+      "id": "p7",
+      "name": "Composio Instagram toolkit lookup",
+      "kind": "composio_lookup",
+      "request": "GET https://docs.composio.dev/toolkits/instagram.md ; GET https://backend.composio.dev/api/v3/toolkits/instagram (no credentials)",
+      "observed": "Docs: 200, '- **Auth:** OAUTH2', '- **Composio-managed OAuth available?** Yes', '- **Triggers:** 0', '- **Version:** 20261014_00'. API: 401 {\"slug\":\"Auth_NoAuthProvided\"}.",
+      "conclusion": "Composio offers managed OAuth for Instagram (OAuth2, no triggers). The machine-readable toolkit API needs a Composio API key, which was not used, so the managed app's exact scopes were not checked.",
+      "outcome": "confirmed",
+      "ranAt": "2026-10-19T18:01:40Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "a-scope-justification",
+      "title": "App Review usage descriptions for the four instagram_business_* permissions",
+      "kind": "scope_justification",
+      "format": "markdown",
+      "content": "# App Review usage descriptions — <YOUR_APP_NAME> (Instagram API with Instagram Login)\n\nPaste each block into its own \"How will your app use ...\" field. Meta says: each permission needs its own description — **do not copy and paste** between them. Replace every <PLACEHOLDER>.\n\n## instagram_business_basic\n<YOUR_APP_NAME> is an AI assistant that helps businesses and creators manage their own Instagram professional account. After the user clicks \"Connect Instagram\" on <YOUR_APP_URL>/settings/connections and completes Instagram login, we use instagram_business_basic to read the connected account's ID, username, profile picture and list of recent media. We show the username and profile picture in the account switcher so the user can confirm which account is connected, and the assistant uses the recent-media list so the user can pick a post to work on (for example \"draft replies to comments on my last reel\"). We read only the account that granted access, store the account ID and username to keep the connection, and delete them when the user disconnects or sends a deletion request.\n\n## instagram_business_content_publish\nUsers write or refine a post with the assistant in the Composer (<YOUR_APP_URL>/compose), attach an image or video they uploaded, and choose \"Publish now\" or a scheduled time. Only after the user clicks Publish (or approves the scheduled item) do we create the media container and publish it to their own Instagram professional account with instagram_business_content_publish. The assistant never posts on its own: every post needs explicit user approval in the UI. We respect the account's 24-hour publishing limit and show the remaining quota in the Composer.\n\n## instagram_business_manage_comments\nThe Inbox (<YOUR_APP_URL>/inbox) lists comments on the user's own posts and reels. The assistant suggests a reply; the user edits and clicks \"Send reply\", and we post the reply with instagram_business_manage_comments. Users can also hide or delete spam comments on their own media from the same screen. We only act on comments on media owned by the connected account.\n\n## instagram_business_manage_messages\nThe Inbox also shows Instagram Direct conversations that customers started with the user's account. The assistant drafts answers to common questions (opening hours, order status, pricing); the user can send them manually or turn on auto-reply for selected topics. Automated replies begin with \"<BRAND>'s automated assistant here\" and include a \"Talk to a person\" option that hands the conversation to the user's team in the same inbox. We only reply within the messaging window Meta allows, never start new conversations, and use the Human Agent tag only when a human team member replies after 24 hours.\n",
+      "howToUse": "Replace placeholders with your real routes and behaviour, delete permissions you won't request, then paste each block into that permission's 'How will your app use' field. Every claim must match what the screencast shows."
+    },
+    {
+      "id": "a-demo-script",
+      "title": "Screencast scripts, one per permission",
+      "kind": "demo_script",
+      "format": "markdown",
+      "content": "# Screencast scripts — one video per permission (1080p+, English UI, captions on, no voice-over needed)\n\nGeneral: record the browser window only, enlarge the cursor, use the mouse, add a caption every time the permission is used (\"Uses instagram_business_<X>: ...\"). Start every video logged out of <YOUR_APP_NAME>. Use the public Business/Creator test account <TEST_IG_HANDLE> (it has a tester role on the app). Do not show a personal account.\n\n## Shared opening (first ~45 s of every video)\n1. Open <YOUR_APP_URL>, log in with the reviewer test user <REVIEWER_EMAIL>.\n2. Go to Settings > Connections, click the \"Connect Instagram\" button (caption: \"Business Login for Instagram\").\n3. Instagram login window: sign in as <TEST_IG_HANDLE>; pause on the permission screen so all requested permissions are readable (caption: \"User grants <PERMISSION>\").\n4. Back in <YOUR_APP_NAME>: the connected account card shows username + avatar.\n\n## Video 1 — instagram_business_basic (~1.5 min)\n5. Open the account switcher: username and profile picture (caption: \"instagram_business_basic: profile info\").\n6. Open \"Recent posts\": the list of the account's media (caption: \"instagram_business_basic: media list\").\n7. Ask the assistant \"Which of my last 5 posts got the most comments?\" and show the answer referencing those posts.\n\n## Video 2 — instagram_business_content_publish (~2 min)\n5. Open Composer, upload an image, ask the assistant to draft a caption, edit it.\n6. Click \"Publish now\"; show the confirmation dialog (caption: \"Nothing is posted without the user's click\").\n7. Show the success state, then open the post on instagram.com in a new tab to prove it was published.\n\n## Video 3 — instagram_business_manage_comments (~2 min)\n5. Leave a comment on the test post from a second account beforehand.\n6. Open Inbox > Comments: the comment appears (caption: \"reads comments on the user's own media\").\n7. Click \"Suggest reply\", edit, click \"Send reply\"; open the post on Instagram and show the reply.\n8. Hide a spam comment and show it hidden.\n\n## Video 4 — instagram_business_manage_messages (~2.5 min)\n5. From a second Instagram account, send a DM to <TEST_IG_HANDLE> (\"What are your opening hours?\").\n6. Open Inbox > Messages: the conversation appears (caption: \"webhook + instagram_business_manage_messages\").\n7. Show the assistant's draft starting with the automation disclosure; click Send; show it arriving in the second account's Instagram app.\n8. Click \"Talk to a person\" to show the human hand-off.\n",
+      "howToUse": "Record each video after the API-call step has been logged. Keep each video focused on one permission and upload it to that permission's request."
+    },
+    {
+      "id": "a-checklist",
+      "title": "Pre-submission checklist for Advanced Access",
+      "kind": "checklist",
+      "format": "markdown",
+      "content": "# Pre-submission checklist — Instagram Advanced Access (Instagram Login)\n\nAccounts & business\n- [ ] App is a Business-type app; Instagram product uses \"API setup with Instagram login\" (not both login types)\n- [ ] App connected to a business portfolio (App settings > Basic > Verification)\n- [ ] Business Verification = Verified (legal name matches registration document exactly)\n- [ ] Access verification (Tech Provider) submitted and approved (Basics > Verifications > Access verification)\n\nApp settings\n- [ ] 1024x1024 icon with no Meta logos/trademarks\n- [ ] Privacy Policy URL live and covers Instagram data, retention, and how to request deletion\n- [ ] App Category set; App Purpose = Clients; contact/business email monitored\n- [ ] Business login settings: OAuth redirect URI = exact Composio redirect URI (check trailing slash); Deauthorize callback URL; Data deletion request URL (HTTPS, returns {url, confirmation_code})\n- [ ] Composio auth config uses the Instagram App ID + Instagram app secret (not the Meta App ID)\n\nPermissions\n- [ ] Only permissions the agent actually uses are requested; instagram_business_basic included\n- [ ] ≥1 successful API call per permission in the last 30 days (allow 2 days for logging)\n- [ ] Each permission has its own, non-copied usage description\n\nReviewer access\n- [ ] App reachable on a public web URL without VPN/password walls; English UI\n- [ ] \"Connect Instagram\" button visible and follows Meta brand guidelines\n- [ ] Step-by-step verification instructions + reviewer test credentials for YOUR app (not a personal Meta account)\n- [ ] One screencast per permission: login -> grant -> feature, 1080p+, captions\n\nAfter approval\n- [ ] Data Use Checkup / data handling questions done, then switch App Mode to Live\n- [ ] Test with an account that has no role (expect no error 100)\n- [ ] Token refresh scheduled (>=24 h old, <60 days) or confirmed handled by Composio\n- [ ] Calendar reminder for the annual Data Use Checkup\n",
+      "howToUse": "Go through it before clicking Submit for Review, and again before switching the app to Live."
+    },
+    {
+      "id": "a-reviewer-instructions",
+      "title": "Reviewer verification instructions and Tech Provider use-case text",
+      "kind": "other",
+      "format": "markdown",
+      "content": "# Reviewer verification instructions (App Review > App Verification) and Tech Provider description\n\n## A. Verification instructions (Platform: Web)\n1. Go to <YOUR_APP_URL>/login and sign in with: email <REVIEWER_EMAIL>, password <REVIEWER_PASSWORD>. (This is a test user of <YOUR_APP_NAME>, not a Meta account.)\n2. Click Settings > Connections > \"Connect Instagram\". Log in with an Instagram professional (Business or Creator) account and approve the requested permissions.\n3. instagram_business_basic: open the account switcher (top left) to see the username and profile picture; open \"Recent posts\" to see the media list.\n4. instagram_business_content_publish: open Composer, upload any image, type a caption, click \"Publish now\", confirm. The post appears on the connected account.\n5. instagram_business_manage_comments: comment on that post from any other Instagram account, then open Inbox > Comments, click \"Suggest reply\", then \"Send reply\".\n6. instagram_business_manage_messages: send a DM to the connected account from another Instagram account, open Inbox > Messages, click Send on the drafted reply.\nIf anything fails, contact <SUPPORT_EMAIL> — we respond within <N> business hours.\n\n## B. Access verification (Tech Provider) — how we use other businesses' data\n<LEGAL_BUSINESS_NAME> operates <YOUR_APP_NAME>, a software service that businesses and creators use to manage their own Instagram professional accounts with the help of an AI assistant. Each customer connects their own account through Business Login for Instagram. We access only the connected account's profile, media, comments and messages, and only to provide the features the customer uses in our product: drafting and publishing their posts, replying to comments on their media, and answering their customers' DMs. We do not sell, share or use this data for advertising or for any other customer, and we delete it when the customer disconnects or requests deletion.\n",
+      "howToUse": "Section A goes in App Review > Complete App Verification > Platform Settings (Web). Section B is the description a business Admin enters in the access verification form."
+    }
+  ],
+  "openQuestions": [
+    "Does www.instagram.com/oauth/authorize accept PKCE (code_challenge / S256)? Meta's Instagram docs don't mention it and no metadata advertises it. This was not tested with a real client.",
+    "Can Business login settings take http://localhost or custom-scheme redirect URIs? Every example is https, and no rule is documented.",
+    "Which permissions does Composio's managed Instagram app currently hold with Advanced Access, beyond the comment-permission gap it documents? And does Composio refresh Instagram long-lived tokens (ig_refresh_token) automatically for custom auth configs, given there is no refresh_token? Its managed-auth page says only that Composio 'stores and refreshes the resulting tokens'. Checking needs a Composio API key, which was not used.",
+    "Can Composio's Instagram toolkit run against a Meta app that uses Facebook Login (Page-linked) instead of Instagram Login?",
+    "Is instagram_business_manage_insights reviewable under Instagram Login? It is a default permission in the app-creation flow but missing from the Instagram App Review permission list.",
+    "Is the API publishing cap 100 or 50 posts per 24 hours? The content-publishing guide (updated Jun 30, 2026) says 100, while its carousel section and the content_publishing_limit reference (updated Jul 23, 2024) say 50. The newer page probably reflects the current cap, but read quota_total from the endpoint.",
+    "Is there a fixed deadline or grace period for the annual Data Use Checkup or the new data access renewal? Meta's pages say deadlines are sent to app admins by email and publish no fixed window for Facebook/Instagram apps.",
+    "Does Live mode really block unapproved permissions for role users? The App Review walkthrough (Jun 2026) and the App Modes page (May 2025) say Live apps can request only approved permissions, while the older Business Verification page (2023) says role users can grant any permission at any time. Test with a role user before switching.",
+    "Is the '20 days' App Review notice official and current? Four 2026 vendor or consultant sources (bundle.social, WoopSocial, Amandeep Singh, Saurabh Dhar) report it in the dashboard, while Meta's walkthrough (updated Jun 30, 2026) still says 'within a week', and Dhar reports ~10-day actual averages in October 2026. Check the notice in your own dashboard when you submit."
+  ],
+  "verification": {
+    "status": "verified",
+    "checkedAt": "2026-10-20T05:51:07Z",
+    "summary": "Two passes checked 48 claims: 32 supported, 13 corrected, 3 downgraded, 0 unverifiable. This pass fixed the May 2026 review figure (17-19 days, not 17-22), the dates in the Dhar case (submission dates, not rejection dates) and the 'legal documents' wording for Business Verification, and confirmed Meta's 'up to 14 business days' directly. App Review timing stays reported: Meta's docs say 'within a week', four 2026 vendors say the dashboard warns of ~20 days.",
+    "entries": [
+      {
+        "id": "v1",
+        "claim": "App Review decision time per round",
+        "location": "paths[advanced-access-instagram-login].approvalWaitDays; summary.headline/bestCase/worstCase; stages[b-review].steps[b-review-5]",
+        "verdict": "corrected",
+        "before": "Meta: 'a decision within a week'; community 5-7 business days per cycle; total 1-10 weeks (typically 2-5).",
+        "after": "Meta's walkthrough still says within a week, but 2026 reports say the dashboard warns of up to 20 days (17-19 day reviews in May 2026; see v26); total 1-13 weeks (typically 3-6).",
+        "method": "cross_source",
+        "sourceIds": [
+          "s13",
+          "s22",
+          "s28",
+          "s29"
+        ],
+        "note": "Walkthrough quote re-confirmed, but two independent 2026 vendor sources (Aug 2026 and a 2026 consultant page) report a 20-day dashboard notice; PostMoore's 5-7 days dates from April 2026."
+      },
+      {
+        "id": "v2",
+        "claim": "Business Verification, access verification and App Review all run in sequence",
+        "location": "paths[advanced-access-instagram-login].approvalWaitDays.basis",
+        "verdict": "corrected",
+        "before": "These run in sequence.",
+        "after": "Business Verification first; access verification is 'independent of App Review', so the two can overlap.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s12"
+        ],
+        "note": "Access verification page: prerequisite is Business Verification, and 'access verification is independent of App Review and permission access levels'."
+      },
+      {
+        "id": "v3",
+        "claim": "Business Verification wait is 3-10 working days (third-party), Meta's own figure unknown",
+        "location": "stages[b-review].steps[b-review-1].duration; openQuestions[4]; blockers[b-bv-rejected]",
+        "verdict": "corrected",
+        "before": "3-10 working days wait (reported); Meta's figure not found.",
+        "after": "Up to 14 business days (Meta Business Help Center), often 3-10 working days (reported).",
+        "method": "cross_source",
+        "sourceIds": [
+          "s26",
+          "s31",
+          "s25"
+        ],
+        "note": "Meta's page did not render for direct fetch; its 'may take up to 14 business days' wording was confirmed via search index and 360dialog docs. Duochat excerpt (Feb 2026) confirmed. Directly re-fetched on 2026-10-20 (see v27)."
+      },
+      {
+        "id": "v4",
+        "claim": "Business Verification is done in Business Manager with documents showing legal name plus address or phone",
+        "location": "requirements[r-business-verification].detail; stages[b-review].steps[b-review-1].detail",
+        "verdict": "corrected",
+        "before": "Done in Business Manager by a business Admin using official documents.",
+        "after": "Done in Meta Business Suite > Security Center by someone with full control; confirm details and connection (email/phone/domain); documents only if Meta finds no matching record.",
+        "method": "cross_source",
+        "sourceIds": [
+          "s11",
+          "s26"
+        ],
+        "note": "s11 lists no documents; Meta Help Center (via search index) and several 2026 guides describe the Security Center flow and the conditional document upload."
+      },
+      {
+        "id": "v5",
+        "claim": "Access verification (Tech Provider): ~5-day decision, needs Business Verification, covers instagram_business_basic and instagram_business_content_publish, error 100 without it",
+        "location": "requirements[r-tech-provider]; stages[b-review].steps[b-review-2]; blockers[b-error-100]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s12"
+        ],
+        "note": "'a decision will be made within approximately 5 days'; both instagram_business_* permissions are on the 34-permission list; error 100 text and Losing Verified Status conditions match."
+      },
+      {
+        "id": "v6",
+        "claim": "App Review prerequisites: one successful call per permission within 30 days, logged within 2 days, button greyed out until then",
+        "location": "requirements[r-api-call-proof]; stages[b-test].steps[b-test-2]; blockers[b-greyed-advanced]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s13"
+        ],
+        "note": "All three phrases appear in the walkthrough (Meta spells it 'grayed out')."
+      },
+      {
+        "id": "v7",
+        "claim": "Screencast rules: 1080p or better, English UI, captions, omit audio, use the mouse",
+        "location": "stages[b-review].steps[b-review-3]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s13"
+        ],
+        "note": "'record in high-resolution, 1080 or better'; 'Omit audio; our reviewers will not listen to it.'"
+      },
+      {
+        "id": "v8",
+        "claim": "'If we are unable to access your app to test it, your entire submission will be rejected' is in the Instagram App Review page and walkthrough",
+        "location": "requirements[r-testable-app].evidence",
+        "verdict": "corrected",
+        "before": "Quote attributed to s3/s13.",
+        "after": "Quote is on Meta's App Review overview page (new source s27); s3 and s13 do not contain it.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s27",
+          "s3",
+          "s13"
+        ],
+        "note": "Walkthrough only says 'We will test your app so be sure that we can access it.'"
+      },
+      {
+        "id": "v9",
+        "claim": "Live mode only after App Review; Data Use Checkup required before switching to Live",
+        "location": "stages[b-live].steps[b-live-1]; nuances[n-live-timing]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s13",
+          "s14"
+        ],
+        "note": "'switching to Live mode prematurely may make your app unusable for users who have a role on your app'; DUC page: 'will need to complete DUC before the app can be switched to Live mode'."
+      },
+      {
+        "id": "v10",
+        "claim": "Token lifecycle: code 1 h single use, short-lived token 1 h, long-lived 60 days (expires_in 5183944), refresh when >=24 h old and unexpired, no refresh_token",
+        "location": "oauth.tokenLifetime; oauth.refreshTokens; nuances[n-no-refresh-token]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s1",
+          "s2",
+          "s5"
+        ],
+        "note": "Short-lived 1 h comes from the overview (s1); Business Login page gives no duration for it. Refresh endpoint re-probed 2026-10-19T18:22Z: 400 code 190, takes the access token itself."
+      },
+      {
+        "id": "v11",
+        "claim": "PKCE support for Instagram Login is unknown",
+        "location": "oauth.pkce",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s2"
+        ],
+        "note": "Authorize parameters listed are client_id, enable_fb_login, force_reauth, redirect_uri, response_type, scope, state; no code_challenge. Token exchange requires client_secret. No 2026 source reports PKCE; 'unknown' is the honest value."
+      },
+      {
+        "id": "v12",
+        "claim": "Old business_* scopes stopped working Jan 27, 2025; Basic Display shut down Dec 4, 2024",
+        "location": "oauth.scopes; requirements[r-professional-accounts]; nuances[n-permission-names]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s2",
+          "s6"
+        ],
+        "note": "Changelog: deprecation date moved from Dec 17, 2024 to Jan 27, 2025; Basic Display entry dated Dec 4, 2024."
+      },
+      {
+        "id": "v13",
+        "claim": "Permission names: App Review page lists instagram_business_content_publishing; app-creation flow adds instagram_business_manage_insights by default",
+        "location": "nuances[n-permission-names]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3",
+          "s4"
+        ],
+        "note": "Both discrepancies confirmed on the live pages."
+      },
+      {
+        "id": "v14",
+        "claim": "Composio managed OAuth = yes; toolkit has 0 triggers; managed app may lack the comment permission; webhook-enable action needs a Live Meta app; managed users see Composio branding",
+        "location": "composio; nuances[n-composio-managed-gaps]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s19",
+          "s20",
+          "s21"
+        ],
+        "note": "Re-fetched toolkits/instagram.md (version 20261014_00): 'Composio-managed OAuth available? Yes', 'Triggers: 0', FAQ quote verbatim. Managed-auth list includes INSTAGRAM. Custom-app page: users see 'Composio wants to access your account'."
+      },
+      {
+        "id": "v15",
+        "claim": "Token endpoint returns 'Invalid platform app' for an unknown client; api.instagram.com/oauth/authorize redirects to www.instagram.com",
+        "location": "probes[p1,p2]; blockers[b-invalid-platform-app]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s2"
+        ],
+        "note": "Re-ran at 2026-10-19T18:22Z: POST access_token -> 400 {\"error_message\": \"Invalid platform app\"}; GET api.instagram.com/oauth/authorize -> 302 to www.instagram.com/oauth/authorize."
+      },
+      {
+        "id": "v16",
+        "claim": "Publishing cap 100 posts/24 h conflicts with 'currently 50' in the content_publishing_limit reference",
+        "location": "nuances[n-rate-limits]; openQuestions[6]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s8"
+        ],
+        "note": "Conflict confirmed; added that the content-publishing page's own carousel section also says 50."
+      },
+      {
+        "id": "v17",
+        "claim": "Rate limit = 4800 x impressions per rolling 24 h, per app-user pair; messaging excluded",
+        "location": "nuances[n-rate-limits]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s1"
+        ],
+        "note": "'Calls within 24 hours = 4800 * Number of Impressions'; 'unique for each app and app user pair'."
+      },
+      {
+        "id": "v18",
+        "claim": "Meta expects automated DMs to offer an escalation path to a human",
+        "location": "nuances[n-ai-disclosure].detail",
+        "verdict": "corrected",
+        "before": "Meta recommends disclosure everywhere, and expects an escalation path to a human.",
+        "after": "Meta recommends disclosure even where not required, and says you can (optionally) provide an escalation path.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s9"
+        ],
+        "note": "Messaging page: 'You can provide an escalation path for automated messaging experiences' — permissive, not required. Disclosure timing and California/Germany wording confirmed."
+      },
+      {
+        "id": "v19",
+        "claim": "Data Protection Assessment has a 60-day completion window (cited to the Data Use Checkup page)",
+        "location": "stages[b-maintain].steps[b-maintain-2].detail; openQuestions[7]",
+        "verdict": "corrected",
+        "before": "The Data Protection Assessment ... is separate and has a 60-day completion window.",
+        "after": "No fixed window is published; deadlines come by email; Meta is consolidating DUC, data handling questions, App Review and DPA into data access renewal.",
+        "method": "cross_source",
+        "sourceIds": [
+          "s14",
+          "s30"
+        ],
+        "note": "s14 never mentions the DPA. The 60-day figure traces to a 2021 third-party blog; Meta's current pages say deadlines are per app."
+      },
+      {
+        "id": "v20",
+        "claim": "Long-lived Page tokens can be invalidated when the user loses Page tasks or changes their password",
+        "location": "paths[facebook-login-page-linked].stages[c-live].steps[c-live-2]",
+        "verdict": "downgraded",
+        "before": "documented/high; examples: losing Page tasks or changing password.",
+        "after": "documented/medium; Meta says only 'under certain conditions'; examples marked as not on the cited page.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s18"
+        ],
+        "note": "s18 has the no-expiry quote but lists no conditions; the linked debugging page did not render."
+      },
+      {
+        "id": "v21",
+        "claim": "Business Verification is most often rejected for legal-name mismatch or a weak/placeholder website",
+        "location": "blockers[b-bv-rejected].cause",
+        "verdict": "downgraded",
+        "before": "Most often the legal name doesn't match; also a weak or placeholder website.",
+        "after": "Reported delay causes: information mismatch, manual document review, sensitive category; no ranking; editing details restarts verification.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s25",
+          "s11",
+          "s26"
+        ],
+        "note": "Duochat lists only those three delay reasons; s11 covers no rejection causes; nothing supports 'most often' or the website cause."
+      },
+      {
+        "id": "v22",
+        "claim": "Business-type app required; 15-app cap for apps not connected to a verified business (archived count); tester account must be public; must connect to a verified business before publishing",
+        "location": "requirements[r-business-app]; stages[a-register].steps[a-register-2]; stages[b-register].steps[b-register-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s4"
+        ],
+        "note": "All quotes found on the create-an-instagram-app page. The 'before you can publish' quote is on s4, not s11."
+      },
+      {
+        "id": "v23",
+        "claim": "Worst-case community timelines: rejected Mar 13 -> approved Apr 1, 2026; rejections May 20 and Jun 14 -> approved Jul 28, 2026",
+        "location": "summary.worstCase; blockers[b-review-rejected]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s22",
+          "s23"
+        ],
+        "note": "Dates confirmed. s23 is a paid consultant's case study (Sep 12, 2026); its old excerpt 'Approved in one submission' described the post-consultation submission, so the excerpt was replaced with the rejection/approval dates. May 20 and Jun 14 are the submission dates of the two rejected rounds (see v28)."
+      },
+      {
+        "id": "v24",
+        "claim": "Messaging: 24 h standard window, 7-day Human Agent window, testers need a role on the app and on the Instagram professional account",
+        "location": "nuances[n-rate-limits]; stages[b-test].steps[b-test-1]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s9"
+        ],
+        "note": "All confirmed on the Instagram Login messaging page."
+      },
+      {
+        "id": "v25",
+        "claim": "Recommended path difficulty 4 (Hard)",
+        "location": "summary.difficulty; paths[advanced-access-instagram-login].difficulty",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s1",
+          "s12",
+          "s26",
+          "s28"
+        ],
+        "note": "Business Verification with legal-entity details plus multi-week App Review fits rubric 4; access is not partner-gated or paid, so 5 is not warranted."
+      },
+      {
+        "id": "v26",
+        "claim": "App Review times of 17-22 days were reported from May 2026",
+        "location": "paths[advanced-access-instagram-login].approvalWaitDays.basis; stages[b-review].steps[b-review-5].detail",
+        "verdict": "corrected",
+        "before": "17-22 day reviews seen from May 2026.",
+        "after": "17-19 day reviews reported in May 2026; one consultant reports ~10-day averages in October 2026.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s28",
+          "s35"
+        ],
+        "note": "bundle.social's timeline table says 'May 2026: 17–19 days'; no cited source gives 22 days. Dhar (Oct 12, 2026): 'Ours average ~10'."
+      },
+      {
+        "id": "v27",
+        "claim": "Meta says a Business Verification decision may take up to 14 business days",
+        "location": "stages[b-review].steps[b-review-1]; paths[*].approvalWaitDays.basis; openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s26",
+          "s31"
+        ],
+        "note": "Fetched the Help Center page directly this time (previous pass relied on the search index): 'A decision on your verification submission may take up to 14 business days.' Step confidence raised to high, the open question removed, and the page's 'website loads and is HTTPS compliant' requirement added to the step and requirement."
+      },
+      {
+        "id": "v28",
+        "claim": "The Dhar case logged rejections on May 20 and June 14, 2026 before approval on July 28",
+        "location": "summary.worstCase; paths[advanced-access-instagram-login].approvalWaitDays.basis",
+        "verdict": "corrected",
+        "before": "Rejections on May 20 and Jun 14, 2026 before approval on Jul 28.",
+        "after": "Submissions on May 20 and Jun 14, 2026 were both rejected; a third was approved on Jul 28.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s23"
+        ],
+        "note": "The case study's App Review history says 'Submitted: May 20, 2026 – 03:30 CEST' and 'Submitted: June 14, 2026 – 00:32 CEST', each 'Submission Not Approved'. Excerpt replaced with the exact text."
+      },
+      {
+        "id": "v29",
+        "claim": "2026 reports say the App Review dashboard warns of up to ~20 days per round",
+        "location": "summary.drivers; summary.bestCase/worstCase; stages[b-review].steps[b-review-5]; openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s28",
+          "s29",
+          "s34",
+          "s35"
+        ],
+        "note": "Now four independent vendor/consultant sources (Aug-Oct 2026). WoopSocial: 'roughly doubled from 10 days to 20'; Dhar: 'Meta says App Review takes ~20 days'. Still no Meta doc, so it stays 'reported'. All four sell review help or review-free APIs."
+      },
+      {
+        "id": "v30",
+        "claim": "Meta's walkthrough still says a decision comes within a week",
+        "location": "paths[*].approvalWaitDays.basis; stages[b-review].steps[b-review-5]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s13"
+        ],
+        "note": "Walkthrough 'Updated: Jun 30, 2026' still reads 'you should receive a decision within a week'."
+      },
+      {
+        "id": "v31",
+        "claim": "Access verification: ~5-day decision, Business Verification prerequisite, list includes instagram_business_basic and instagram_business_content_publish, error 100 for non-role users",
+        "location": "requirements[r-tech-provider]; stages[b-review].steps[b-review-2]; blockers[b-error-100]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s12"
+        ],
+        "note": "Re-read the page (updated Dec 12, 2024): all four points match. instagram_business_manage_comments/_messages are not on the list, but basic is, so every Instagram Login multi-tenant app needs it."
+      },
+      {
+        "id": "v32",
+        "claim": "Business Verification requires legal business documents",
+        "location": "summary.drivers[0]; agentVsYou.youMust[2]",
+        "verdict": "corrected",
+        "before": "Business Verification with legal (business) documents, done by a business portfolio Admin.",
+        "after": "Business Verification of legal business details; official documents only if Meta can't match a record; done by someone with full control.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s26"
+        ],
+        "note": "Help Center: 'If no matching record is found ... you may be asked to upload official documents'; 'You must have full control of the business portfolio.' The previous pass fixed the requirement but left these two lines."
+      },
+      {
+        "id": "v33",
+        "claim": "Long-lived Page tokens don't expire",
+        "location": "paths[facebook-login-page-linked].endState",
+        "verdict": "corrected",
+        "before": "long-lived Page tokens don't expire.",
+        "after": "long-lived Page tokens have no expiration date, though Meta says they can still be invalidated under certain conditions.",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s18"
+        ],
+        "note": "s18: 'do not have an expiration date and only expire or are invalidated under certain conditions.' Brings endState in line with step c-live-2."
+      },
+      {
+        "id": "v34",
+        "claim": "Tokens generated in the App Dashboard are long-lived (60 days)",
+        "location": "oauth.tokenLifetime; oauth.evidence",
+        "verdict": "corrected",
+        "before": "Claim cited to s1/s2/s5/s17/s18, none of which states it.",
+        "after": "Cited to Instagram Login Get started (new s33): 'Access tokens from the App Dashboard are long-lived and are valid for 60 days.'",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s33"
+        ],
+        "note": "Value was right, citation was missing. s33 also backs the /me?fields=user_id,username smoke test in step a-test-2."
+      },
+      {
+        "id": "v35",
+        "claim": "Graph API v26.0 is the current version used in the Facebook Login and /me URLs",
+        "location": "oauth.authorizationUrl; oauth.tokenUrl; stages[a-test].steps[a-test-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s40",
+          "s33"
+        ],
+        "note": "Versions page: v26.0 released July 29, 2026, expiration TBD; no v27.0 listed as of 2026-10-20."
+      },
+      {
+        "id": "v36",
+        "claim": "PKCE support for Instagram Login is unknown",
+        "location": "oauth.pkce; openQuestions[0]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s37",
+          "s2"
+        ],
+        "note": "OAuth Authorize reference (updated Jul 17, 2025) lists client_id, redirect_uri, response_type, scope, state only; Facebook Login manual-flow page (Jun 30, 2026) has no code_challenge either; web search found no 2025-2026 report of PKCE."
+      },
+      {
+        "id": "v37",
+        "claim": "Publishing cap: 100 posts per 24 h vs 'currently 50'",
+        "location": "nuances[n-rate-limits]; openQuestions",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s8",
+          "s38"
+        ],
+        "note": "Conflict still live: content-publishing page (updated Jun 30, 2026) says 100 in Rate Limit and 50 in the carousel section; reference (updated Jul 23, 2024) says 'currently 50'. Added the page dates and cited the reference as s38."
+      },
+      {
+        "id": "v38",
+        "claim": "Composio-managed OAuth = yes, toolkit has 0 triggers, managed app may lack the comment permission",
+        "location": "composio; nuances[n-composio-managed-gaps]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s19",
+          "s20",
+          "s21"
+        ],
+        "note": "Re-fetched toolkits/instagram.md (version 20261014_00) and managed-auth.md: INSTAGRAM sits under 'Composio-managed OAuth available (123)'; FAQ quote verbatim; custom-app page still says users see 'Composio wants to access your account'."
+      },
+      {
+        "id": "v39",
+        "claim": "Tested probes: token endpoint 'Invalid platform app', api.instagram.com authorize 302 to www, refresh endpoint code 190, no PKCE/DCR in discovery",
+        "location": "probes[p1-p4]; blockers[b-invalid-platform-app]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "probe",
+        "sourceIds": [
+          "s2"
+        ],
+        "note": "Re-ran at 2026-10-20T05:44Z with the same invalid inputs: identical results (400 Invalid platform app; 302 to www.instagram.com/oauth/authorize; 400 code 190; openid-configuration without token_endpoint or code_challenge_methods_supported)."
+      },
+      {
+        "id": "v40",
+        "claim": "Live mode restricts everyone, including role users, to approved permissions; test posts become public",
+        "location": "stages[b-live].steps[b-live-1]; nuances[n-live-timing]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "cross_source",
+        "sourceIds": [
+          "s13",
+          "s39"
+        ],
+        "note": "Walkthrough and App Modes page agree ('only permissions approved through App Review'); App Modes added as s39 and the open question reworded to name both pages."
+      },
+      {
+        "id": "v41",
+        "claim": "Webhooks for app users need a Live app, Advanced Access and Business Verification; comment and mention notifications need a public account; TLS required",
+        "location": "nuances[n-standard-not-full]; requirements[r-professional-accounts]; oauth.redirectUris",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s7"
+        ],
+        "note": "Webhooks setup page (updated Sep 16, 2026): 'Your app must be Live to receive notifications for app users', BV 'Required for production access', 'Private accounts do not receive comment or mention notifications', 'Self-signed certificates are not supported.'"
+      },
+      {
+        "id": "v42",
+        "claim": "Rate limit 4800 x impressions per app-user pair; messaging window usually 24 h, Human Agent 7 days; disclosure rules",
+        "location": "nuances[n-rate-limits]; nuances[n-ai-disclosure]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s1",
+          "s9"
+        ],
+        "note": "Overview (updated Sep 28, 2026) and messaging page (Sep 28, 2026) unchanged on these points; Click-to-Direct ads can extend the standard window to 7 days, consistent with 'usually 24 hours'."
+      },
+      {
+        "id": "v43",
+        "claim": "What an agent can do: agentCan had no way for an agent to read App Review or compliance status",
+        "location": "agentVsYou.agentCan",
+        "verdict": "corrected",
+        "before": "No mention of Meta's Developer Tools MCP server.",
+        "after": "Added: with beta access, an agent can read App Review status/requirements, compliance actions and webhook subscriptions via https://mcp.facebook.com/devtools, but cannot submit App Review.",
+        "method": "cross_source",
+        "sourceIds": [
+          "s36",
+          "s32"
+        ],
+        "note": "Launched in beta on Jun 30, 2026 (PPC Land, citing Meta's blog and docs); gradual rollout. Marked as reported in the bullet."
+      },
+      {
+        "id": "v44",
+        "claim": "Business-type app required; 15-app limit (archived apps count); dashboard tester account must be public; BV needed before publishing",
+        "location": "requirements[r-business-app]; stages[a-register].steps[a-register-2]; stages[b-register].steps[b-register-2]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s4"
+        ],
+        "note": "All four statements still on the create-an-instagram-app page (updated May 14, 2025)."
+      },
+      {
+        "id": "v45",
+        "claim": "Business Login mechanics: code 1 h single use, '#_' suffix, trailing slash, exact redirect match, server-side secret, expires_in 5183944, refresh only when >=24 h old",
+        "location": "oauth; blockers[b-redirect-mismatch]; requirements[r-redirect-uri]; requirements[r-secret-server-side]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s2",
+          "s5",
+          "s37"
+        ],
+        "note": "Business Login page (updated Mar 13, 2026) and the refresh and authorize references match word for word."
+      },
+      {
+        "id": "v46",
+        "claim": "Data Use Checkup is annual and must be done before switching to Live; Data Access Renewal consolidates the assessments",
+        "location": "stages[b-maintain].steps[b-maintain-2]; stages[b-live].steps[b-live-1]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s14",
+          "s30",
+          "s10"
+        ],
+        "note": "DUC page: 'will need to complete DUC before the app can be switched to Live mode'; DAR page: 'consolidates most of these existing assessments'. Access Levels page also ties DUC to Advanced Access."
+      },
+      {
+        "id": "v47",
+        "claim": "Instagram App Review page: web/mobile web only, one login type per app, unused permissions are rejected, permission listed as instagram_business_content_publishing",
+        "location": "stages[b-test].steps[b-test-3]; stages[b-configure].steps[b-configure-3]; nuances[n-permission-names]; nuances[n-one-login-type]",
+        "verdict": "supported",
+        "before": "",
+        "after": "",
+        "method": "source_recheck",
+        "sourceIds": [
+          "s3"
+        ],
+        "note": "Page updated Jun 30, 2026; all four points present."
+      },
+      {
+        "id": "v48",
+        "claim": "'Insufficient developer role' arrives as {error_type: OAuthException, code: 400, ...}",
+        "location": "blockers[b-insufficient-role].symptom",
+        "verdict": "downgraded",
+        "before": "Exact JSON payload stated as the Business Login symptom.",
+        "after": "Error name kept; the JSON payload is labelled as community-reported, mostly from the Basic Display era.",
+        "method": "cross_source",
+        "sourceIds": [
+          "s24",
+          "s41"
+        ],
+        "note": "s24 names only 'Insufficient Developer Role'; the JSON appears in a Basic Display library issue (s41). No Business Login sample found."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/overview",
+      "title": "Instagram Platform - Overview",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Advanced Access is the access level required if your app serves Instagram professional accounts that you don't own or manage ... This access level requires App Review and Business Verification."
+    },
+    {
+      "id": "s2",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/instagram-api-with-instagram-login/business-login",
+      "title": "Business Login for Instagram",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Tokens that have not been refreshed in 60 days will expire and can no longer be refreshed."
+    },
+    {
+      "id": "s3",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/app-review",
+      "title": "App Review for Instagram API",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Your app can either use Facebook Login or Instagram Login but not both."
+    },
+    {
+      "id": "s4",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/create-an-instagram-app",
+      "title": "Create a Meta app for the Instagram API",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Your app must be a business type app to be able to add the Instagram product."
+    },
+    {
+      "id": "s5",
+      "url": "https://developers.facebook.com/docs/instagram-platform/reference/refresh_access_token",
+      "title": "Instagram Platform reference - Refresh Access Token",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Refreshed tokens are valid for 60 days from the date at which they are refreshed."
+    },
+    {
+      "id": "s6",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/changelog",
+      "title": "Changelog for Instagram Platform",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "The Instagram Basic Display API has been deprecated. All requests to the Instagram Basic Display API will return an error message."
+    },
+    {
+      "id": "s7",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/webhooks/setup",
+      "title": "Instagram Platform - Webhooks setup",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Your app must be Live to receive notifications for app users."
+    },
+    {
+      "id": "s8",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/content-publishing",
+      "title": "Instagram Platform - Publish Content",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Instagram accounts are limited to 100 API-published posts within a 24-hour moving period."
+    },
+    {
+      "id": "s9",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/instagram-api-with-instagram-login/messaging-api",
+      "title": "Instagram API with Instagram Login - Messaging",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "When required by applicable law, automated chat experiences must disclose that a person is interacting with an automated service"
+    },
+    {
+      "id": "s10",
+      "url": "https://developers.facebook.com/docs/graph-api/overview/access-levels",
+      "title": "Graph API - Access Levels",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Business Verification is required to get Advanced Access."
+    },
+    {
+      "id": "s11",
+      "url": "https://developers.facebook.com/documentation/development/release/business-verification",
+      "title": "Business Verification (Meta App Development)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "only someone with an Admin role in the Business will be able to complete the verification process."
+    },
+    {
+      "id": "s12",
+      "url": "https://developers.facebook.com/documentation/development/release/access-verification",
+      "title": "Access Verification (Tech Provider)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Once a business admin has completed the process a decision will be made within approximately 5 days."
+    },
+    {
+      "id": "s13",
+      "url": "https://developers.facebook.com/documentation/resp-plat-initiatives/individual-processes/app-review/submission-guide",
+      "title": "App Review submission walkthrough",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Calls must be made within 30 days of submitting for App Review ... your submission will be queued and you should receive a decision within a week."
+    },
+    {
+      "id": "s14",
+      "url": "https://developers.facebook.com/documentation/resp-plat-initiatives/individual-processes/data-use-checkup",
+      "title": "Data Use Checkup",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Data Use Checkup is not required for developers whose apps have Standard Access to permissions and features."
+    },
+    {
+      "id": "s15",
+      "url": "https://developers.facebook.com/documentation/development/create-an-app/app-dashboard/data-deletion-callback",
+      "title": "Data Deletion Request Callback",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "all apps must inform users in their privacy policy how to request deletion of their data."
+    },
+    {
+      "id": "s16",
+      "url": "https://developers.facebook.com/documentation/development/register",
+      "title": "Register as a Meta Developer",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "We will send a confirmation code to the phone number and email address that you provide in order to confirm that you have access to them."
+    },
+    {
+      "id": "s17",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/instagram-api-with-facebook-login/business-login-for-instagram",
+      "title": "Facebook Login for Business (Instagram API with Facebook Login)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "This URL must match a URL in the Facebook Login > Settings > Client OAuth Settings > Valid OAuth Redirect URI field in the App Dashboard."
+    },
+    {
+      "id": "s18",
+      "url": "https://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived",
+      "title": "Facebook Login - Get long-lived access tokens",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Long-lived Page access token do not have an expiration date and only expire or are invalidated under certain conditions."
+    },
+    {
+      "id": "s19",
+      "url": "https://docs.composio.dev/toolkits/instagram",
+      "title": "Composio - Instagram toolkit",
+      "publisher": "composio",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Composio is working on managed-app approval for the missing permission, but an owned Meta app is the current unblock path for production usage."
+    },
+    {
+      "id": "s20",
+      "url": "https://docs.composio.dev/toolkits/managed-auth",
+      "title": "Composio - Managed auth toolkits",
+      "publisher": "composio",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Composio manages at least one OAuth method."
+    },
+    {
+      "id": "s21",
+      "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+      "title": "Composio - Custom OAuth app vs managed auth",
+      "publisher": "composio",
+      "accessedAt": "2026-10-19",
+      "excerpt": "For OAuth toolkits, the dashboard shows the redirect URI to add in the provider's developer portal."
+    },
+    {
+      "id": "s22",
+      "url": "https://www.postmoo.re/blogs/meta-app-review-disapproved-how-to-get-approved",
+      "title": "PostMoore - Why Meta App Review keeps disapproving your app (Apr 2026)",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "It varies as you saw from our screenshots, but typically 5–7 business days."
+    },
+    {
+      "id": "s23",
+      "url": "https://www.saurabhdhar.com/blog/meta-app-review-rejected-twice-to-approval-case-study",
+      "title": "Saurabh Dhar - Meta App Review rejected twice to approval (Sep 2026, consultant)",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Submitted: May 20, 2026 – 03:30 CEST ... Submitted: June 14, 2026 – 00:32 CEST ... July 28, 2026 — ✅ Approved"
+    },
+    {
+      "id": "s24",
+      "url": "https://github.com/otabekswe/InstaLoom",
+      "title": "InstaLoom README (GitHub) - Instagram business login setup",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "If a tester invitation is required, add the username in App roles → Roles → Instagram Testers"
+    },
+    {
+      "id": "s25",
+      "url": "https://www.duochat.in/help-center/get-verified-with-facebook/how-long-meta-business-verification-usually-takes",
+      "title": "Duochat - How long Meta Business Verification usually takes (Feb 2026)",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Verification takes 3 to 10 working days"
+    },
+    {
+      "id": "s26",
+      "url": "https://www.facebook.com/business/help/2058515294227817",
+      "title": "Meta Business Help Centre - Verifying your business in Meta Business Suite",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "A decision on your verification submission may take up to 14 business days. You'll receive a notification when the review is complete."
+    },
+    {
+      "id": "s27",
+      "url": "https://developers.facebook.com/documentation/resp-plat-initiatives/individual-processes/app-review",
+      "title": "Meta App Review overview",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "If we are unable to access your app to test it, your entire submission will be rejected."
+    },
+    {
+      "id": "s28",
+      "url": "https://bundle.social/blog/meta-app-review-20-days",
+      "title": "bundle.social - Meta App Review now takes 20 days (Aug 4, 2026, vendor blog)",
+      "publisher": "community",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Meta is now explicitly telling developers to expect a 20-day wait for most submissions."
+    },
+    {
+      "id": "s29",
+      "url": "https://singhamandeep.com/instagram-business-manage-messages-app-review/",
+      "title": "Amandeep Singh - Instagram Business Manage Messages App Review: 2026 fix guide (consultant)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "In 2026 the App Review dashboard also says most submissions are reviewed within 20 days"
+    },
+    {
+      "id": "s30",
+      "url": "https://developers.facebook.com/documentation/resp-plat-initiatives/data-access-renewal",
+      "title": "Data Access Renewal (Meta for Developers)",
+      "publisher": "official",
+      "accessedAt": "2026-10-19",
+      "excerpt": "consolidates most of these existing assessments into one streamlined process."
+    },
+    {
+      "id": "s31",
+      "url": "https://docs.360dialog.com/docs/resources/meta-business-verification/classic-business-verification",
+      "title": "360dialog - Classic Business Verification",
+      "publisher": "other",
+      "accessedAt": "2026-10-19",
+      "excerpt": "Meta reviews submissions within up to 14 business days."
+    },
+    {
+      "id": "s32",
+      "url": "https://ppc.land/meta-puts-ai-ahead-of-support-tickets-for-developers-by-mid-september/",
+      "title": "PPC Land - Meta puts AI ahead of support tickets for developers (Aug 5, 2026)",
+      "publisher": "other",
+      "accessedAt": "2026-10-19",
+      "excerpt": "made its AI Developer Assistant the primary support path on developers.facebook.com"
+    },
+    {
+      "id": "s33",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/instagram-api-with-instagram-login/get-started",
+      "title": "Instagram API with Instagram Login - Get started",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Access tokens from the business login flow are short-lived and valid for 1 hour. Access tokens from the App Dashboard are long-lived and are valid for 60 days."
+    },
+    {
+      "id": "s34",
+      "url": "https://woopsocial.com/blog/meta-app-review-rejected-2026-fix-guide",
+      "title": "WoopSocial - Meta App Review rejected? The complete 2026 fix-it guide (Sep 1, 2026, vendor blog)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Meta's review timeline roughly doubled from 10 days to 20, so every rejection cycle now costs weeks, not days."
+    },
+    {
+      "id": "s35",
+      "url": "https://www.saurabhdhar.com/blog/meta-app-approval-guide",
+      "title": "Saurabh Dhar - Meta app approval guide (updated Oct 12, 2026, consultant)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Meta says App Review takes ~20 days. Ours average ~10."
+    },
+    {
+      "id": "s36",
+      "url": "https://ppc.land/meta-launches-developer-tools-mcp-cutting-dashboard-logins-to-zero/",
+      "title": "PPC Land - Meta launches Developer Tools MCP (Jun 30, 2026)",
+      "publisher": "other",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Nothing else in the tool set can alter a developer's app configuration, submit an App Review request on a developer's behalf, or change compliance status."
+    },
+    {
+      "id": "s37",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/reference/oauth-authorize",
+      "title": "Instagram Platform reference - OAuth Authorize",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Codes are valid for 1 hour and can only be used once."
+    },
+    {
+      "id": "s38",
+      "url": "https://developers.facebook.com/documentation/instagram-platform/instagram-graph-api/reference/ig-user/content_publishing_limit",
+      "title": "Instagram Platform reference - IG User Content Publishing Limit",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "quota_total — The maximum number of IG Containers the app user can publish within the quota_duration time period (currently 50)."
+    },
+    {
+      "id": "s39",
+      "url": "https://developers.facebook.com/documentation/development/build-and-test/app-modes",
+      "title": "App Modes (Meta App Development)",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "Apps in Live mode can request permissions from anyone, but only permissions approved through App Review."
+    },
+    {
+      "id": "s40",
+      "url": "https://developers.facebook.com/docs/graph-api/changelog/versions/",
+      "title": "Graph API - Versions",
+      "publisher": "official",
+      "accessedAt": "2026-10-20",
+      "excerpt": "v26.0 July 29, 2026 TBD"
+    },
+    {
+      "id": "s41",
+      "url": "https://github.com/loicnestler/instagram-basic-display/issues/2",
+      "title": "GitHub issue - 'Insufficient developer role' (instagram-basic-display library)",
+      "publisher": "community",
+      "accessedAt": "2026-10-20",
+      "excerpt": "{\"error_type\": \"OAuthException\", \"code\": 400, \"error_message\": \"Insufficient developer role\"}"
+    }
+  ],
+  "meta": {
+    "generatedAt": "2026-10-19T18:08:03Z",
+    "generatedBy": "library",
+    "model": "claude-code-research-agent",
+    "durationSec": 1490,
+    "lastReviewedAt": "2026-10-20T05:51:07Z"
+  }
+}

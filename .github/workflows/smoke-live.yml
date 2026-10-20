@@ -1,0 +1,36 @@
+name: Live agent smoke test
+
+# Runs the full live pipeline (resolve -> research -> draft -> verify -> publish)
+# for one app using the ANTHROPIC_API_KEY repository secret, prints the agent's
+# progress to the log and uploads the resulting guide as an artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: App name or website (pick one outside the library)
+        required: true
+        default: Calendly
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsx scripts/gen-library-index.ts
+      - name: Generate a guide live
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          APP: ${{ inputs.app }}
+        run: npx tsx scripts/smoke-live.ts "$APP" smoke-output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-output
+          path: smoke-output/
