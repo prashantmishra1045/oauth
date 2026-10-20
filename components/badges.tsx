@@ -21,7 +21,7 @@ export function DifficultyBadge({ level, label, size = "sm" }: { level: number; 
   const s = DIFFICULTY_STYLE[level] ?? DIFFICULTY_STYLE[3];
   return (
     <span
-      className={cx("inline-flex items-center gap-1.5 rounded-full font-medium ring-1 ring-inset", s.pill, size === "lg" ? "px-3 py-1 text-sm" : "px-2 py-0.5 text-xs")}
+      className={cx("inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-medium ring-1 ring-inset", s.pill, size === "lg" ? "px-3 py-1 text-sm" : "px-2 py-0.5 text-xs")}
       title={`Difficulty ${level} of 5`}
     >
       <span className="flex gap-0.5" aria-hidden>
@@ -43,7 +43,7 @@ const OWNER = {
 export function OwnerBadge({ owner }: { owner: keyof typeof OWNER }) {
   const o = OWNER[owner];
   return (
-    <span className={cx("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", o.cls)} title={o.title}>
+    <span className={cx("inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", o.cls)} title={o.title}>
       <span aria-hidden>{o.icon}</span>
       {o.label}
     </span>
@@ -63,8 +63,8 @@ export function EvidenceBadge({ evidence, sourceNumbers }: { evidence: Evidence;
   const refs = evidence.sourceIds.filter((id) => id in sourceNumbers);
   const tip = `${e.label} · ${evidence.confidence} confidence — ${e.help}${evidence.note ? `\n${evidence.note}` : ""}`;
   return (
-    <span className="inline-flex items-center gap-1 align-middle">
-      <span className={cx("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", e.cls)} title={tip}>
+    <span className="inline-flex shrink-0 flex-wrap items-center gap-1 align-middle">
+      <span className={cx("inline-flex items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", e.cls)} title={tip}>
         <span className={cx("h-1.5 w-1.5 rounded-full", e.dot)} aria-hidden />
         {e.label}
         {evidence.confidence !== "high" && <span className="font-normal opacity-75">· {evidence.confidence}</span>}
@@ -97,7 +97,7 @@ export function ManagedBadge({ managed }: { managed: "yes" | "no" | "unknown" })
     no: { t: "Bring your own OAuth app", c: "bg-zinc-100 text-zinc-700 ring-zinc-200" },
     unknown: { t: "Composio status unknown", c: "bg-zinc-50 text-zinc-500 ring-zinc-200" },
   }[managed];
-  return <span className={cx("inline-flex rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", map.c)}>{map.t}</span>;
+  return <span className={cx("inline-flex shrink-0 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", map.c)}>{map.t}</span>;
 }
 
 const VERDICT = {
@@ -108,7 +108,7 @@ const VERDICT = {
 } as const;
 
 export function VerdictBadge({ verdict }: { verdict: keyof typeof VERDICT }) {
-  return <span className={cx("inline-flex rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ring-1 ring-inset", VERDICT[verdict])}>{verdict}</span>;
+  return <span className={cx("inline-flex shrink-0 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ring-1 ring-inset", VERDICT[verdict])}>{verdict}</span>;
 }
 
 const STATUS = {
@@ -119,5 +119,5 @@ const STATUS = {
 
 export function VerificationPill({ status }: { status: keyof typeof STATUS }) {
   const s = STATUS[status];
-  return <span className={cx("inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium", s.c)}>{s.t}</span>;
+  return <span className={cx("inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium", s.c)}>{s.t}</span>;
 }

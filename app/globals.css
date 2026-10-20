@@ -23,8 +23,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  /* Guides quote long URLs and scope strings; never let one widen the page on a phone. */
-  overflow-wrap: anywhere;
+  /* Wrap long words without shrinking flex items to one character wide (which "anywhere" does);
+     elements holding long URLs opt into breaking anywhere with .break-anywhere. */
+  overflow-wrap: break-word;
 }
 
 /* Anchor targets land below the sticky header. */
@@ -43,4 +44,8 @@ body {
   body {
     background: white;
   }
+}
+
+.break-anywhere {
+  overflow-wrap: anywhere;
 }
