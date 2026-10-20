@@ -16,7 +16,8 @@ export function getStore(): Store {
   if (store) return store;
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (url && token) {
+  // `vercel pull` writes "[SENSITIVE]" placeholders for secrets, so check the shape, not just presence.
+  if (url?.startsWith("https://") && token && token !== "[SENSITIVE]") {
     store = new RedisStore(new Redis({ url, token }));
   } else {
     // Vercel's filesystem is read-only outside /tmp.

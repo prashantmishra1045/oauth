@@ -14,7 +14,8 @@ export const BETAS: Anthropic.Beta.AnthropicBeta[] = [
 export class ConfigError extends Error {}
 
 export function liveGenerationConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+  // A real key, not a "[SENSITIVE]" placeholder written by `vercel pull`.
+  return Boolean(process.env.ANTHROPIC_API_KEY?.startsWith("sk-ant-"));
 }
 
 /**

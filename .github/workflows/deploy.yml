@@ -43,16 +43,11 @@ jobs:
             printf '%s' "$ANTHROPIC_API_KEY" | vercel env add ANTHROPIC_API_KEY production --sensitive --force --yes --token="$VERCEL_TOKEN"
           fi
 
-      - name: Pull Vercel settings and build
+      # Build on Vercel, where secret env values are available (a local `vercel pull` only gets placeholders).
+      - name: Build and deploy on Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-          vercel build --prod --token="$VERCEL_TOKEN"
-      - name: Deploy
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          url=$(vercel deploy --prod --yes --token="$VERCEL_TOKEN")
           echo "Deployed: $url"
           echo "### Deployed to $url" >> "$GITHUB_STEP_SUMMARY"
