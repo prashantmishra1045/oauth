@@ -25,5 +25,5 @@ export const formatUsd = (usd: number) => `$${usd.toFixed(2)}`;
 
 /** Total the deployment may spend on live generation (checked before each new job starts). */
 export function budgetUsd(): number {
-  return Number(process.env.GENERATION_BUDGET_USD || 3.5);
+  return Number(process.env.GENERATION_BUDGET_USD || 10);
 }

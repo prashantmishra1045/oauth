@@ -1,6 +1,6 @@
 # Greenlight: OAuth app setup & approval guides
 
-**Live app:** _<add Vercel URL after first deploy>_ · **Verification report:** [VERIFICATION.md](VERIFICATION.md) · **How it works:** [docs/architecture.md](docs/architecture.md)
+**Live app:** https://greenlight-neon-rho.vercel.app · **Verification report:** [VERIFICATION.md](VERIFICATION.md) · **How it works:** [docs/architecture.md](docs/architecture.md)
 
 A developer building an AI agent wants their users to connect an app. Before launch they often need their own OAuth app with that provider, and getting it approved can take an hour or many weeks. Greenlight tells them how hard it will be, how long they will wait, what can block them, and what an agent can do for them.
 
@@ -54,7 +54,7 @@ Without Redis configured, jobs and generated guides are stored in `.data/`.
 |---|---|---|
 | `ANTHROPIC_API_KEY` | (none) | Enables live generation. Used explicitly; the app never falls back to other ambient credentials. |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_*`) | (none) | Shared store for jobs and generated guides. Needed on Vercel. |
-| `GENERATION_BUDGET_USD` | 3.5 | Hard cap on estimated live-generation spend for the deployment; new jobs are refused once it's reached (checked before each job starts). |
+| `GENERATION_BUDGET_USD` | 10 | Hard cap on estimated live-generation spend for the deployment; new jobs are refused once it's reached (checked before each job starts). |
 | `GENERATION_LIMIT_PER_HOUR` / `GENERATION_LIMIT_PER_DAY` | 3 / 15 | Rate limits for new live guides (per IP / global). |
 | `GREENLIGHT_MODEL` | `claude-opus-5-5` | Model for the live agent. |
 | `GREENLIGHT_FAST_MODE` | off | `1` enables fast mode where the account supports it (faster output, higher price). |
@@ -66,7 +66,7 @@ Without Redis configured, jobs and generated guides are stored in `.data/`.
 - Anything behind a provider login (console screens, review forms) is described from documentation, not observed.
 - Live guides are fact-checked by the same model family that wrote them. The check catches misread sources and stale numbers; it is not an independent audit. The library guides got the deeper treatment.
 - Policies change. Guides carry dates, and live guides regenerate after 30 days. A production version would re-verify the library on a schedule and track policy pages for changes.
-- A live guide costs an estimated $0.50–1 in API usage (prompt caching keeps the research loop's re-sent pages cheap). Generation is rate-limited and capped by `GENERATION_BUDGET_USD`; each finished job shows its estimated cost.
+- A live guide costs about $1 in API usage (the first production run, Calendly, was an estimated $1.07) (prompt caching keeps the research loop's re-sent pages cheap). Generation is rate-limited and capped by `GENERATION_BUDGET_USD`; each finished job shows its estimated cost.
 
 ## Repository layout
 

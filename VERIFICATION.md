@@ -72,4 +72,9 @@ The app code was also reviewed by five independent reviewers, each looking at a 
 
 ## Live pipeline
 
-The live agent's code paths were exercised end to end with replay mode, plus real probes against Google, Microsoft and GitHub. The first runs with a real API key are done through the **Live agent smoke test** GitHub Action; their results go here.
+First production run (2026-10-20, https://greenlight-neon-rho.vercel.app/guides/calendly): **Calendly**, an app outside the library, went from request to published guide in **244 s**. It used 7 web searches, 14 page reads and 4 probes, and produced 28 researched facts from 10 sources. The fact-check examined 9 high-impact claims: 6 supported, 2 downgraded, 1 unverifiable. Estimated cost: about $1.07 (14.5k uncached input tokens, 88k cache-write tokens, 393k cache-read tokens, 21k output tokens).
+
+Lessons from that run:
+
+- The full guide schema is too large for the API's structured-output grammar compiler, which rejected it with a 400. The draft is now requested as plain JSON and validated locally with the same zod schema.
+- `web_fetch` refuses URLs that haven't appeared earlier in the conversation (`url_not_in_prior_context`), as documented. The agent recovered by searching first.

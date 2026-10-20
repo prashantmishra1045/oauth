@@ -15,8 +15,7 @@ Write the guide from the research findings and probe results you are given.
 - Keep it tight for a live guide: 1-2 paths (two only when difficulty differs by access tier), 3-5 stages per path, 2-4 steps per stage, 5-8 requirements, 4-7 nuances, 3-5 blockers, 1-2 artifacts, at most 15 sources. Short, concrete sentences.
 - ids are kebab-case and unique within their list.`;
 
-// The schema only, without the helper's parse(): the SDK would otherwise parse
-// inside the stream and hide refusals and truncation behind a generic parse error.
+// JSON Schema for the draft, given to the model in the prompt.
 const DRAFT_SCHEMA = betaZodOutputFormat(GuideDraft).schema;
 
 export async function draftGuide(args: {
@@ -71,29 +70,24 @@ Write the guide now.`;
     return parsed.data;
   };
 
-  try {
-    return read(await streamTurn(args.client, { ...params, output_config: { effort, format: { type: "json_schema", schema: DRAFT_SCHEMA } } }, { abortAt: args.deadline }));
-  } catch (err) {
-    // A schema the structured-output compiler rejects is a 400; retry once as plain JSON validated locally.
-    if (!(err instanceof Anthropic.BadRequestError)) throw err;
-    args.emit({ stage: "draft", kind: "warn", message: "Structured output unavailable; drafting as plain JSON instead.", detail: err.message.slice(0, 200) });
-    return read(
-      await streamTurn(
-        args.client,
-        {
-          ...params,
-          output_config: { effort },
-          messages: [
-            {
-              role: "user",
-              content: `${prompt}\n\nReply with only the guide as one JSON object (no prose, no code fence) matching this JSON Schema:\n${JSON.stringify(DRAFT_SCHEMA)}`,
-            },
-          ],
-        },
-        { abortAt: args.deadline },
-      ),
-    );
-  }
+  // The full guide schema is too large for the structured-output grammar compiler (it returns a 400),
+  // so ask for JSON in text and validate it locally with the same zod schema.
+  return read(
+    await streamTurn(
+      args.client,
+      {
+        ...params,
+        output_config: { effort },
+        messages: [
+          {
+            role: "user",
+            content: `${prompt}\n\nReply with only the guide as one JSON object (no prose, no code fence) matching this JSON Schema:\n${JSON.stringify(DRAFT_SCHEMA)}`,
+          },
+        ],
+      },
+      { abortAt: args.deadline },
+    ),
+  );
 }
 
 /** Text written after the last fallback marker (the declined model's partial text is not the answer). */
